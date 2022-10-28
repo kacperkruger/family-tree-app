@@ -26,11 +26,13 @@ app.post('/mmind', (req, res) => {
 
   try {
     const serverCode = generateServerCode(size, dim)
+    console.log(serverCode);
     const newGame = {
       status: "onGoing",
       code: serverCode,
       max_moves: max,
-      moves: 0
+      moves: 0,
+      moveHistory: []
     }
     games.set(id, newGame);
     
@@ -45,23 +47,54 @@ app.post('/mmind', (req, res) => {
   };
 });
 
-app.patch('/mmind', (req, res) => {
+app.patch('/mmind/:gameid', (req, res) => {
+  const gameid = req.params.gameid
   const data = req.body;
-  const { gameid, userMove } = data;
-
+  const { userMove } = data;
 
   try {
-    const game = games.get(gameid)
-    if (game.moves >= game.max)
+    const game = games.get(gameid);
+    console.log(game);
+    if (game.status !== "onGoing") throw "Game has already ended";
 
-    const serverCode = game.code
-    const [blackPoints, whitePoints] = processUserInput(userMove, serverCode);
+    const serverCode = game.code;
+    const [blackPoints, whitePoints] = processUserInput(serverCode, userMove);
+
+    if (blackPoints === serverCode.length) {
+      const updatedGame = {
+        ...game,
+        status: "Won",
+        moves: game.moves + 1,
+        moveHistory: [...game.moveHistory, userMove]
+      }
+      games.set(gameid, updatedGame);
+      return res.status(200).send("You won!")
+    }
+
+    if (game.moves === game.max_moves - 1) {
+      const updatedGame = {
+        ...game,
+        status: "Lose",
+        moves: game.moves + 1,
+        moveHistory: [...game.moveHistory, userMove]
+      }
+      games.set(gameid, updatedGame);
+      return res.status(200).send("You lose :(")
+    }
+
+    const updatedGame = {
+      ...game,
+      moves: game.moves + 1,
+      moveHistory: [...game.moveHistory, userMove]
+    }
+    games.set(gameid, updatedGame);
     return res.status(200).send(JSON.stringify({
       white: whitePoints,
       black: blackPoints,
       gameid
     }));
   } catch (error) {
+    console.log(error)
     return res.status(500).send(error);
   };
 });

@@ -2,11 +2,11 @@ const processUserMove = (serverValue, userMove) => {
   let blackPoints = 0;
   let whitePoints = 0;
 
-  if (serverValue.length() !== userMove.length()) throw 'User move is invalid length';
+  if (serverValue.length !== userMove.length) throw 'User move is invalid length';
 
   // black points
-  let serverInputAfterBlackPoints = serverValue;
-  const userInputAfterBlackPoints = userMove.map((color, index) => {
+  let serverInputAfterBlackPoints = serverValue.split('');
+  const userInputAfterBlackPoints = userMove.split('').map((color, index) => {
     if (serverValue[index] === color) {
       blackPoints++;
       serverInputAfterBlackPoints[index] = undefined;
