@@ -58,7 +58,7 @@ app.patch('/mmind/:gameid', (req, res) => {
     if (game.status !== "onGoing") throw "Game has already ended";
 
     const serverCode = game.code;
-    const [blackPoints, whitePoints] = processUserInput(serverCode, userMove);
+    const [blackPoints, whitePoints] = processUserInput(game.code, userMove, game.dim);
 
     if (blackPoints === serverCode.length) {
       const updatedGame = {
