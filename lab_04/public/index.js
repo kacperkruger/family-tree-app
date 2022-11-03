@@ -15,12 +15,12 @@ const moveInput = document.getElementById('move-input');
 const appendGame = (gameId) => {
     const gameElement = document.createElement('div');
     gameElement.innerText = gameId;
+    gameElement.innerText = gameId;
     gameContainer.append(gameElement);
-    currentGameId = gameElement;
+    currentGameId = gameId;
 }
 
 window.addEventListener('load', (event) => {
-    console.log("aaaa")
     axios.get('/mmind').then(res => {
         const gamesIds = res.data
         console.log(res)
@@ -56,9 +56,9 @@ gameForm.addEventListener('submit', e => {
 
     const size = sizeInput.value;
     const dim = dimInput.value;
-    const max_moves = maxMovesInput.value;
+    const max = maxMovesInput.value;
 
-    axios.post('/mmind', {size, dim, max_moves}).then((res) => {
+    axios.post('/mmind', {size, dim, max}).then((res) => {
         const data = res.data
         appendGame(data.gameid);
 
@@ -77,7 +77,11 @@ moveForm.addEventListener('submit', e => {
 
     axios.patch('/mmind/' + currentGameId, {userMove: move}).then(res => {
         const data = res.data;
-        const moveHistory = data.moveHistory
-        appendMove(...moveHistory[moveHistory.length - 1]);
-    })
+
+        const blackPoints = data.black
+        const whitePoints = data.white
+        appendMove(move, blackPoints, whitePoints);
+    }).catch(e => {
+        console.log(e);
+    });
 })

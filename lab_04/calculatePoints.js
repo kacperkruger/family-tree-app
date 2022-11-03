@@ -25,3 +25,5 @@ const calculatePoints = (serverValue, userMove) => {
 
     return [blackPoints, whitePoints];
 }
+
+module.exports = calculatePoints;
