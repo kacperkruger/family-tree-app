@@ -1,14 +1,23 @@
 const express = require('express')
 const { v4: uuidv4 } = require('uuid');
+const cors = require('cors');
+
 const processUserInput = require('./processUserInput');
 const generateServerCode = require('./generateServerCode');
 
 const app = express();
+app.use(express.static('public'));
+app.use(cors());
 app.use(express.json())
 
 // parametr – ewentualnie przekazywany poprzez zmienną środowiskową
 const port = process.env.PORT || 3000;
-const games = new Map(); 
+const games = new Map();
+
+app.get('/mmind', (req, res) => {
+  const gamesIds = Array.from(games.keys())
+  return res.send(gamesIds);
+});
 
 // tworzymy i konfigurujemy obiekt aplikacji
 app.post('/mmind', (req, res) => {

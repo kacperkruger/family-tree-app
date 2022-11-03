@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mastermind</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script defer src="index.js"></script>
+</head>
+<body>
+    <h1>Mastermind</h1>
+    <div id="game-container"></div>
+    <form id="create-game-container">
+        <label for="size-input"></label>Size<input type="text" id="size-input">
+        <label for="dim-input"></label>Dim<input type="text" id="dim-input">
+        <label for="max-moves-input">Max moves</label><input type="text" id="max-moves-input">
+        <button type="submit" id="send-game-button">Send</button>
+    </form>
+    <div id="move-container"></div>
+    <form id="send-container">
+        <label for="move-input">Type your move</label>
+        <input type="text" id="move-input" />
+        <button type="submit" id="send-move-button">Send</button>
+    </form>
+</body>
+</html>
