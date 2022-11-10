@@ -11,18 +11,18 @@ router.get('/', async (req, res) => {
 
 // Utworzenie nowego użytkownika
 router.post('/', async (req, res) => {
-    const data = req.data
+    const body = req.body
 
     try {
         const newUser = await User.create({ 
-            login: data.login,
-            email: data.email,
-            registrationDate: data.registrationDate
+            login: body.login,
+            email: body.email,
+            registrationDate: body.registrationDate
         })
-        return res.status(201).send({newUser: user})
+        return res.status(201).send({newUser})
     } catch (e) {
         console.log(e)
-        return res.status(500).send(e.getMessage())
+        return res.status(500).send(e.reason)
     }
 });
 
@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
 router.get('/:userId', async (req, res) => {
     const id = request.params.userId
     try {
-        user = User.findOne({_id: id})
+        const user = User.findOne({_id: id})
         return res.send(user)
     } catch (e) {
         console.log(e)
@@ -41,12 +41,12 @@ router.get('/:userId', async (req, res) => {
 // Zastąpienie danych użytkownika o podanym userId nowym „kompletem”
 router.put('/:userId', async (req, res) => {
     const id = req.params.userId;
-    const data = req.data;
+    const body = req.body;
     
     try {
         const updatedUser = await User.findOneAndUpdate({_id: id}, {
-            login: data.login,
-            email: data.email,
+            login: body.login,
+            email: body.email,
             registrationDate: data.registrationDate
         })
         return res.send(updatedUser)
@@ -63,19 +63,23 @@ router.delete('/:userId', async (req, res) => {
     try {
         const deletedUser = await User.findOneAndDelete({_id: id});
         return res.send({deletedUser})
+    } catch (e) {
+        console.log(e.reason)
+        return res.send(e.reason)
     }
 });
 
 // „Unacześnienie” wybranych danych użytkownika o podanym userId
 router.patch('/:userId', async (req, res) => {
     const id = req.params.userId;
-    
+    const body = req.body
+
     try {
         const user = await User.findOne({_id: id})
         const updatedUser = await User.findOneAndUpdate({_id: id}, {
-            login: data.login || user.login,
-            email: data.email || user.email,
-            registrationDate: data.registrationDate || user.registrationDate
+            login: body.login || user.login,
+            email: body.email || user.email,
+            registrationDate: body.registrationDate || user.registrationDate
         })
         return res.send(updatedUser)
     } catch (e) {
