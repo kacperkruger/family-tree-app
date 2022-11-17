@@ -77,7 +77,11 @@ app.patch('/mmind/:gameid', (req, res) => {
         moveHistory: [...game.moveHistory, userMove]
       }
       games.set(gameid, updatedGame);
-      return res.status(200).send("You won!")
+      return res.status(200).send(JSON.stringify({
+        white: whitePoints,
+        black: blackPoints,
+        gameid
+      }))
     }
 
     if (game.moves === game.max_moves - 1) {

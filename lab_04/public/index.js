@@ -30,18 +30,18 @@ window.addEventListener('load', (event) => {
 
 const appendMove = (move, blackPoints, whitePoints) => {
     const moveElement = document.createElement('div');
+    moveElement.id = "move";
     const moveDiv = document.createElement("div");
-    moveDiv.id = "move";
     moveDiv.innerText = move;
     moveElement.append(moveDiv);
 
-    [Array(blackPoints).keys()].forEach(() => {
+    Array.from(Array(blackPoints)).forEach(() => {
         const blackPointsDiv = document.createElement("div");
         blackPointsDiv.id = "black";
         moveElement.append(blackPointsDiv)
     });
 
-    [Array(whitePoints).keys()].forEach(() => {
+    Array.from(Array(whitePoints)).forEach(() => {
         const whitePointsDiv = document.createElement("div");
         whitePointsDiv.id = "white";
         moveElement.append(whitePointsDiv)
@@ -49,6 +49,7 @@ const appendMove = (move, blackPoints, whitePoints) => {
 
 
     moveContainer.append(moveElement);
+    moveInput.value = '';
 }
 
 gameForm.addEventListener('submit', e => {
