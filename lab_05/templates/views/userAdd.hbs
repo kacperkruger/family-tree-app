@@ -1,0 +1,12 @@
+{{#> layout}}
+    {{#*inline "content"}}
+        <h1>{{title}}</h1>
+        Welcome to {{title}}
+        <form action="/users" method="post">
+            <label for="login">login: </label><input type="text" id="login" value="">
+            <label for="email">email: </label><input type="text" id="email" value="">
+            <label for="registrationDate">registration date: </label><input type="date" id="registrationDate" value="">
+            <input type="submit" value="Submit">
+        </form>
+    {{/inline}}
+{{/layout}}

@@ -1,0 +1,11 @@
+{{#> layout}}
+    {{#*inline "content"}}
+        <h1>{{title}}</h1>
+        Welcome to {{title}}
+        <ul>
+            {{#each users as |user|}}
+                <li><span>{{user.login}}</span><span>{{user.email}}</span></li>
+            {{/each}}
+        </ul>
+    {{/inline}}
+{{/layout}}

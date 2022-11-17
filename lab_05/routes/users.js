@@ -12,13 +12,15 @@ router.get('/', async (req, res) => {
 // Utworzenie nowego użytkownika
 router.post('/', async (req, res) => {
     const body = req.body
-
+    console.log(body)
+    console.log(body.login)
     try {
         const newUser = await User.create({ 
             login: body.login,
             email: body.email,
             registrationDate: body.registrationDate
         })
+        console.log(newUser)
         return res.status(201).send({newUser})
     } catch (e) {
         console.log(e)
@@ -28,7 +30,7 @@ router.post('/', async (req, res) => {
 
 // Pobranie danych użytkownika o podanym userId
 router.get('/:userId', async (req, res) => {
-    const id = request.params.userId
+    const id = req.params.userId
     try {
         const user = User.findOne({_id: id})
         return res.send(user)
@@ -87,6 +89,8 @@ router.patch('/:userId', async (req, res) => {
         return res.status(500).send(e);
     }
 });
+
+
 
 module.exports = router;
 

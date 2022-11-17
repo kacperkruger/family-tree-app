@@ -1,12 +1,22 @@
 const express = require('express');
-const app = express();
+const path = require('path');
+const hbs = require('hbs');
 
+const app = express();
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'templates', 'views'));
+hbs.registerPartials(path.join(__dirname, 'templates', 'partials'));
+
+app.use(express.urlencoded({extended: false}));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 // Dodajemy usługi REST, które należy zdefiniować w pliku „users.js”
 // znajdującym się w podkatalogu „routes”
 const users = require('./routes/users');
+const views = require('./routes/views');
 app.use('/users', users);
+app.use('/', views);
 
 // Wczytujemy ewentualne dane konfiguracyjne z pliku „.env”
 require('dotenv').config();
