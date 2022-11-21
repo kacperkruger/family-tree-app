@@ -1,0 +1,13 @@
+{{#> layout}}
+    {{#*inline "content"}}
+        <h1>{{title}}</h1>
+        Welcome to {{title}}
+        <form action="/api/users" method="post">
+            <label for="username">username: </label><input type="text" id="username" name="username" value="">
+            <label for="email">email: </label><input type="text" id="email" name="email" value="">
+            <label for="password">password: </label><input type="password" id="password" name="password" value="">
+            <label for="confirmPassword">confirm password: </label><input type="password" id="confirmPassword" name="confirmPassword" value="">
+            <input type="submit" value="Submit">
+        </form>
+    {{/inline}}
+{{/layout}}
