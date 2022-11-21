@@ -1,24 +1,6 @@
 const bcrypt = require('bcrypt');
 const passport = require('passport');
 const User = require('../models/User')
-const ROLES = require("./roles");
-
-const createAdmin = async _ => {
-    const password = await hashPassword('admin')
-    const registrationDate = new Date();
-    try {
-        await User.findOneAndUpdate({
-            username: 'admin',
-            email: 'admin@tsw.edu.pl',
-            password,
-            role: ROLES.ADMIN,
-            registrationDate
-        }, { expire: new Date() }, { upsert: true, new: true, setDefaultsOnInsert: true })
-    } catch (e) {
-        console.log(e.codeName)
-    }
-
-}
 
 
 const setup = async () => {
@@ -60,4 +42,4 @@ const checkIsInRole = (...roles) => (req, res, next) => {
     return next()
 }
 
-module.exports = {createAdmin ,setup, hashPassword, verifyPassword, checkIsInRole}
+module.exports = {setup, hashPassword, verifyPassword, checkIsInRole}

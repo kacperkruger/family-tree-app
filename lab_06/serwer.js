@@ -44,8 +44,6 @@ const dbConnData = {
     database: process.env.MONGO_DATABASE || 'lab06'
 };
 
-createAdmin()
-
 mongoose
     .connect(`mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`, {
         useNewUrlParser: true, useUnifiedTopology: true

@@ -8,7 +8,7 @@
                 <div>{{user._id}}</div>
             </div>
             <div>
-                <div>login: </div>
+                <div>username: </div>
                 <div>{{user.username}}</div>
             </div>
             <div>
@@ -23,6 +23,9 @@
                 <div>role: </div>
                 <div>{{user.role}}</div>
             </div>
+            <div>
+                <a href="/edit/{{user._id}}">edit</a>
+            </div>
         </div>
 
         <ul>
@@ -33,8 +36,8 @@
                         <div>{{user._id}}</div>
                     </div>
                     <div>
-                        <div>login: </div>
-                        <div>{{user.login}}</div>
+                        <div>username: </div>
+                        <div>{{user.username}}</div>
                     </div>
                     <div>
                         <div>email: </div>
@@ -47,6 +50,9 @@
                     <div>
                         <div>role: </div>
                         <div>{{user.role}}</div>
+                    </div>
+                    <div>
+                        <a href="/edit/{{user._id}}">edit</a>
                     </div>
                 </div>
             {{/each}}
