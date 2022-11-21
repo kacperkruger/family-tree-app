@@ -3,7 +3,8 @@ const path = require('path');
 const hbs = require('hbs');
 const validateUserStrategy = require('./authentication/validateUserStrategy')
 const mongoose = require('mongoose');
-const {setup} = require("./authentication/utils");
+const { setup, createAdmin } = require("./authentication/utils");
+const User = require("./models/User")
 
 
 
@@ -42,6 +43,8 @@ const dbConnData = {
     port: process.env.MONGO_PORT || 27017,
     database: process.env.MONGO_DATABASE || 'lab06'
 };
+
+createAdmin()
 
 mongoose
     .connect(`mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`, {

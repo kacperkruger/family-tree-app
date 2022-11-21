@@ -6,7 +6,7 @@ const ROLES = require("../authentication/roles");
 const {hashPassword} = require("../authentication/utils");
 
 router.get('/', async (req, res) => {
-    const users = await User.find({})
+    const users = await User.find({ role: ROLES.USER })
     return res.send({allUsers: users})
 });
 
@@ -25,7 +25,8 @@ router.post('/', async (req, res) => {
             role: ROLES.USER,
             registrationDate
         })
-        return res.status(201).redirect('/dashboard')
+        req.user = null;
+        return res.status(201).redirect('/login')
     } catch (e) {
         console.log(e)
         return res.redirect('/register')
