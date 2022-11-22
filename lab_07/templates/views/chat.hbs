@@ -5,17 +5,18 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Chat</title>
-    <script src="/js/chat.js" defer>console.log({{{userLogin}}})</script>
+    <title>Chat /{{topic}}</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>const topic = "{{topic}}"</script>
+    <script src="js/chat.js" defer></script>
 </head>
 <body>
 
-<h1>Chat</h1>
+<h1>/{{topic}}</h1>
 
 <div>
     <p>
-        <label for="userToSend">user to send: </label><input type="text" id="userToSend">
-        <label for="message">message: </label><input type="text" id="message">
+        <label for="text">message: </label><input type="text" id="text">
         <input id="send" type="button" value="Wyślij">
     </p>
     <p>

@@ -3,8 +3,7 @@ const path = require('path');
 const hbs = require('hbs');
 const validateUserStrategy = require('./authentication/validateUserStrategy')
 const mongoose = require('mongoose');
-const WebSocketServer = require("ws").Server;
-const { setup } = require("./authentication/utils");
+const {setup} = require("./authentication/utils");
 
 
 const app = express();
@@ -34,7 +33,6 @@ setup()
 const users = require('./routes/users');
 const auth = require('./routes/authentication')
 const views = require('./routes/views');
-const url = require("url");
 app.use('/api/users', users);
 app.use('/login', auth);
 app.use('/', views);
@@ -43,29 +41,30 @@ require('dotenv').config();
 const dbConnData = {
     host: process.env.MONGO_HOST || '127.0.0.1',
     port: process.env.MONGO_PORT || 27017,
-    database: process.env.MONGO_DATABASE || 'lab06'
+    database: process.env.MONGO_DATABASE || 'lab07'
 };
 
-const wss = new WebSocketServer({
-    server: httpServer,
-});
+const io = require("socket.io")(httpServer);
 
-wss.on("connection", (ws, req) => {
-    const parsed = url.parse(req.url)
-    console.log(parsed)
-    console.log("Otwieramy połączenie przez WS");
-    ws.on("message", (message) => {
-        history.push(message);
-        console.log(`Historia: ${history}`);
-        ws.send(`dostałem: ${message}`);
+io
+    .of("/chat")
+    .on("connect", (socket) => {
+        console.log("Uruchomiłem kanał „/chat”");
+        socket.on("message", (data) => {
+            console.log(`/chat: ${data}`);
+            socket.emit("message", `/chat: ${data}`);
+        });
     });
-    ws.on("close", () => {
-        console.log("Zamykamy połączenie przez WS.");
+
+io
+    .of("/news")
+    .on("connect", (socket) => {
+        console.log("Uruchomiłem kanał „/news”");
+        socket.on("message", (data) => {
+            console.log(`/news: ${data}`);
+            socket.emit("message", `/news: ${data}`);
+        });
     });
-    ws.on("error", () => {
-        console.log("Błąd");
-    });
-});
 
 mongoose
     .connect(`mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`, {

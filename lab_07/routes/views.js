@@ -16,7 +16,7 @@ router.get('/chat', async (req, res) => {
     if (!user) return res.redirect('/login');
 
     res.render('chat', {
-        userLogin: req.user.login
+        topic: 'chat'
     })
 });
 

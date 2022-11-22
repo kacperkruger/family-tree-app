@@ -1,26 +1,24 @@
-if (document.readyState === "interactive") {
-    let send = document.getElementById("send");
-    let text = document.getElementById("text");
-    let message = document.getElementById("message");
-    console.log("eee")
+let send = document.getElementById("send");
+let text = document.getElementById("text");
+let message = document.getElementById("message");
 
-    const socket = new WebSocket(`ws://${location.host}/?login=${login}`);
-    socket.addEventListener("open", () => {
-    });
-    socket.addEventListener("close", () => {
-        console.log("Rozłączenie");
-    });
-    socket.addEventListener("message", (msg) => {
-        message.textContent = `Wiadomość od serwera: „${msg.data}”`;
-    });
-    socket.addEventListener("error", (err) => {
-        console.log("Błąd");
-        message.textContent = `Błąd połączenia z serwerem: ${err}`;
-    });
+const socket = io(`http://${location.host}/${topic}`);
+socket.on("connect", () => {
+    console.log(socket.id)
 
-    send.addEventListener("click", () => {
-        socket.send(text.value);
-        text.value = "";
-        text.focus();
-    })
-}
+    console.log(`Nawiązano połączenie z kanałem „/${topic}”`);
+});
+socket.on("disconnect", () => {
+    console.log(`Połączenie z kanałem „/${topic}” zostało zakończone`);
+});
+socket.on("message", (data) => {
+    console.log(data)
+    console.log(data)
+    message.textContent = data;
+});
+
+send.addEventListener("click", () => {
+    socket.send(text.value);
+    text.value = "";
+    text.focus();
+})
