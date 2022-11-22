@@ -3,9 +3,8 @@ const path = require('path');
 const hbs = require('hbs');
 const validateUserStrategy = require('./authentication/validateUserStrategy')
 const mongoose = require('mongoose');
-const { setup, createAdmin } = require("./authentication/utils");
-const User = require("./models/User")
-
+const WebSocketServer = require("ws").Server;
+const { setup } = require("./authentication/utils");
 
 
 const app = express();
@@ -13,6 +12,8 @@ app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'templates', 'views'));
 hbs.registerPartials(path.join(__dirname, 'templates', 'partials'));
 const secret = process.env.APP_SECRET || '$sekretny $sekret';
+
+const httpServer = require("http").createServer(app);
 
 app.use(require('cookie-parser')());
 app.use(require('express-session')({
@@ -33,6 +34,7 @@ setup()
 const users = require('./routes/users');
 const auth = require('./routes/authentication')
 const views = require('./routes/views');
+const url = require("url");
 app.use('/api/users', users);
 app.use('/login', auth);
 app.use('/', views);
@@ -44,6 +46,27 @@ const dbConnData = {
     database: process.env.MONGO_DATABASE || 'lab06'
 };
 
+const wss = new WebSocketServer({
+    server: httpServer,
+});
+
+wss.on("connection", (ws, req) => {
+    const parsed = url.parse(req.url)
+    console.log(parsed)
+    console.log("Otwieramy połączenie przez WS");
+    ws.on("message", (message) => {
+        history.push(message);
+        console.log(`Historia: ${history}`);
+        ws.send(`dostałem: ${message}`);
+    });
+    ws.on("close", () => {
+        console.log("Zamykamy połączenie przez WS.");
+    });
+    ws.on("error", () => {
+        console.log("Błąd");
+    });
+});
+
 mongoose
     .connect(`mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`, {
         useNewUrlParser: true, useUnifiedTopology: true
@@ -52,8 +75,8 @@ mongoose
         console.log(`Connected to MongoDB. Database name: "${response.connections[0].name}"`)
         const apiPort = process.env.PORT || 3000
         const apiHost = process.env.API_HOST || 'localhost';
-        app.listen(apiPort, () => {
-            console.log(`API server available from: http://${apiHost}:${apiPort}`);
+        httpServer.listen(apiPort, () => {
+            console.log(`websocket server available from: ws://${apiHost}:${apiPort}`);
         });
     })
     .catch(error => console.error('Error connecting to MongoDB', error));
