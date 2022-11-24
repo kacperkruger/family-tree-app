@@ -1,0 +1,11 @@
+{{#> layout}}
+    {{#*inline "content"}}
+        <h1>Login</h1>
+        Login page
+        <form action="/login" method="post">
+            <label for="username">username: </label><input type="text" id="username" name="username" value="">
+            <label for="password">password: </label><input type="password" id="password" name="password" value="">
+            <input type="submit" value="Login">
+        </form>
+    {{/inline}}
+{{/layout}}
