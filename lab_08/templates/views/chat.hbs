@@ -7,7 +7,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Chat /{{topic}}</title>
     <script src="/socket.io/socket.io.js"></script>
-    <script>const topic = "{{topic}}"</script>
+    <script>
+        const topic = "{{topic}}"
+        const username = "{{username}}"
+    </script>
     <script src="js/chat.js" defer></script>
 </head>
 <body>
@@ -20,7 +23,7 @@
         <input id="send" type="button" value="Wyślij">
     </p>
     <p>
-        <span id="message"></span>
+        <div id="message-container"></div>
     </p>
 </div>
 

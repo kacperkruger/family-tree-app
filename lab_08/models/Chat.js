@@ -1,11 +1,11 @@
 const {Schema, model} = require('mongoose');
 
 const chatSchema = new Schema({
-    users: [{
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    }],
+    name: {
+        required: true,
+        type: String,
+        unique: true
+    },
     messages: [{
         type: Schema.Types.ObjectId,
         ref: 'Message',

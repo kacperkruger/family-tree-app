@@ -16,7 +16,18 @@ router.get('/chat', async (req, res) => {
     if (!user) return res.redirect('/login');
 
     res.render('chat', {
-        topic: 'chat'
+        topic: 'chat',
+        username: user.username
+    })
+});
+
+router.get('/news', async (req, res) => {
+    const user = req.user;
+    if (!user) return res.redirect('/login');
+
+    res.render('chat', {
+        topic: 'news',
+        username: user.username
     })
 });
 

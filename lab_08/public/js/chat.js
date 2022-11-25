@@ -1,6 +1,6 @@
 let send = document.getElementById("send");
 let text = document.getElementById("text");
-let message = document.getElementById("message");
+let messageContainer = document.getElementById("message-container");
 
 const socket = io(`http://${location.host}/${topic}`);
 socket.on("connect", () => {
@@ -11,14 +11,24 @@ socket.on("connect", () => {
 socket.on("disconnect", () => {
     console.log(`Połączenie z kanałem „/${topic}” zostało zakończone`);
 });
-socket.on("message", (data) => {
-    console.log(data)
-    console.log(data)
-    message.textContent = data;
+socket.on("message", data => {
+    const parsedMessage = JSON.parse(data)
+    appendMessage(parsedMessage.username, parsedMessage.message)
 });
 
 send.addEventListener("click", () => {
-    socket.send(text.value);
+    const messageVal = text.value
+    socket.send(JSON.stringify({
+        username,
+        message: messageVal
+    }));
+    appendMessage("You", messageVal)
     text.value = "";
     text.focus();
 })
+
+const appendMessage = (username, message) => {
+    const messageDiv = document.createElement("div");
+    messageDiv.innerText = `${username}: ${message}`;
+    messageContainer.append(messageDiv);
+}

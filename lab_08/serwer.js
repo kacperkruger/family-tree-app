@@ -4,6 +4,9 @@ const hbs = require('hbs');
 const validateUserStrategy = require('./authentication/validateUserStrategy')
 const mongoose = require('mongoose');
 const {setup} = require("./authentication/utils");
+const User = require('./models/User');
+const Chat = require('./models/Chat');
+const Message = require('./models/Message');
 
 
 const app = express();
@@ -46,13 +49,31 @@ const dbConnData = {
 
 const io = require("socket.io")(httpServer);
 
+const workspaces = io.of(/^\/rooms\w+$/);
+
+workspaces.on('connection', async socket => {
+    const workspace = socket.nsp;
+    const name = workspace.name;
+    try {
+        const chat = await Chat.findOne({name}).populate('messages');
+        chat.messages.forEach(message => socket.send('message', message));
+        socket.on('message', data => {
+            const user = User.findOne({username: data.username});
+            
+            workspace.broadcast.emit('message', data);
+        })
+    } catch (e) {
+
+    }
+})
+
 io
     .of("/chat")
     .on("connect", (socket) => {
         console.log("Uruchomiłem kanał „/chat”");
         socket.on("message", (data) => {
             console.log(`/chat: ${data}`);
-            socket.emit("message", `/chat: ${data}`);
+            socket.broadcast.emit("message", data);
         });
     });
 
@@ -62,7 +83,7 @@ io
         console.log("Uruchomiłem kanał „/news”");
         socket.on("message", (data) => {
             console.log(`/news: ${data}`);
-            socket.emit("message", `/news: ${data}`);
+            socket.broadcast.emit("message", data);
         });
     });
 
