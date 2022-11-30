@@ -4,6 +4,7 @@ const router = express.Router();
 const axios = require("axios");
 const ROLES = require("../authentication/roles");
 const User = require('../models/User');
+const Chat = require('../models/Chat');
 
 router.get('/register', async (req, res) => {
     res.render('form', {
@@ -11,25 +12,34 @@ router.get('/register', async (req, res) => {
     })
 });
 
-router.get('/chat', async (req, res) => {
-    const user = req.user;
-    if (!user) return res.redirect('/login');
 
-    res.render('chat', {
-        topic: 'chat',
-        username: user.username
+// router.get('/chat', async (req, res) => {
+//     const user = req.user;
+//     if (!user) return res.redirect('/login');
+//
+//     res.render('chat', {
+//         topic: 'chat',
+//         username: user.username
+//     })
+// });
+
+Chat.find({})
+    .then(response => {
+        response.forEach(chat => {
+            router.get(`/${chat.name}`, async (req, res) => {
+                const user = req.user;
+                if (!user) return res.redirect('/login');
+
+                res.render('chat', {
+                    topic: chat.name,
+                    username: user.username
+                })
+            });
+        })
     })
-});
+    .catch(e => console.log(e))
 
-router.get('/news', async (req, res) => {
-    const user = req.user;
-    if (!user) return res.redirect('/login');
 
-    res.render('chat', {
-        topic: 'news',
-        username: user.username
-    })
-});
 
 router.get('/dashboard', async (req, res) => {
    const user = req.user;
@@ -56,5 +66,7 @@ router.get('/edit/:userId', async (req, res) => {
         console.log(e)
     }
 });
+
+
 
 module.exports = router;

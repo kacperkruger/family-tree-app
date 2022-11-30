@@ -12,8 +12,8 @@ socket.on("disconnect", () => {
     console.log(`Połączenie z kanałem „/${topic}” zostało zakończone`);
 });
 socket.on("message", data => {
-    const parsedMessage = JSON.parse(data)
-    appendMessage(parsedMessage.username, parsedMessage.message)
+    console.log(data)
+    appendMessage(data.username, data.message)
 });
 
 send.addEventListener("click", () => {

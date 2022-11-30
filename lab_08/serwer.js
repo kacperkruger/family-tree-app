@@ -49,43 +49,43 @@ const dbConnData = {
 
 const io = require("socket.io")(httpServer);
 
-const workspaces = io.of(/^\/rooms\w+$/);
+const workspaces = io.of(/^\/\w+$/);
 
 workspaces.on('connection', async socket => {
     const workspace = socket.nsp;
     const name = workspace.name;
-    try {
-        const chat = await Chat.findOne({name}).populate('messages');
-        chat.messages.forEach(message => socket.send('message', message));
-        socket.on('message', data => {
-            const user = User.findOne({username: data.username});
-            
-            workspace.broadcast.emit('message', data);
-        })
-    } catch (e) {
-
+    const topic = name.slice(1)
+    const chat = await Chat.findOneAndUpdate({name: topic}, {}, {upsert: true, new: true}).populate('messages');
+    for (const message of chat.messages) {
+        const populatedMessage = await message.populate('user')
+        const messageDTO = {
+            username: populatedMessage.user.username,
+            message: populatedMessage.message
+        }
+        socket.send(messageDTO)
     }
+    socket.on('message', async (data) => {
+        try {
+            const dataJson = JSON.parse(data)
+            const user = await User.findOne({username: dataJson.username});
+            const newMessage = await Message.create({
+                user: user._id,
+                message: dataJson.message
+            })
+            const chat = await Chat.findOne({name: topic}).populate('messages');
+            const messages = chat.messages
+            await Chat.updateOne({name: topic}, {
+                messages: [...messages, newMessage]
+            })
+
+            socket.broadcast.emit('message', JSON.parse(data));
+        } catch (e) {
+            console.log(e)
+            console.log("error")
+        }
+    })
+
 })
-
-io
-    .of("/chat")
-    .on("connect", (socket) => {
-        console.log("Uruchomiłem kanał „/chat”");
-        socket.on("message", (data) => {
-            console.log(`/chat: ${data}`);
-            socket.broadcast.emit("message", data);
-        });
-    });
-
-io
-    .of("/news")
-    .on("connect", (socket) => {
-        console.log("Uruchomiłem kanał „/news”");
-        socket.on("message", (data) => {
-            console.log(`/news: ${data}`);
-            socket.broadcast.emit("message", data);
-        });
-    });
 
 mongoose
     .connect(`mongodb://${dbConnData.host}:${dbConnData.port}/${dbConnData.database}`, {
