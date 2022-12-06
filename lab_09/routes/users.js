@@ -4,7 +4,6 @@ const router = express.Router();
 const User = require('../models/User');
 const ROLES = require("../authentication/roles");
 const {hashPassword} = require("../authentication/utils");
-const bodyParser = require("body-parser");
 
 router.get('/', async (req, res) => {
     const users = await User.find({ role: ROLES.USER })

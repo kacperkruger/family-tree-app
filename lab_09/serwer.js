@@ -24,19 +24,21 @@ app.use(require('express-session')({
 
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
 app.use(express.json());
 
 const passport = require('passport');
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(validateUserStrategy);
+passport.use('user', validateUserStrategy);
 setup()
 
 const users = require('./routes/users');
+const chats = require('./routes/chats')
 const auth = require('./routes/authentication')
 const views = require('./routes/views');
 app.use('/api/users', users);
+app.use('/api/chats', chats)
 app.use('/login', auth);
 app.use('/', views);
 
