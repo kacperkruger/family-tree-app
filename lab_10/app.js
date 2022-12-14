@@ -9,7 +9,7 @@ const app = Vue.createApp({
             hpMe: 100,
             rounds: 0,
             logs: [],
-            status: 'OnGoing',
+            status: 'W trakcie',
         }
     },
 
@@ -29,9 +29,9 @@ const app = Vue.createApp({
     methods: {
 
         checkStatus() {
-            if (this.hpMe === 0) this.status = 'Lost'
-            else if (this.hpEnemy === 0) this.status = 'Won'
-            else this.status = 'OnGoing'
+            if (this.hpMe === 0) this.status = 'Przegrałeś'
+            else if (this.hpEnemy === 0) this.status = 'Wygrałeś'
+            else this.status = 'W trakcie'
         },
 
         addLogs(enemyLost, meLost) {
@@ -40,7 +40,7 @@ const app = Vue.createApp({
         },
 
         fight() {
-            if (this.status === 'OnGoing') {
+            if (this.status === 'W trakcie') {
                 const enemyLost = getRandomValue(1, 20)
                 const meLost = getRandomValue(1, 20)
 
@@ -55,7 +55,7 @@ const app = Vue.createApp({
         },
 
         megaFight() {
-            if (this.rounds % 3 === 0 && this.status === 'OnGoing') {
+            if (this.rounds % 3 === 0 && this.status === 'W trakcie') {
                 const enemyLost = getRandomValue(5, 30)
                 const meLost = getRandomValue(1, 20)
 
@@ -70,7 +70,7 @@ const app = Vue.createApp({
         },
 
         heal() {
-            if (this.status === 'OnGoing') {
+            if (this.status === 'W trakcie') {
                 const meLost = getRandomValue(1, 20)
                 const meHeal = getRandomValue(1, 20)
                 this.hpMe = Math.max(this.hpMe - meLost, 0)
@@ -83,6 +83,13 @@ const app = Vue.createApp({
                 this.rounds++
             }
         },
+
+        capitulation() {
+            if (this.status === 'W trakcie') {
+                this.hpMe = 0
+                this.status = 'Przegrałeś'
+            }
+        }
     }
 });
 

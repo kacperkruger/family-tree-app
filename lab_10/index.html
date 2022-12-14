@@ -33,7 +33,11 @@
         <button @click="fight">STARCIE</button>
         <button :disabled="rounds % 3 !== 0" @click="megaFight">STARCIE++</button>
         <button @click="heal">ODZYSKANIE SIŁ</button>
-        <button>KAPITULACJA</button>
+        <button @click="capitulation">KAPITULACJA</button>
+      </section>
+      <section class="container">
+        <h2>Status Gry</h2>
+        <h3>{{status}}</h3>
       </section>
       <section id="log" class="container">
         <h2>Dziennik Pojedynku</h2>
