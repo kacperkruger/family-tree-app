@@ -3,10 +3,15 @@ import express from 'express';
 import startServer from './utils/startServer';
 import parseError from './utils/parseError';
 import dotenvConfig from './configs/dotenvConfig';
+import expressConfig from './configs/expressConfig';
+import passportConfig from './configs/passportConfig';
 
 const app = express();
 
 dotenvConfig();
+expressConfig(app);
+passportConfig();
+
 connectToMongo().then(_ => {
     startServer(app);
 }).catch(e => {
