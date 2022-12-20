@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
-import mongodbConnData from '../configs/mongodbConnData';
+import fetchMongoDbConnData from '../configs/mongodbConnData';
 
 const connectToMongo = async () => {
+    const mongodbConnData = fetchMongoDbConnData();
     mongoose.set('strictQuery', false);
     await mongoose
         .connect(mongodbConnData.uri, {
