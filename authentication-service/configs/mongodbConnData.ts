@@ -4,8 +4,8 @@ const mongoDatabase = process.env.MONGO_DATABASE;
 
 const dbConnData = {
     uri: `mongodb://${mongoHost}:${mongoPort}/${mongoDatabase}`,
-    user: process.env.MONGO_USER || '',
-    password: process.env.MONGO_PASS || ''
+    user: process.env.MONGO_USER,
+    password: process.env.MONGO_PASS
 };
 
 export default dbConnData;

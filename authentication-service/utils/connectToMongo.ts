@@ -4,7 +4,10 @@ import mongodbConnData from '../configs/mongodbConnData';
 const connectToMongo = async () => {
     mongoose.set('strictQuery', false);
     await mongoose
-        .connect(mongodbConnData.uri);
+        .connect(mongodbConnData.uri, {
+            user: mongodbConnData.user,
+            pass: mongodbConnData.password
+        });
     console.log('Connected to mongodb');
 };
 
