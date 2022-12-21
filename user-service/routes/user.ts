@@ -6,7 +6,6 @@ import parseError from '../utils/parseError';
 const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
-    if (!req.user) return res.sendStatus(405);
     const data = req.body;
     try {
         const hashedPassword = hashPassword(data.password);
