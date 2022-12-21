@@ -5,11 +5,13 @@ import parseError from './utils/parseError';
 import dotenvConfig from './configs/dotenvConfig';
 import expressConfig from './configs/expressConfig';
 import passportConfig from './configs/passportConfig';
+import apiConfig from './configs/apiConfig';
 
 const app = express();
 
 dotenvConfig();
 expressConfig(app);
+apiConfig(app);
 passportConfig();
 
 connectToMongo().then(_ => {
