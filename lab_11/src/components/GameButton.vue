@@ -1,16 +1,7 @@
 <script setup>
-defineProps(["name", "fun", "disabled"]);
+defineProps(["name", "disabled"]);
 </script>
 
 <template>
-  <button
-    @click="
-      {
-        fun;
-      }
-    "
-    :disabled="{ disabled }"
-  >
-    {{ name }}
-  </button>
+  <button :disabled="disabled">{{ name }}</button>
 </template>

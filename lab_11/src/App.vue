@@ -1,65 +1,92 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import GameButton from "./components/GameButton.vue";
 
 const hpMe = ref(100);
 const hpEnemy = ref(100);
 const rounds = ref(0);
 const logs = ref([]);
-const satus = ref("W trakcie");
+const status = ref("W trakcie");
+
+const getRandomValue = (min, max) => {
+  return Math.floor(Math.random() * (max - min)) + min;
+};
+
+const checkStatus = () => {
+  if (this.hpMe === 0) this.status = "Przegrałeś";
+  else if (this.hpEnemy === 0) this.status = "Wygrałeś";
+  else this.status = "W trakcie";
+};
+
+const addLogs = (enemyLost, meLost) => {
+  this.logs.push(`Przeciwnik stracił: ${enemyLost}`);
+  this.logs.push(`Ty straciłeś: ${meLost}`);
+};
 
 const fight = () => {
-  if (status === "W trakcie") {
+  if (status.value === "W trakcie") {
     const enemyLost = getRandomValue(1, 20);
     const meLost = getRandomValue(1, 20);
 
-    hpEnemy = Math.max(hpEnemy - enemyLost);
-    hpMe = Math.max(hpMe - meLost);
+    hpEnemy.value = Math.max(hpEnemy.value - enemyLost);
+    hpMe.value = Math.max(hpMe.value - meLost);
 
     addLogs(enemyLost, meLost);
     checkStatus();
 
-    rounds++;
+    rounds.value++;
     console.log(hpMe);
   }
 };
 
 const megaFight = () => {
-  if (rounds % 3 === 0 && status === "W trakcie") {
+  if (rounds.value % 3 === 0 && status.value === "W trakcie") {
     const enemyLost = getRandomValue(5, 30);
     const meLost = getRandomValue(1, 20);
 
-    hpEnemy = Math.max(hpEnemy - enemyLost, 0);
-    hpMe = Math.max(hpMe - meLost, 0);
+    hpEnemy.value = Math.max(hpEnemy.value - enemyLost, 0);
+    hpMe.value = Math.max(hpMe.value - meLost, 0);
 
     addLogs(enemyLost, meLost);
     checkStatus();
 
-    rounds++;
+    rounds.value++;
   }
 };
 
 const heal = () => {
-  if (status === "W trakcie") {
+  if (status.value === "W trakcie") {
     const meLost = getRandomValue(1, 20);
     const meHeal = getRandomValue(1, 20);
-    hpMe = Math.max(hpMe - meLost, 0);
-    hpMe = Math.min(hpMe + meHeal, 100);
+    hpMe.value = Math.max(hpMe.value - meLost, 0);
+    hpMe.value = Math.min(hpMe.value + meHeal, 100);
 
-    logs.push(`Ty straciłeś: ${meLost}`);
-    logs.push(`Ty się uleczyłeś: ${meHeal}`);
+    logs.value.push(`Ty straciłeś: ${meLost}`);
+    logs.value.push(`Ty się uleczyłeś: ${meHeal}`);
     checkStatus();
 
-    rounds++;
+    rounds.value++;
   }
 };
 
 const capitulation = () => {
-  if (status === "W trakcie") {
-    hpMe = 0;
-    status = "Przegrałeś";
+  if (status.value === "W trakcie") {
+    hpMe.value = 0;
+    status.value = "Przegrałeś";
   }
 };
+
+const opponentBarStyles = computed(() => {
+  return {
+    width: hpEnemy.value + "%",
+  };
+});
+
+const playerBarStyles = computed(() => {
+  return {
+    width: hpMe.value + "%",
+  };
+});
 </script>
 
 <template>
@@ -80,14 +107,14 @@ const capitulation = () => {
       </div>
     </section>
     <section id="controls">
-      <GameButton name="STARCIE" fun="fight" />
+      <GameButton name="STARCIE" @click="fight" />
       <GameButton
         name="STARCIE++"
-        function="megaFight"
+        @click="megaFight"
         disabled="rounds % 3 !== 0"
       />
-      <GameButton name="ODZYSKANIE SIŁ" function="heal" />
-      <GameButton name="KAPITULACJA" function="capitulation" />
+      <GameButton name="ODZYSKANIE SIŁ" @click="heal" />
+      <GameButton name="KAPITULACJA" @click="capitulation" />
     </section>
     <section class="container">
       <h2>Status Gry</h2>
