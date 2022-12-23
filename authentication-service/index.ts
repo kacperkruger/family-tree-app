@@ -6,12 +6,14 @@ import dotenvConfig from './configs/dotenvConfig';
 import expressConfig from './configs/expressConfig';
 import passportConfig from './configs/passportConfig';
 import apiConfig from './configs/apiConfig';
+import mongoUserModelConfig from './configs/mongoUserModelConfig';
 
 const app = express();
 
 dotenvConfig();
 expressConfig(app);
 apiConfig(app);
+mongoUserModelConfig();
 passportConfig();
 
 connectToMongo().then(_ => {
