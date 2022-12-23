@@ -10,8 +10,7 @@ const chatSchema: Schema = new Schema<IPrivateChat>({
     messages: [{
         type: Schema.Types.ObjectId,
         ref: 'Message',
-        required: true,
-        minlength: 2
+        required: true
     }]
 });
 
