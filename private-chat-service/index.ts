@@ -5,7 +5,7 @@ import parseErrorMessage from './utils/parseErrorMessage';
 import dotenvConfig from './configs/dotenvConfig';
 import expressConfig from './configs/expressConfig';
 import apiConfig from './configs/apiConfig';
-import mongoUserModel from './configs/mongoUserModel';
+import mongoUserModelConfig from './configs/mongoUserModelConfig';
 
 const app = express();
 
@@ -14,7 +14,7 @@ expressConfig(app);
 apiConfig(app);
 
 connectToMongo().then(_ => {
-    mongoUserModel();
+    mongoUserModelConfig();
     startServer(app);
 }).catch(e => {
     const errorMessage = parseErrorMessage(e);
