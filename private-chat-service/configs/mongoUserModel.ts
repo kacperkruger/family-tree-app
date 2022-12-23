@@ -1,6 +1,6 @@
 import {model, Schema} from 'mongoose';
 
-const mongooseConfig = () => {
+const mongoUserModel = () => {
     model('User', new Schema({
         password: {
             type: String,
@@ -9,4 +9,4 @@ const mongooseConfig = () => {
     }));
 };
 
-export default mongooseConfig;
+export default mongoUserModel;
