@@ -7,3 +7,5 @@ const findFamilyTreeByUser =
     'WITH parents, persons\n' +
     'OPTIONAL MATCH (partners: Person)-[:PARTNERS]-(persons)\n' +
     'RETURN persons.name as name, id(persons) as id, collect(id(parents)) as parents, collect(id(partners)) as partners';
+
+export default findFamilyTreeByUser;
