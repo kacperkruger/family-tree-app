@@ -1,5 +1,5 @@
 const findFamilyTreeByUser =
-    'MERGE (user: User {userId: \'123\'})\n' +
+    'MERGE (user: User {userId: $userId})\n' +
     'WITH user\n' +
     'MATCH (user)-[:OWNS]->(persons: Person)\n' +
     'WITH persons\n' +
