@@ -43,13 +43,14 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
         dateOfBirth: data.dateOfBirth || null
     });
 
-    let person: Person;
+    let createdPerson: Person;
     result.subscribe({
         onNext: record => {
-            person = parsePerson(record);
+            createdPerson = parsePerson(record);
         },
         onCompleted: async () => {
-            res.json({person});
+            if (!createdPerson) res.status(404).json({error: 'One or more person do not exist.'});
+            else res.json({createdPerson});
             await session.close;
         },
         onError: error => {
@@ -76,7 +77,8 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
             editedPersons.push(person);
         },
         onCompleted: async () => {
-            res.json({editedPersons});
+            if (!editedPersons) res.status(404).json({error: 'One or more person do not exist.'});
+            else res.json({editedPersons});
             await session.close;
         },
         onError: error => {
