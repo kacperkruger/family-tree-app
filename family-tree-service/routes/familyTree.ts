@@ -6,7 +6,7 @@ import parseErrorMessage from '../utils/parseErrorMessage';
 import createPersonAndAddToUserFamilyTree from '../queries/createPersonAndAddToUserFamilyTree';
 import parsePerson from '../utils/parsePerson';
 import addParentRelationship from '../queries/addParentRelationship';
-import addPartnersRelationship from '../queries/addPartnersRelationship';
+import addPartnerRelationship from '../queries/addPartnerRelationship';
 
 const router: Router = express.Router();
 
@@ -92,7 +92,7 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
-    const result = session.run(addPartnersRelationship, {
+    const result = session.run(addPartnerRelationship, {
         userId,
         partner1Id: data.partner1Id,
         partner2Id: data.partner2Id
