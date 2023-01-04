@@ -8,6 +8,6 @@ const addPartnersRelationship =
     'UNWIND [partner1, partner2] AS editedPerson\n' +
     'OPTIONAL MATCH (editedPerson)-[:CHILD_OF]->(parents: Person)\n' +
     'OPTIONAL MATCH (editedPerson)-[:PARTNERS]-(partners: Person)\n' +
-    'RETURN editedPerson.id as id, editedPerson.name as name, collect(parents.id) as parents, collect(partners.id) as partners';
+    'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners';
 
 export default addPartnersRelationship;
