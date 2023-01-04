@@ -10,6 +10,7 @@ const connectToNeo4j = (() => {
             executed = true;
             const dbConnData = neo4jConnData();
             driver = neo4j.driver(dbConnData.uri, neo4j.auth.basic(dbConnData.user, dbConnData.password));
+            await driver.verifyConnectivity();
             console.log('Connected to Neo4j');
         }
         return driver.session();
