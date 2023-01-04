@@ -6,6 +6,7 @@ import parseErrorMessage from '../utils/parseErrorMessage';
 import createPersonAndAddToUserFamilyTree from '../queries/createPersonAndAddToUserFamilyTree';
 import parsePerson from '../utils/parsePerson';
 import addParentRelationship from '../queries/addParentRelationship';
+import addPartnersRelationship from '../queries/addPartnersRelationship';
 
 const router: Router = express.Router();
 
@@ -67,6 +68,34 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
         userId,
         childId: data.childId,
         parentId: data.parentId
+    });
+
+    const editedPersons: Person[] = [];
+    result.subscribe({
+        onNext: record => {
+            const person = parsePerson(record);
+            editedPersons.push(person);
+        },
+        onCompleted: async () => {
+            if (!editedPersons.length) res.status(404).json({error: 'One or more persons do not exist.'});
+            else res.json({editedPersons});
+            await session.close;
+        },
+        onError: error => {
+            const message = parseErrorMessage(error);
+            res.json({error: message});
+        }
+    });
+});
+
+router.post('/:userId/relationship/partner', async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const data = req.body;
+    const session = await connectToNeo4j();
+    const result = session.run(addPartnersRelationship, {
+        userId,
+        partner1Id: data.partner1Id,
+        partner2Id: data.partner2Id
     });
 
     const editedPersons: Person[] = [];
