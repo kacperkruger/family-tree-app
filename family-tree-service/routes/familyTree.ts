@@ -7,7 +7,8 @@ import createPersonAndAddToUserFamilyTree from '../queries/createPersonAndAddToU
 import parsePerson from '../utils/parsePerson';
 import addParentRelationship from '../queries/addParentRelationship';
 import addPartnerRelationship from '../queries/addPartnerRelationship';
-import deleteParentRelationShip from '../queries/deleteParentRelationShip';
+import deleteParentRelationship from '../queries/deleteParentRelationship';
+import deletePartnerRelationship from '../queries/deletePartnerRelationship';
 
 const router: Router = express.Router();
 
@@ -93,7 +94,7 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
-    const result = session.run(deleteParentRelationShip, {
+    const result = session.run(deleteParentRelationship, {
         userId,
         childId: data.childId,
         parentId: data.parentId
@@ -101,7 +102,30 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
 
     result.subscribe({
         onCompleted: async (statistic) => {
-            if (statistic.updateStatistics.updates().relationshipsDeleted !== 1) res.status(404).json({error: 'One or more persons do not exist.'});
+            if (statistic.updateStatistics.updates().relationshipsDeleted !== 1) res.status(404).json({error: 'Persons or relationship do not exist.'});
+            else res.sendStatus(200);
+            await session.close;
+        },
+        onError: error => {
+            const message = parseErrorMessage(error);
+            res.json({error: message});
+        }
+    });
+});
+
+router.delete('/:userId/relationship/partner', async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const data = req.body;
+    const session = await connectToNeo4j();
+    const result = session.run(deletePartnerRelationship, {
+        userId,
+        partner1Id: data.partner1Id,
+        partner2Id: data.partner2Id
+    });
+
+    result.subscribe({
+        onCompleted: async (statistic) => {
+            if (statistic.updateStatistics.updates().relationshipsDeleted !== 1) res.status(404).json({error: 'Persons or relationship do not exist.'});
             else res.sendStatus(200);
             await session.close;
         },
