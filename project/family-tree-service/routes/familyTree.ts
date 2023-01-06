@@ -10,6 +10,7 @@ import addPartnerRelationship from '../queries/addPartnerRelationship';
 import deleteParentRelationship from '../queries/deleteParentRelationship';
 import deletePartnerRelationship from '../queries/deletePartnerRelationship';
 import deletePerson from '../queries/deletePerson';
+import editPerson from '../queries/editPerson';
 
 const router: Router = express.Router();
 
@@ -54,6 +55,37 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
         },
         onCompleted: async () => {
             res.json({createdPerson});
+            await session.close;
+        },
+        onError: error => {
+            const message = parseErrorMessage(error);
+            res.json({error: message});
+        }
+    });
+});
+
+router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const personId = req.params.personId;
+    const data = req.body;
+    const session = await connectToNeo4j();
+
+    const result = session.run(editPerson, {
+        userId,
+        personId,
+        name: data.name,
+        surname: data.surname,
+        gender: data.gender,
+        dateOfBirth: data.dateOfBirth
+    });
+
+    let editedPerson: Person;
+    result.subscribe({
+        onNext: record => {
+            editedPerson = parsePerson(record);
+        },
+        onCompleted: async () => {
+            res.json({editedPerson});
             await session.close;
         },
         onError: error => {
