@@ -17,6 +17,7 @@ const router: Router = express.Router();
 router.get('/:userId', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const session = await connectToNeo4j();
+    
     const result = session.run(findFamilyTreeByUser, {userId});
 
     const familyTree: Person[] = [];
@@ -40,6 +41,7 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
+
     const result = session.run(createPersonAndAddToUserFamilyTree, {
         userId,
         name: data.name,
@@ -122,6 +124,7 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
+
     const result = session.run(addParentRelationship, {
         userId,
         childId: data.childId,
@@ -150,6 +153,7 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
+
     const result = session.run(deleteParentRelationship, {
         userId,
         childId: data.childId,
@@ -178,6 +182,7 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
+
     const result = session.run(addPartnerRelationship, {
         userId,
         partner1Id: data.partner1Id,
@@ -206,12 +211,13 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
     const userId = req.params.userId;
     const data = req.body;
     const session = await connectToNeo4j();
+
     const result = session.run(deletePartnerRelationship, {
         userId,
         partner1Id: data.partner1Id,
         partner2Id: data.partner2Id
     });
-    console.log('adam');
+
     const editedPersons: Person[] = [];
     result.subscribe({
         onNext: record => {
