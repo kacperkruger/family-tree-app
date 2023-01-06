@@ -9,6 +9,7 @@ import addParentRelationship from '../queries/addParentRelationship';
 import addPartnerRelationship from '../queries/addPartnerRelationship';
 import deleteParentRelationship from '../queries/deleteParentRelationship';
 import deletePartnerRelationship from '../queries/deletePartnerRelationship';
+import deletePerson from '../queries/deletePerson';
 
 const router: Router = express.Router();
 
@@ -53,6 +54,29 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
         },
         onCompleted: async () => {
             res.json({createdPerson});
+            await session.close;
+        },
+        onError: error => {
+            const message = parseErrorMessage(error);
+            res.json({error: message});
+        }
+    });
+});
+
+router.delete('/:userId/person/:personId', async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const personId = req.params.personId;
+    const session = await connectToNeo4j();
+
+    const result = session.run(deletePerson, {
+        userId,
+        personId
+    });
+
+    result.subscribe({
+        onCompleted: async (statistics) => {
+            if (statistics.updateStatistics.updates().nodesDeleted !== 1) res.status(404).json({error: 'Person with given id does not exists'});
+            else res.sendStatus(200);
             await session.close;
         },
         onError: error => {
@@ -155,7 +179,7 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
         partner1Id: data.partner1Id,
         partner2Id: data.partner2Id
     });
-    console.log("adam");
+    console.log('adam');
     const editedPersons: Person[] = [];
     result.subscribe({
         onNext: record => {
