@@ -1,4 +1,4 @@
-const deleteParentRelationship = 'MERGE (user: User {userId: $userId})\n' +
+const deleteParent = 'MERGE (user: User {userId: $userId})\n' +
     'WITH user\n' +
     'MATCH (user)-[:OWNS]->(child: Person {id: $childId})\n' +
     'MATCH (user)-[:OWNS]->(parent: Person {id: $parentId})\n' +
@@ -11,4 +11,4 @@ const deleteParentRelationship = 'MERGE (user: User {userId: $userId})\n' +
     'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners';
 
 
-export default deleteParentRelationship;
+export default deleteParent;

@@ -1,4 +1,4 @@
-const addPartnerRelationship =
+const addPartner =
     'MERGE (user: User {userId: $userId})\n' +
     'WITH user\n' +
     'MATCH (user)-[:OWNS]->(partner1: Person {id: $partner1Id})\n' +
@@ -10,4 +10,4 @@ const addPartnerRelationship =
     'OPTIONAL MATCH (editedPerson)-[:PARTNERS]-(partners: Person)\n' +
     'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners';
 
-export default addPartnerRelationship;
+export default addPartner;
