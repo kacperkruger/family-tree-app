@@ -16,7 +16,9 @@ const updatePerson = async (personId: string, personRequest: PersonRequest): Pro
     });
 
     return result.then(queryResult => {
-        return queryResult.records.map(record => parsePerson(record))[0];
+        const records = queryResult.records;
+        if (!records.length) throw new Error('Person not found');
+        return records.map(record => parsePerson(record))[0];
     }).finally(() => session.close());
 };
 
