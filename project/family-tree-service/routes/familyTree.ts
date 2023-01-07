@@ -4,7 +4,6 @@ import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
 import parsePerson from '../utils/parsePerson';
 import addPartner from '../queries/addPartner';
-import deleteParent from '../queries/deleteParent';
 import deletePartner from '../queries/deletePartner';
 import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
@@ -12,7 +11,8 @@ import addPerson from '../operations/addPerson';
 import updatePerson from '../operations/updatePerson';
 import removePerson from '../operations/removePerson';
 import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPerson';
-import addParent from '../operations/addParent';
+import addParentRelationship from '../operations/addParentRelationship';
+import deleteChildRelationship from '../operations/deleteChildRelationship';
 
 const router: Router = express.Router();
 
@@ -95,41 +95,31 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
         if (!hasAccessToParent) return res.sendStatus(401);
 
-        const editedPersons = await addParent(childId, parentId)
-        res.json({editedPersons})
+        const editedPerson = await addParentRelationship(childId, parentId);
+        res.json({editedPerson});
     } catch (e) {
-        const errorMessage = parseErrorMessage(e)
-        res.status(400).json({error: errorMessage})
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
     }
 });
 
 router.delete('/:userId/relationship/parent', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const data = req.body;
-    const session = await connectToNeo4j();
 
-    const result = session.run(deleteParent, {
-        userId,
-        childId: data.childId,
-        parentId: data.parentId
-    });
+    try {
+        const childId = data.childId;
+        const parentId = data.parentId;
 
-    const editedPersons: Person[] = [];
-    result.subscribe({
-        onNext: record => {
-            const person = parsePerson(record);
-            editedPersons.push(person);
-        },
-        onCompleted: async () => {
-            if (!editedPersons.length) res.status(404).json({error: 'Persons or relationships do not exist.'});
-            else res.json({editedPersons});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+        const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
+        if (!hasAccessToChild) return res.sendStatus(401);
+
+        const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
+        if (!hasAccessToParent) return res.sendStatus(401);
+
+        const editedPerson = await deleteChildRelationship(parentId, childId);
+        res.json({editedPerson});
+    }
 });
 
 router.post('/:userId/relationship/partner', async (req: Request, res: Response) => {

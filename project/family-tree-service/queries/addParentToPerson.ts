@@ -5,10 +5,9 @@ const addParentToPerson = 'MATCH (child: Person {id: $childId})\n' +
     'WITH child\n' +
     'MATCH (newParent: Person {id: $parentId})\n' +
     'MERGE (child)-[:CHILD_OF]->(newParent)\n' +
-    'WITH child, newParent\n' +
-    'UNWIND [child, newParent] AS editedPerson\n' +
-    'OPTIONAL MATCH (editedPerson)-[:CHILD_OF]->(parents: Person)\n' +
-    'OPTIONAL MATCH (editedPerson)-[:PARTNERS]-(partners: Person)\n' +
-    'RETURN editedPerson.id AS id, editedPerson.name AS name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) AS parents, collect(partners.id) AS partners';
+    'WITH child\n' +
+    'OPTIONAL MATCH (child)-[:CHILD_OF]->(parents: Person)\n' +
+    'OPTIONAL MATCH (child)-[:PARTNERS]-(partners: Person)\n' +
+    'RETURN child.id AS id, child.name AS name, child.surname AS surname, child.gender as gender, date(child.dateOfBirth) AS dateOfBirth, collect(parents.id) AS parents, collect(partners.id) AS partners';
 
 export default addParentToPerson;
