@@ -3,7 +3,7 @@ import addPerson from './addPerson';
 import addChild from './addChild';
 import {Person} from '../models/Person';
 
-const copyPerson = async (userId: string, personId: string, nGenerations: number): Promise<Person[]> => {
+const copyPersonToUsersTree = async (userId: string, personId: string, nGenerations: number): Promise<Person[]> => {
     const copiedPersons: Person[] = [];
 
     const copyPersonHelper = async (userId: string, personId: string, nGenerations: number, childId: string = ''): Promise<void> => {
@@ -35,5 +35,5 @@ const copyPerson = async (userId: string, personId: string, nGenerations: number
     return copiedPersons;
 };
 
-export default copyPerson;
+export default copyPersonToUsersTree;
 
