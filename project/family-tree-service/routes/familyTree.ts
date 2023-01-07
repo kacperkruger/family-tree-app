@@ -7,11 +7,11 @@ import addParentToPerson from '../queries/addParentToPerson';
 import addPartner from '../queries/addPartner';
 import deleteParent from '../queries/deleteParent';
 import deletePartner from '../queries/deletePartner';
-import deletePerson from '../queries/deletePerson';
 import copyPerson from '../operations/copyPerson';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
 import updatePerson from '../operations/updatePerson';
+import removePerson from '../operations/removePerson';
 
 const router: Router = express.Router();
 
@@ -54,35 +54,25 @@ router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
             surname: data.surname,
             gender: data.gender,
             dateOfBirth: data.dateOfBirth
-        })
-        res.json({updatedPerson})
+        });
+        res.json({updatedPerson});
     } catch (e) {
-        const errorMessage = parseErrorMessage(e)
-        res.status(400).json({error: errorMessage})
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
     }
 });
 
 router.delete('/:userId/person/:personId', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const personId = req.params.personId;
-    const session = await connectToNeo4j();
 
-    const result = session.run(deletePerson, {
-        userId,
-        personId
-    });
-
-    result.subscribe({
-        onCompleted: async (statistics) => {
-            if (statistics.updateStatistics.updates().nodesDeleted !== 1) res.status(404).json({error: 'Person with given id does not exists'});
-            else res.sendStatus(200);
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+    try {
+        await removePerson(userId, personId);
+        res.sendStatus(200);
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
+    }
 });
 
 router.post('/:userId/relationship/parent', async (req: Request, res: Response) => {
