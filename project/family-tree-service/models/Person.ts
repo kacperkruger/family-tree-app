@@ -5,7 +5,7 @@ export interface Person {
     name: string,
     surname: string,
     gender: Gender,
-    dateOfBirth: String,
+    dateOfBirth: string,
     parents: string[],
     partners: string[]
 }
