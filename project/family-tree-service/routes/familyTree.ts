@@ -2,7 +2,6 @@ import express, {Request, Response, Router} from 'express';
 import connectToNeo4j from '../utils/connectToNeo4j';
 import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
-import createPerson from '../queries/createPerson';
 import parsePerson from '../utils/parsePerson';
 import addParentToPerson from '../queries/addParentToPerson';
 import addPartner from '../queries/addPartner';
@@ -12,6 +11,7 @@ import deletePerson from '../queries/deletePerson';
 import editPerson from '../queries/editPerson';
 import copyPerson from '../operations/copyPerson';
 import getFamilyTree from '../operations/getFamilyTree';
+import addPerson from '../operations/addPerson';
 
 const router: Router = express.Router();
 
@@ -29,30 +29,18 @@ router.get('/:userId', async (req: Request, res: Response) => {
 router.post('/:userId/person', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const data = req.body;
-    const session = await connectToNeo4j();
-
-    const result = session.run(createPerson, {
-        userId,
-        name: data.name,
-        surname: data.surname || '',
-        gender: data.gender || '',
-        dateOfBirth: data.dateOfBirth || null
-    });
-
-    let createdPerson: Person;
-    result.subscribe({
-        onNext: record => {
-            createdPerson = parsePerson(record);
-        },
-        onCompleted: async () => {
-            res.json({createdPerson});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+    try {
+        const addedPerson = await addPerson(userId, {
+            name: data.name || '',
+            surname: data.surname || '',
+            gender: data.gender || '',
+            dateOfBirth: data.dateOfBirth || null
+        });
+        res.json({addedPerson});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
+    }
 });
 
 router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
