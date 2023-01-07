@@ -119,6 +119,9 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
 
         const editedPerson = await deleteChildRelationship(parentId, childId);
         res.json({editedPerson});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
     }
 });
 
