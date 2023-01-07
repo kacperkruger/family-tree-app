@@ -1,6 +1,6 @@
 const addParentToPerson = 'MATCH (child: Person {id: $childId})\n' +
     'OPTIONAL MATCH (child)-[:CHILD_OF]->(parents: Person)\n' +
-    'WITH user, child, count(parents) AS numberOfParents\n' +
+    'WITH child, count(parents) AS numberOfParents\n' +
     'WHERE numberOfParents < 2\n' +
     'WITH child\n' +
     'MATCH (newParent: Person {id: $parentId})\n' +
