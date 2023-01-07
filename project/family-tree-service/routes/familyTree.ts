@@ -3,21 +3,22 @@ import connectToNeo4j from '../utils/connectToNeo4j';
 import findFamilyTreeByUser from '../queries/findFamilyTreeByUser';
 import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
-import createPersonAndAddToUserFamilyTree from '../queries/createPersonAndAddToUserFamilyTree';
+import createPerson from '../queries/createPerson';
 import parsePerson from '../utils/parsePerson';
-import addParentRelationship from '../queries/addParentRelationship';
-import addPartnerRelationship from '../queries/addPartnerRelationship';
-import deleteParentRelationship from '../queries/deleteParentRelationship';
-import deletePartnerRelationship from '../queries/deletePartnerRelationship';
+import addParentToPerson from '../queries/addParentToPerson';
+import addPartner from '../queries/addPartner';
+import deleteParent from '../queries/deleteParent';
+import deletePartner from '../queries/deletePartner';
 import deletePerson from '../queries/deletePerson';
 import editPerson from '../queries/editPerson';
+import copyPerson from '../operations/copyPerson';
 
 const router: Router = express.Router();
 
 router.get('/:userId', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const session = await connectToNeo4j();
-    
+
     const result = session.run(findFamilyTreeByUser, {userId});
 
     const familyTree: Person[] = [];
@@ -42,7 +43,7 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
     const data = req.body;
     const session = await connectToNeo4j();
 
-    const result = session.run(createPersonAndAddToUserFamilyTree, {
+    const result = session.run(createPerson, {
         userId,
         name: data.name,
         surname: data.surname || '',
@@ -125,7 +126,7 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
     const data = req.body;
     const session = await connectToNeo4j();
 
-    const result = session.run(addParentRelationship, {
+    const result = session.run(addParentToPerson, {
         userId,
         childId: data.childId,
         parentId: data.parentId
@@ -154,7 +155,7 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
     const data = req.body;
     const session = await connectToNeo4j();
 
-    const result = session.run(deleteParentRelationship, {
+    const result = session.run(deleteParent, {
         userId,
         childId: data.childId,
         parentId: data.parentId
@@ -183,7 +184,7 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
     const data = req.body;
     const session = await connectToNeo4j();
 
-    const result = session.run(addPartnerRelationship, {
+    const result = session.run(addPartner, {
         userId,
         partner1Id: data.partner1Id,
         partner2Id: data.partner2Id
@@ -212,7 +213,7 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
     const data = req.body;
     const session = await connectToNeo4j();
 
-    const result = session.run(deletePartnerRelationship, {
+    const result = session.run(deletePartner, {
         userId,
         partner1Id: data.partner1Id,
         partner2Id: data.partner2Id
@@ -234,6 +235,15 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
             res.json({error: message});
         }
     });
+});
+
+router.copy('/:userId/person/:personId', async (req: Request, res: Response) => {
+    const userId = req.params.userId;
+    const personId = req.params.personId;
+    const numberOfGenerations = req.query.n || 0;
+    
+    const copiedPersons = await copyPerson(userId, personId, +numberOfGenerations);
+    res.json({copiedPersons});
 });
 
 export default router;
