@@ -8,10 +8,10 @@ import addPartner from '../queries/addPartner';
 import deleteParent from '../queries/deleteParent';
 import deletePartner from '../queries/deletePartner';
 import deletePerson from '../queries/deletePerson';
-import editPerson from '../queries/editPerson';
 import copyPerson from '../operations/copyPerson';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
+import updatePerson from '../operations/updatePerson';
 
 const router: Router = express.Router();
 
@@ -47,31 +47,19 @@ router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const data = req.body;
-    const session = await connectToNeo4j();
 
-    const result = session.run(editPerson, {
-        userId,
-        personId,
-        name: data.name,
-        surname: data.surname,
-        gender: data.gender,
-        dateOfBirth: data.dateOfBirth
-    });
-
-    let editedPerson: Person;
-    result.subscribe({
-        onNext: record => {
-            editedPerson = parsePerson(record);
-        },
-        onCompleted: async () => {
-            res.json({editedPerson});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+    try {
+        const updatedPerson = await updatePerson(userId, personId, {
+            name: data.name,
+            surname: data.surname,
+            gender: data.gender,
+            dateOfBirth: data.dateOfBirth
+        })
+        res.json({updatedPerson})
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e)
+        res.status(400).json({error: errorMessage})
+    }
 });
 
 router.delete('/:userId/person/:personId', async (req: Request, res: Response) => {
