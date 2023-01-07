@@ -9,6 +9,7 @@ import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPe
 import addParentRelationship from '../operations/addParentRelationship';
 import deleteChildRelationship from '../operations/deleteChildRelationship';
 import addPartnerRelationship from '../operations/addPartnerRelationship';
+import deletePartnerRelationship from '../operations/deletePartnerRelationship';
 
 const router: Router = express.Router();
 
@@ -126,8 +127,8 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
     const data = req.body;
 
     try {
-        const partner1Id = data.childId;
-        const partner2Id = data.parentId;
+        const partner1Id = data.partner1Id;
+        const partner2Id = data.partner2Id;
 
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
         if (!hasAccessToPartner1) return res.sendStatus(401);
@@ -148,8 +149,8 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
     const data = req.body;
 
     try {
-        const partner1Id = data.childId;
-        const partner2Id = data.parentId;
+        const partner1Id = data.partner1Id;
+        const partner2Id = data.partner2Id;
 
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
         if (!hasAccessToPartner1) return res.sendStatus(401);
