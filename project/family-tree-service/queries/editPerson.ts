@@ -1,6 +1,4 @@
-const editPerson = 'MERGE (user: User {userId: $userId})\n' +
-    'WITH user\n' +
-    'MATCH (user)-[:OWNS]->(person: Person {id: $personId})\n' +
+const editPerson = 'MATCH (person: Person {id: $personId})\n' +
     'SET person.name = $name\n' +
     'SET person.surname = $surname\n' +
     'SET person.male = $gender\n' +

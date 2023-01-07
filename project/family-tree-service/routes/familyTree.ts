@@ -3,15 +3,15 @@ import connectToNeo4j from '../utils/connectToNeo4j';
 import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
 import parsePerson from '../utils/parsePerson';
-import addParentToPerson from '../queries/addParentToPerson';
 import addPartner from '../queries/addPartner';
 import deleteParent from '../queries/deleteParent';
 import deletePartner from '../queries/deletePartner';
-import copyPerson from '../operations/copyPerson';
+import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
 import updatePerson from '../operations/updatePerson';
 import removePerson from '../operations/removePerson';
+import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPerson';
 
 const router: Router = express.Router();
 
@@ -49,7 +49,10 @@ router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
     const data = req.body;
 
     try {
-        const updatedPerson = await updatePerson(userId, personId, {
+        const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
+        if (!hasAccess) return res.sendStatus(401);
+
+        const updatedPerson = await updatePerson(personId, {
             name: data.name,
             surname: data.surname,
             gender: data.gender,
@@ -67,7 +70,9 @@ router.delete('/:userId/person/:personId', async (req: Request, res: Response) =
     const personId = req.params.personId;
 
     try {
-        await removePerson(userId, personId);
+        const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
+        if (!hasAccess) return res.sendStatus(401);
+        await removePerson(personId);
         res.sendStatus(200);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
@@ -196,7 +201,7 @@ router.copy('/:userId/person/:personId', async (req: Request, res: Response) => 
     const personId = req.params.personId;
     const numberOfGenerations = req.query.n || 0;
 
-    const copiedPersons = await copyPerson(userId, personId, +numberOfGenerations);
+    const copiedPersons = await copyPersonToUsersTree(userId, personId, +numberOfGenerations);
     res.json({copiedPersons});
 });
 

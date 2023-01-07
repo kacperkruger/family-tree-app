@@ -1,11 +1,9 @@
-const addParentToPerson = 'MERGE (user: User {userId: $userId})\n' +
-    'WITH user\n' +
-    'MATCH (user)-[:OWNS]->(child: Person {id: $childId})\n' +
+const addParentToPerson = 'MATCH (child: Person {id: $childId})\n' +
     'OPTIONAL MATCH (child)-[:CHILD_OF]->(parents: Person)\n' +
     'WITH user, child, count(parents) AS numberOfParents\n' +
     'WHERE numberOfParents < 2\n' +
-    'WITH user, child\n' +
-    'MATCH (user)-[:OWNS]->(newParent: Person {id: $parentId})\n' +
+    'WITH child\n' +
+    'MATCH (newParent: Person {id: $parentId})\n' +
     'MERGE (child)-[:CHILD_OF]->(newParent)\n' +
     'WITH child, newParent\n' +
     'UNWIND [child, newParent] AS editedPerson\n' +
