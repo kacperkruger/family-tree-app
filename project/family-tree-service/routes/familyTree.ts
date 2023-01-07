@@ -1,6 +1,5 @@
 import express, {Request, Response, Router} from 'express';
 import connectToNeo4j from '../utils/connectToNeo4j';
-import findFamilyTreeByUser from '../queries/findFamilyTreeByUser';
 import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
 import createPerson from '../queries/createPerson';
@@ -12,30 +11,19 @@ import deletePartner from '../queries/deletePartner';
 import deletePerson from '../queries/deletePerson';
 import editPerson from '../queries/editPerson';
 import copyPerson from '../operations/copyPerson';
+import getFamilyTree from '../operations/getFamilyTree';
 
 const router: Router = express.Router();
 
 router.get('/:userId', async (req: Request, res: Response) => {
     const userId = req.params.userId;
-    const session = await connectToNeo4j();
-
-    const result = session.run(findFamilyTreeByUser, {userId});
-
-    const familyTree: Person[] = [];
-    result.subscribe({
-        onNext: record => {
-            const person = parsePerson(record);
-            familyTree.push(person);
-        },
-        onCompleted: async () => {
-            res.json({familyTree});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+    try {
+        const familyTree = await getFamilyTree(userId);
+        res.json({familyTree});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
+    }
 });
 
 router.post('/:userId/person', async (req: Request, res: Response) => {
@@ -241,7 +229,7 @@ router.copy('/:userId/person/:personId', async (req: Request, res: Response) => 
     const userId = req.params.userId;
     const personId = req.params.personId;
     const numberOfGenerations = req.query.n || 0;
-    
+
     const copiedPersons = await copyPerson(userId, personId, +numberOfGenerations);
     res.json({copiedPersons});
 });
