@@ -14,3 +14,5 @@ const checkIfUserHasAccessToPerson = async (userId: string, personId: string): P
         return queryResult.records[0].get('hasAccess');
     }).finally(() => session.close());
 };
+
+export default checkIfUserHasAccessToPerson;
