@@ -1,10 +1,5 @@
 import express, {Request, Response, Router} from 'express';
-import connectToNeo4j from '../utils/connectToNeo4j';
-import {Person} from '../models/Person';
 import parseErrorMessage from '../utils/parseErrorMessage';
-import parsePerson from '../utils/parsePerson';
-import addPartner from '../queries/addPartner';
-import deletePartner from '../queries/deletePartner';
 import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
@@ -13,6 +8,7 @@ import removePerson from '../operations/removePerson';
 import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPerson';
 import addParentRelationship from '../operations/addParentRelationship';
 import deleteChildRelationship from '../operations/deleteChildRelationship';
+import addPartnerRelationship from '../operations/addPartnerRelationship';
 
 const router: Router = express.Router();
 
@@ -128,59 +124,45 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
 router.post('/:userId/relationship/partner', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const data = req.body;
-    const session = await connectToNeo4j();
 
-    const result = session.run(addPartner, {
-        userId,
-        partner1Id: data.partner1Id,
-        partner2Id: data.partner2Id
-    });
+    try {
+        const partner1Id = data.childId;
+        const partner2Id = data.parentId;
 
-    const editedPersons: Person[] = [];
-    result.subscribe({
-        onNext: record => {
-            const person = parsePerson(record);
-            editedPersons.push(person);
-        },
-        onCompleted: async () => {
-            if (!editedPersons.length) res.status(404).json({error: 'One or more persons do not exist.'});
-            else res.json({editedPersons});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+        const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
+        if (!hasAccessToPartner1) return res.sendStatus(401);
+
+        const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
+        if (!hasAccessToPartner2) return res.sendStatus(401);
+
+        const editedPersons = await addPartnerRelationship(partner1Id, partner2Id);
+        res.json({editedPersons});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
+    }
 });
 
 router.delete('/:userId/relationship/partner', async (req: Request, res: Response) => {
     const userId = req.params.userId;
     const data = req.body;
-    const session = await connectToNeo4j();
 
-    const result = session.run(deletePartner, {
-        userId,
-        partner1Id: data.partner1Id,
-        partner2Id: data.partner2Id
-    });
+    try {
+        const partner1Id = data.childId;
+        const partner2Id = data.parentId;
 
-    const editedPersons: Person[] = [];
-    result.subscribe({
-        onNext: record => {
-            const person = parsePerson(record);
-            editedPersons.push(person);
-        },
-        onCompleted: async () => {
-            if (!editedPersons.length) res.status(404).json({error: 'Persons or relationship do not exist.'});
-            else res.json({editedPersons});
-            await session.close;
-        },
-        onError: error => {
-            const message = parseErrorMessage(error);
-            res.json({error: message});
-        }
-    });
+        const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
+        if (!hasAccessToPartner1) return res.sendStatus(401);
+
+        const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
+        if (!hasAccessToPartner2) return res.sendStatus(401);
+
+        const editedPersons = await deletePartnerRelationship(partner1Id, partner2Id);
+        res.json({editedPersons});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).json({error: errorMessage});
+    }
 });
 
 router.copy('/:userId/person/:personId', async (req: Request, res: Response) => {
