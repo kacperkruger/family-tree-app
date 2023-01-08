@@ -1,5 +1,5 @@
 import express, {Request, Response, Router} from 'express';
-import parseErrorMessage from '../utils/parseErrorMessage';
+import {parseErrorMessage} from 'common-server-utils';
 import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
@@ -13,18 +13,18 @@ import deletePartnerRelationship from '../operations/deletePartnerRelationship';
 
 const router: Router = express.Router();
 
-router.get('/:userId', async (req: Request, res: Response) => {
+router.get('/:userId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     try {
         const familyTree = await getFamilyTree(userId);
-        res.json({familyTree});
+        return res.json({familyTree});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.post('/:userId/person', async (req: Request, res: Response) => {
+router.post('/:userId/person', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
     try {
@@ -34,14 +34,14 @@ router.post('/:userId/person', async (req: Request, res: Response) => {
             gender: data.gender || '',
             dateOfBirth: data.dateOfBirth || null
         });
-        res.json({addedPerson});
+        return res.json({addedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
+router.put('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const data = req.body;
@@ -56,14 +56,14 @@ router.put('/:userId/person/:personId', async (req: Request, res: Response) => {
             gender: data.gender,
             dateOfBirth: data.dateOfBirth
         });
-        res.json({updatedPerson});
+        return res.json({updatedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.delete('/:userId/person/:personId', async (req: Request, res: Response) => {
+router.delete('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
 
@@ -71,14 +71,14 @@ router.delete('/:userId/person/:personId', async (req: Request, res: Response) =
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
         if (!hasAccess) return res.sendStatus(401);
         await removePerson(personId);
-        res.sendStatus(200);
+        return res.sendStatus(200);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.post('/:userId/relationship/parent', async (req: Request, res: Response) => {
+router.post('/:userId/relationship/parent', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -93,14 +93,14 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response) 
         if (!hasAccessToParent) return res.sendStatus(401);
 
         const editedPerson = await addParentRelationship(childId, parentId);
-        res.json({editedPerson});
+        return res.json({editedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.delete('/:userId/relationship/parent', async (req: Request, res: Response) => {
+router.delete('/:userId/relationship/parent', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -115,14 +115,14 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
         if (!hasAccessToParent) return res.sendStatus(401);
 
         const editedPerson = await deleteChildRelationship(parentId, childId);
-        res.json({editedPerson});
+        return res.json({editedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.post('/:userId/relationship/partner', async (req: Request, res: Response) => {
+router.post('/:userId/relationship/partner', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -137,14 +137,14 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
         if (!hasAccessToPartner2) return res.sendStatus(401);
 
         const editedPersons = await addPartnerRelationship(partner1Id, partner2Id);
-        res.json({editedPersons});
+        return res.json({editedPersons});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.delete('/:userId/relationship/partner', async (req: Request, res: Response) => {
+router.delete('/:userId/relationship/partner', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -159,20 +159,25 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
         if (!hasAccessToPartner2) return res.sendStatus(401);
 
         const editedPersons = await deletePartnerRelationship(partner1Id, partner2Id);
-        res.json({editedPersons});
+        return res.json({editedPersons});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        res.status(400).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.copy('/:userId/person/:personId', async (req: Request, res: Response) => {
+router.copy('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const numberOfGenerations = req.query.n || 0;
 
-    const copiedPersons = await copyPersonToUsersTree(userId, personId, +numberOfGenerations);
-    res.json({copiedPersons});
+    try {
+        const copiedPersons = await copyPersonToUsersTree(userId, personId, +numberOfGenerations);
+        return res.json({copiedPersons});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        return res.status(400).json({error: errorMessage});
+    }
 });
 
 export default router;

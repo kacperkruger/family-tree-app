@@ -1,6 +1,5 @@
 import express from 'express';
-import startServer from './utils/startServer';
-import parseErrorMessage from './utils/parseErrorMessage';
+import {parseErrorMessage, startServer} from 'common-server-utils';
 import dotenvConfig from './configs/dotenvConfig';
 import expressConfig from './configs/expressConfig';
 import connectToNeo4j from './utils/connectToNeo4j';
