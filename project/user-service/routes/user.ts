@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import User from '../models/User';
 import hashPassword from '../utils/hashPassword';
-import parseError from '../utils/parseError';
+import {parseErrorMessage} from 'common-server-utils';
 
 const router = express.Router();
 
@@ -16,7 +16,8 @@ router.post('/', async (req: Request, res: Response) => {
         });
         return res.sendStatus(201);
     } catch (e) {
-        return parseError(e, res.status(400).send);
+        const errorMessage = parseErrorMessage(e);
+        res.status(400).send(errorMessage);
     }
 });
 
