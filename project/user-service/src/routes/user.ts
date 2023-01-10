@@ -17,7 +17,7 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
         return res.status(201).json({createdUser});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(400).send(errorMessage);
+        return res.status(400).json({error: errorMessage});
     }
 });
 
@@ -29,7 +29,7 @@ router.get('/details/:id', async (req: Request, res: Response): Promise<Response
         return res.json({user});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(400).send(errorMessage);
+        return res.status(400).json({error: errorMessage});
     }
 });
 
@@ -41,19 +41,19 @@ router.get('/sensitive/:id', async (req: Request, res: Response): Promise<Respon
         return res.json({user});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(400).send(errorMessage);
+        return res.status(400).json({error: errorMessage});
     }
 });
 
-router.get('/details', async (req: Request, res: Response): Promise<Response> => {
-    const userIds = req.body.userIds;
+router.get('/details', async (req: Request<{}, {}, {}, { userId: string }>, res: Response): Promise<Response> => {
+    const userIds = req.query.userId;
     try {
-        const user = await User.find({_id: {$all: userIds}}).select('--password');
-        if (user === null) return res.status(404).json({error: 'User not found'});
-        return res.json({user});
+        const users = await User.find({_id: {$in: userIds}}).select('--password');
+        if (users.length !== userIds.length) return res.status(404).json({error: 'User(s) not found'});
+        return res.json({users});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(500).send(errorMessage);
+        return res.status(500).json({error: errorMessage});
     }
 });
 
