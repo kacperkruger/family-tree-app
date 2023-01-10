@@ -1,3 +1,5 @@
 .idea
 node_modules
-configs/.env
+src/configs/.env
+*lock*
+dist

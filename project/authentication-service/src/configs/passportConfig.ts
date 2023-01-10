@@ -1,7 +1,8 @@
 import passport from 'passport';
 import PassportLocal from 'passport-local';
 import bcrypt from 'bcrypt';
-import {getUserDetails, getUserSensitiveData} from '@kacperkruger/clients/dist/user';
+import {getUserDetails, getUserSensitiveData} from '@kacperkruger/clients/user';
+import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 
 const passportConfig = () => {
     const LocalStrategy = PassportLocal.Strategy;
@@ -18,7 +19,8 @@ const passportConfig = () => {
             const user = await getUserDetails(userSensitiveData._id);
             return done(null, user);
         } catch (e) {
-            return done(e);
+            const errorMessage = parseErrorMessage(e);
+            return done(errorMessage, null);
         }
     };
 
