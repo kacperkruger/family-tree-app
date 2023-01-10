@@ -19,8 +19,8 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${USER_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${USER_DB_PASSWORD}
-  #    volumes:
-  #      - db-user:/bitnami/mongodb
+    volumes:
+      - db-user:/data/db
   user-service:
     image:
       kacperkruger/tsw-user-service:latest
