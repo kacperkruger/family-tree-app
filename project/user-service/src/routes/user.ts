@@ -53,8 +53,13 @@ router.get('/details', async (req: Request<{}, {}, {}, { userId: string }>, res:
         return res.json({users});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(500).json({error: errorMessage});
+        return res.status(400).json({error: errorMessage});
     }
+});
+
+router.get('/', async (_req: Request, res: Response): Promise<Response> => {
+    const users = await User.find({}).select('--password');
+    return res.json({users});
 });
 
 export default router;
