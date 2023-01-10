@@ -1,5 +1,6 @@
 import getUserDetails from './getUserDetails';
 import {UserDetails} from './domain/UserDetails';
-import {UserSensitiveDetails} from './domain/UserSensitiveDetails';
+import {UserSensitiveData} from './domain/UserSensitiveData';
+import getUserSensitiveData from './getUserSensitiveData';
 
-export {getUserDetails, UserSensitiveDetails, UserDetails};
+export {getUserDetails, getUserSensitiveData, UserSensitiveData, UserDetails};

@@ -19,7 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.2.2",
-    "node": "^19.3.0"
+    "node": "^19.3.0",
+    "@kacperkruger/common-server-utils": "^1.0.1"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",
