@@ -1,0 +1,40 @@
+version: "3.7"
+services:
+  neo4j-family-tree:
+    image: neo4j:5-enterprise
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+      - "7473:7473"
+    environment:
+      - NEO4J_PLUGINS=[\'apoc\']
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4j_AUTH=${FAMILY_TREE_DB_USERNAME}/${FAMILY_TREE_DB_PASSWORD}
+    volumes:
+      - db-family-tree:/data
+  mongodb-user:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${USER_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${USER_DB_PASSWORD}
+  #    volumes:
+  #      - db-user:/bitnami/mongodb
+  user-service:
+    image:
+      kacperkruger/tsw-user-service:latest
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - MONGO_HOST=mongodb-user
+      - MONGO_PORT=27017
+      - MONGO_USER=${USER_DB_USERNAME}
+      - MONGO_PASS=${USER_DB_PASSWORD}
+    depends_on:
+      - mongodb-user
+
+volumes:
+  db-user:
+  db-family-tree:
