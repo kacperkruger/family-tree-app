@@ -36,7 +36,7 @@ router.get('/details/:id', async (req: Request, res: Response): Promise<Response
 router.get('/sensitive/:id', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.id;
     try {
-        const user = await User.findById(userId, 'username password');
+        const user = await User.findById(userId, '-_id username password');
         if (user === null) return res.status(404).json({error: 'User not found'});
         return res.json({user});
     } catch (e) {
