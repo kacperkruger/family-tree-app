@@ -21,7 +21,7 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
     }
 });
 
-router.get('/details/:id', async (req: Request, res: Response): Promise<Response> => {
+router.get('/:id/details', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.id;
     try {
         const user = await User.findById(userId, '--password');
@@ -33,7 +33,7 @@ router.get('/details/:id', async (req: Request, res: Response): Promise<Response
     }
 });
 
-router.get('/sensitive/:id', async (req: Request, res: Response): Promise<Response> => {
+router.get('/:id/sensitive-data', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.id;
     try {
         const user = await User.findById(userId, '-_id username password');
@@ -45,19 +45,19 @@ router.get('/sensitive/:id', async (req: Request, res: Response): Promise<Respon
     }
 });
 
-router.get('/details', async (req: Request<{}, {}, {}, { userId: string }>, res: Response): Promise<Response> => {
-    const userIds = req.query.userId;
-    try {
-        const users = await User.find({_id: {$in: userIds}}).select('--password');
-        if (users.length !== userIds.length) return res.status(404).json({error: 'User(s) not found'});
-        return res.json({users});
-    } catch (e) {
-        const errorMessage = parseErrorMessage(e);
-        return res.status(400).json({error: errorMessage});
+router.get('/', async (req: Request, res: Response): Promise<Response> => {
+    let usersId = req.query.id;
+    if (usersId) {
+        if (typeof usersId === 'string') usersId = [usersId];
+        try {
+            const users = await User.find({_id: {$in: usersId}}).select('--password');
+            if (users.length !== usersId.length) return res.status(404).json({error: 'User(s) not found'});
+            return res.json({users});
+        } catch (e) {
+            const errorMessage = parseErrorMessage(e);
+            return res.status(400).json({error: errorMessage});
+        }
     }
-});
-
-router.get('/', async (_req: Request, res: Response): Promise<Response> => {
     const users = await User.find({}).select('--password');
     return res.json({users});
 });
