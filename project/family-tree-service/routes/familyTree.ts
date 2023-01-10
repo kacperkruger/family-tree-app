@@ -10,8 +10,22 @@ import addParentRelationship from '../operations/addParentRelationship';
 import deleteChildRelationship from '../operations/deleteChildRelationship';
 import addPartnerRelationship from '../operations/addPartnerRelationship';
 import deletePartnerRelationship from '../operations/deletePartnerRelationship';
+import getUsersBySurnames from '../operations/getUsersBySurnames';
+import {getUserDetails} from 'clients/dist/user';
 
 const router: Router = express.Router();
+
+router.get('/users/search', async (req: Request<{}, {}, {}, { surnames: string[] }>, res: Response): Promise<Response> => {
+    const surnames = req.query.surnames;
+    try {
+        const userIds = await getUsersBySurnames(surnames);
+        const users = userIds.map(async userId => await getUserDetails(userId));
+        return res.json({users});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        return res.status(400).json({error: errorMessage});
+    }
+});
 
 router.get('/:userId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
