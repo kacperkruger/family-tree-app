@@ -1,7 +1,7 @@
 import connectToNeo4j from '../utils/connectToNeo4j';
 import parsePerson from '../utils/parsePerson';
 import deleteChildFromParent from '../queries/deleteChildFromParent';
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 
 const deleteChildRelationship = async (parentId: string, childId: string): Promise<Person> => {
     const session = await connectToNeo4j();

@@ -1,6 +1,6 @@
 import connectToNeo4j from '../utils/connectToNeo4j';
 import findFamilyTreeByUser from '../queries/findFamilyTreeByUser';
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 import parsePerson from '../utils/parsePerson';
 
 const getFamilyTree = async (userId: string): Promise<Person[]> => {

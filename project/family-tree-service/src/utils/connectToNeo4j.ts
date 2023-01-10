@@ -1,5 +1,5 @@
 import neo4j, {Driver} from 'neo4j-driver';
-import neo4jConnData from '../configs/neo4jConnData';
+import neo4jConnData from '../routes/configs/neo4jConnData';
 
 const connectToNeo4j = (() => {
     let driver: Driver;

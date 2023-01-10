@@ -1,4 +1,4 @@
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 import connectToNeo4j from '../utils/connectToNeo4j';
 import parsePerson from '../utils/parsePerson';
 import addChildToPerson from '../queries/addChildToPerson';

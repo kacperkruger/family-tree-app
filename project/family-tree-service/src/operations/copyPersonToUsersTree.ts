@@ -1,7 +1,7 @@
 import getPerson from './getPerson';
 import addPerson from './addPerson';
 import addChild from './addChild';
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 
 const copyPersonToUsersTree = async (userId: string, personId: string, nGenerations: number): Promise<Person[]> => {
     const copiedPersons: Person[] = [];

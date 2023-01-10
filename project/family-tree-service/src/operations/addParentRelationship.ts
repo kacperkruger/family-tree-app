@@ -1,6 +1,6 @@
 import connectToNeo4j from '../utils/connectToNeo4j';
 import addParentToPerson from '../queries/addParentToPerson';
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 import parsePerson from '../utils/parsePerson';
 
 const addParentRelationship = async (childId: string, parentId: string): Promise<Person> => {

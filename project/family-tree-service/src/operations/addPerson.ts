@@ -1,5 +1,5 @@
 import createPerson from '../queries/createPerson';
-import {Person} from '../models/Person';
+import {Person} from '../routes/models/Person';
 import parsePerson from '../utils/parsePerson';
 import connectToNeo4j from '../utils/connectToNeo4j';
 import {PersonRequest} from '../requests/PersonRequest';
