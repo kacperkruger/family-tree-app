@@ -15,8 +15,8 @@
     "dotenv": "^16.0.3"
   },
   "dependencies": {
-    "common-server-utils": "file:../common-server-utils/common-server-utils-1.0.0.tgz",
-    "clients": "file:../clients/clients-1.0.0.tgz",
+    "@kacperkruger/clients": "^1.1.1",
+    "@kacperkruger/common-server-utils": "^1.0.1",
     "express": "^4.18.2",
     "neo4j-driver": "^5.3.0",
     "nodemon": "^2.0.20"
