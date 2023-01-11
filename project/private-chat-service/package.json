@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@kacperkruger/common-server-utils": "^1.0.1",
     "express": "^4.18.2",
     "mongoose": "^6.8.1"
   },

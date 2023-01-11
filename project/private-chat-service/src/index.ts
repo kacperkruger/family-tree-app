@@ -1,11 +1,9 @@
 import connectToMongo from './utils/connectToMongo';
 import express from 'express';
-import startServer from './utils/startServer';
-import parseErrorMessage from './utils/parseErrorMessage';
+import {parseErrorMessage, startServer} from '@kacperkruger/common-server-utils';
 import dotenvConfig from './configs/dotenvConfig';
 import expressConfig from './configs/expressConfig';
 import apiConfig from './configs/apiConfig';
-import mongoUserModelConfig from './configs/mongoUserModelConfig';
 
 const app = express();
 
@@ -14,7 +12,6 @@ expressConfig(app);
 apiConfig(app);
 
 connectToMongo().then(_ => {
-    mongoUserModelConfig();
     startServer(app);
 }).catch(e => {
     const errorMessage = parseErrorMessage(e);
