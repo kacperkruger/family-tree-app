@@ -1,14 +1,13 @@
 import connectToMongo from './utils/connectToMongo';
 import express from 'express';
 import {parseErrorMessage, startServer} from '@kacperkruger/common-server-utils';
-import dotenvConfig from './configs/dotenvConfig';
-import expressConfig from './configs/expressConfig';
+import dotenv from 'dotenv';
 import apiConfig from './configs/apiConfig';
 
 const app = express();
 
-dotenvConfig();
-expressConfig(app);
+dotenv.config();
+app.use(express.json());
 apiConfig(app);
 
 connectToMongo().then(_ => {

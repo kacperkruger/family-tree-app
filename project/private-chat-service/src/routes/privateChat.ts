@@ -1,8 +1,8 @@
 import express, {Request, Response, Router} from 'express';
 import {Types} from 'mongoose';
-import PrivateChat from '../models/private-chat/PrivateChat';
+import PrivateChatModel from '../models/private-chat/PrivateChatModel';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
-import Message from '../models/message/Message';
+import MessageModel from '../models/message/MessageModel';
 
 const router: Router = express.Router();
 
@@ -10,22 +10,19 @@ router.get('/:id', async (req: Request, res: Response) => {
     const privateChatId = req.params.id;
     const data = req.body;
     const userId = new Types.ObjectId(data.userId);
-    let privateChat = await PrivateChat.findOne({_id: privateChatId});
+    let privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
     if (!privateChat) return res.sendStatus(404);
     if (!privateChat.users.includes(userId)) return res.sendStatus(401);
 
-    privateChat = await privateChat.populate('users');
     privateChat = await privateChat.populate('messages');
-    privateChat = await privateChat.populate({path: 'messages', populate: 'user'});
-
     return res.status(200).json({privateChat});
 });
 
 router.post('/', async (req: Request, res: Response) => {
     const data = req.body;
     try {
-        let createdChat = await PrivateChat.create({
+        let createdChat = await PrivateChatModel.create({
             users: data.users,
             messages: []
         });
@@ -37,24 +34,22 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-router.patch('/:id/add/message', async (req: Request, res: Response) => {
+router.post('/:id/messages', async (req: Request, res: Response) => {
     const privateChatId = req.params.id;
     const userId = req.body.userId;
     const text = req.body.text;
     try {
-        const privateChat = await PrivateChat.findOne({_id: privateChatId});
+        const privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
         if (!privateChat) return res.sendStatus(404);
         if (!privateChat.users.includes(userId)) return res.sendStatus(401);
 
-        const message = await Message.create({user: userId, text});
-        const updatedPrivateChat = await PrivateChat
+        const message = await MessageModel.create({user: userId, text});
+        const updatedPrivateChat = await PrivateChatModel
             .findOneAndUpdate({_id: privateChatId},
                 {$push: {messages: message._id}},
                 {new: true})
-            .populate('users')
-            .populate('messages')
-            .populate({path: 'messages', populate: 'user'});
+            .populate('messages');
 
         return res.status(200).send(updatedPrivateChat);
     } catch (e) {
@@ -63,45 +58,45 @@ router.patch('/:id/add/message', async (req: Request, res: Response) => {
     }
 });
 
-router.patch('/:id/add/user', async (req: Request, res: Response) => {
+router.post('/:id/users', async (req: Request, res: Response): Promise<Response> => {
     const privateChatId = req.params.id;
     const userId = req.body.userId;
-    const user = req.body.user;
+    const userToAdd = req.body.userToAdd;
 
     try {
-        const privateChat = await PrivateChat.findOne({_id: privateChatId});
+        const privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
         if (!privateChat) return res.sendStatus(404);
         if (!privateChat.users.includes(userId)) return res.sendStatus(401);
 
-        const updatedPrivateChat = await PrivateChat
+        const updatedPrivateChat = await PrivateChatModel
             .findOneAndUpdate({_id: privateChatId},
-                {$addToSet: {users: user}},
+                {$addToSet: {users: userToAdd}},
                 {new: true})
-            .populate('users')
-            .populate('messages')
-            .populate({path: 'messages', populate: 'user'});
+            .populate('messages');
 
-        return res.status(200).send(updatedPrivateChat);
+        return res.send(updatedPrivateChat);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
 });
 
-router.get('/users', async (req: Request, res: Response) => {
-    const userIds = req.query.userIds;
-    try {
-        const privateChats = await PrivateChat.find({users: {$all: userIds}})
-            .populate('users')
-            .populate('messages')
-            .populate({path: 'messages', populate: 'user'});
-
-        return res.send(200).json(privateChats);
-    } catch (e) {
-        const errorMessage = parseErrorMessage(e);
-        return res.status(404).json({error: errorMessage});
+router.get('/', async (req: Request, res: Response): Promise<Response> => {
+    let usersId = req.query.userId;
+    if (usersId) {
+        if (typeof usersId === 'string') usersId = [usersId];
+        try {
+            const privateChats = await PrivateChatModel.find({users: {$all: usersId}});
+            return res.json(privateChats);
+        } catch (e) {
+            const errorMessage = parseErrorMessage(e);
+            return res.status(404).json({error: errorMessage});
+        }
     }
+
+    const privateChats = await PrivateChatModel.find({});
+    return res.json({privateChats});
 });
 
 export default router;

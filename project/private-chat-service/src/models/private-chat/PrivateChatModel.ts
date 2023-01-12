@@ -1,10 +1,8 @@
 import {model, Schema} from 'mongoose';
-import {IPrivateChat} from './IPrivateChat';
 
-const chatSchema: Schema = new Schema<IPrivateChat>({
+const chatSchema: Schema = new Schema({
     users: [{
         type: Schema.Types.ObjectId,
-        ref: 'User',
         required: true
     }],
     messages: [{
@@ -14,4 +12,4 @@ const chatSchema: Schema = new Schema<IPrivateChat>({
     }]
 });
 
-export default model<IPrivateChat>('PrivateChat', chatSchema);
+export default model('PrivateChat', chatSchema);

@@ -1,10 +1,8 @@
 import {model, Schema} from 'mongoose';
-import {IMessage} from './IMessage';
 
-const messageScheme: Schema = new Schema<IMessage>({
+const messageScheme: Schema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
         required: true
     },
     text: {
@@ -13,4 +11,5 @@ const messageScheme: Schema = new Schema<IMessage>({
     }
 });
 
-export default model<IMessage>('Message', messageScheme);
+
+export default model('Message', messageScheme);
