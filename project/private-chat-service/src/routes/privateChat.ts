@@ -1,8 +1,8 @@
 import express, {Request, Response, Router} from 'express';
 import {Types} from 'mongoose';
-import PrivateChatModel from '../models/private-chat/PrivateChatModel';
+import PrivateChatModel from '../models/private-chat/PrivateChat';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
-import MessageModel from '../models/message/MessageModel';
+import MessageModel from '../models/message/Message';
 
 const router: Router = express.Router();
 

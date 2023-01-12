@@ -21,6 +21,15 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=${USER_DB_PASSWORD}
     volumes:
       - db-user:/data/db
+  mongodb-private-chat:
+    image: mongo
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${PRIVATE_CHAT_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${PRIVATE_CHAT_DB_PASSWORD}
+    volumes:
+      - db-private-chat:/data/db
   user-service:
     image:
       kacperkruger/tsw-user-service:latest
@@ -38,3 +47,4 @@ services:
 volumes:
   db-user:
   db-family-tree:
+  db-private-chat:
