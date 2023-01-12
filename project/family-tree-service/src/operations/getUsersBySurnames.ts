@@ -1,8 +1,8 @@
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import findUsersWhoContainSurname from '../queries/findUsersWhoContainSurname';
 
 const getUserIdsBySurnames = async (surnames: string[]): Promise<string[]> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
     const result = session.run(findUsersWhoContainSurname, {listOfSurname: surnames});
 
     return result.then(queryResult => {

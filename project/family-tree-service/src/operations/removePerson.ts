@@ -1,8 +1,8 @@
 import deletePerson from '../queries/deletePerson';
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 
 const removePerson = async (personId: string): Promise<void> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(deletePerson, {
         personId

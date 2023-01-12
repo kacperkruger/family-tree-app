@@ -1,10 +1,10 @@
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import parsePerson from '../utils/parsePerson';
 import deleteChildFromParent from '../queries/deleteChildFromParent';
-import {Person} from '../routes/models/Person';
+import {Person} from '../models/Person';
 
 const deleteChildRelationship = async (parentId: string, childId: string): Promise<Person> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(deleteChildFromParent, {
         childId,

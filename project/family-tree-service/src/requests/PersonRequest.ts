@@ -1,4 +1,4 @@
-import {Gender} from '../routes/models/Gender';
+import {Gender} from '../models/Gender';
 
 export interface PersonRequest {
     name: string,

@@ -1,4 +1,4 @@
-import {Person} from '../routes/models/Person';
+import {Person} from '../models/Person';
 import {Record} from 'neo4j-driver';
 
 const parsePerson = (record: Record): Person => {

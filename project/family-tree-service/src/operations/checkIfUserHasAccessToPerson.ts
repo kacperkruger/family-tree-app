@@ -1,8 +1,8 @@
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import whetherUserHasAccessToPerson from '../queries/whetherUserHasAccessToPerson';
 
 const checkIfUserHasAccessToPerson = async (userId: string, personId: string): Promise<boolean> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(whetherUserHasAccessToPerson, {
         userId,

@@ -1,20 +1,13 @@
 import neo4j, {Driver} from 'neo4j-driver';
-import neo4jConnData from '../routes/configs/neo4jConnData';
 
-const connectToNeo4j = (() => {
-    let driver: Driver;
-    let executed = false;
-
-    return async () => {
-        if (!executed) {
-            executed = true;
-            const dbConnData = neo4jConnData();
-            driver = neo4j.driver(dbConnData.uri, neo4j.auth.basic(dbConnData.user, dbConnData.password));
-            await driver.verifyConnectivity();
-            console.log('Connected to Neo4j');
-        }
-        return driver.session();
-    };
-})();
+const connectToNeo4j = async (): Promise<Driver> => {
+    const uri = process.env.NEO4J_URI || '';
+    const user = process.env.NEO4J_USER || '';
+    const password = process.env.NEO4J_PASSWORD || '';
+    const driver = neo4j.driver(uri, neo4j.auth.basic(user, password));
+    await driver.verifyConnectivity();
+    console.log('Connected to Neo4j');
+    return driver;
+};
 
 export default connectToNeo4j;

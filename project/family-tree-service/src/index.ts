@@ -1,17 +1,16 @@
 import express from 'express';
-import {parseErrorMessage, startServer} from 'common-server-utils';
-import dotenvConfig from './routes/configs/dotenvConfig';
-import expressConfig from './routes/configs/expressConfig';
-import connectToNeo4j from './utils/connectToNeo4j';
-import apiConfig from './routes/configs/apiConfig';
+import {parseErrorMessage, startServer} from '@kacperkruger/common-server-utils';
+import connectToNeo4jOrGetDriver from './utils/connectToNeo4jOrGetDriver';
+import apiConfig from './configs/apiConfig';
+import dotenv from 'dotenv';
 
 const app = express();
 
-dotenvConfig();
-expressConfig(app);
+dotenv.config();
+app.use(express.json());
 apiConfig(app);
 
-connectToNeo4j().then(_ => {
+connectToNeo4jOrGetDriver().then(_ => {
     startServer(app);
 }).catch(e => {
     console.log(parseErrorMessage(e));

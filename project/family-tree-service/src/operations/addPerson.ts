@@ -1,11 +1,11 @@
 import createPerson from '../queries/createPerson';
-import {Person} from '../routes/models/Person';
+import {Person} from '../models/Person';
 import parsePerson from '../utils/parsePerson';
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import {PersonRequest} from '../requests/PersonRequest';
 
 const addPerson = async (userId: string, personRequest: PersonRequest): Promise<Person> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
     const result = session.run(createPerson, {
         userId,
         name: personRequest.name,

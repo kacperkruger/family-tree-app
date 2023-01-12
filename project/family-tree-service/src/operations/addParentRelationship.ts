@@ -1,10 +1,10 @@
-import connectToNeo4j from '../utils/connectToNeo4j';
+import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import addParentToPerson from '../queries/addParentToPerson';
-import {Person} from '../routes/models/Person';
+import {Person} from '../models/Person';
 import parsePerson from '../utils/parsePerson';
 
 const addParentRelationship = async (childId: string, parentId: string): Promise<Person> => {
-    const session = await connectToNeo4j();
+    const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(addParentToPerson, {
         childId,
