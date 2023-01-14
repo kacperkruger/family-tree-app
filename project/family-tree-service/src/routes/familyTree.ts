@@ -32,11 +32,11 @@ router.get('/:userId', async (req: Request, res: Response): Promise<Response> =>
         return res.json({familyTree});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(400).json({error: errorMessage});
+        return res.status(500).json({error: errorMessage});
     }
 });
 
-router.post('/:userId/person', async (req: Request, res: Response): Promise<Response> => {
+router.post('/:userId/persons', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
     try {
@@ -46,21 +46,21 @@ router.post('/:userId/person', async (req: Request, res: Response): Promise<Resp
             gender: data.gender || '',
             dateOfBirth: data.dateOfBirth || null
         });
-        return res.json({addedPerson});
+        return res.status(201).json({addedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
 });
 
-router.put('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.put('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const data = req.body;
 
     try {
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
-        if (!hasAccess) return res.sendStatus(401);
+        if (!hasAccess) return res.sendStatus(405);
 
         const updatedPerson = await updatePerson(personId, {
             name: data.name,
@@ -75,22 +75,21 @@ router.put('/:userId/person/:personId', async (req: Request, res: Response): Pro
     }
 });
 
-router.delete('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
-
     try {
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
-        if (!hasAccess) return res.sendStatus(401);
+        if (!hasAccess) return res.sendStatus(405);
         await removePerson(personId);
-        return res.sendStatus(200);
+        return res.sendStatus(204);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
-        return res.status(400).json({error: errorMessage});
+        return res.status(404).json({error: errorMessage});
     }
 });
 
-router.post('/:userId/relationship/parent', async (req: Request, res: Response): Promise<Response> => {
+router.post('/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -99,10 +98,10 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response):
         const parentId = data.parentId;
 
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(401);
+        if (!hasAccessToChild) return res.sendStatus(405);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(401);
+        if (!hasAccessToParent) return res.sendStatus(405);
 
         const editedPerson = await addParentRelationship(childId, parentId);
         return res.json({editedPerson});
@@ -112,7 +111,7 @@ router.post('/:userId/relationship/parent', async (req: Request, res: Response):
     }
 });
 
-router.delete('/:userId/relationship/parent', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -121,10 +120,10 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
         const parentId = data.parentId;
 
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(401);
+        if (!hasAccessToChild) return res.sendStatus(405);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(401);
+        if (!hasAccessToParent) return res.sendStatus(405);
 
         const editedPerson = await deleteChildRelationship(parentId, childId);
         return res.json({editedPerson});
@@ -134,7 +133,7 @@ router.delete('/:userId/relationship/parent', async (req: Request, res: Response
     }
 });
 
-router.post('/:userId/relationship/partner', async (req: Request, res: Response): Promise<Response> => {
+router.post('/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -143,10 +142,10 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
         const partner2Id = data.partner2Id;
 
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
-        if (!hasAccessToPartner1) return res.sendStatus(401);
+        if (!hasAccessToPartner1) return res.sendStatus(405);
 
         const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
-        if (!hasAccessToPartner2) return res.sendStatus(401);
+        if (!hasAccessToPartner2) return res.sendStatus(405);
 
         const editedPersons = await addPartnerRelationship(partner1Id, partner2Id);
         return res.json({editedPersons});
@@ -156,7 +155,7 @@ router.post('/:userId/relationship/partner', async (req: Request, res: Response)
     }
 });
 
-router.delete('/:userId/relationship/partner', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -165,10 +164,10 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
         const partner2Id = data.partner2Id;
 
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
-        if (!hasAccessToPartner1) return res.sendStatus(401);
+        if (!hasAccessToPartner1) return res.sendStatus(405);
 
         const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
-        if (!hasAccessToPartner2) return res.sendStatus(401);
+        if (!hasAccessToPartner2) return res.sendStatus(405);
 
         const editedPersons = await deletePartnerRelationship(partner1Id, partner2Id);
         return res.json({editedPersons});
@@ -178,7 +177,7 @@ router.delete('/:userId/relationship/partner', async (req: Request, res: Respons
     }
 });
 
-router.copy('/:userId/person/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.copy('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const numberOfGenerations = req.query.n || 0;
