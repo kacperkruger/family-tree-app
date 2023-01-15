@@ -14,18 +14,22 @@ import getUsersBySurnames from '../operations/getUsersBySurnames';
 
 const router: Router = express.Router();
 
-router.get('/users/search', async (req: Request<{}, {}, {}, { surnames: string[] }>, res: Response): Promise<Response> => {
-    const surnames = req.query.surnames;
-    try {
-        const userIds = await getUsersBySurnames(surnames);
-        return res.json({userIds});
-    } catch (e) {
-        const errorMessage = parseErrorMessage(e);
-        return res.status(400).json({error: errorMessage});
+router.get('/users', async (req: Request<{}, {}, {}, { surname: string[] | string | undefined }>, res: Response): Promise<Response> => {
+    let surnames = req.query.surname;
+    if (surnames) {
+        if (typeof surnames === 'string') surnames = [surnames];
+        try {
+            const userIds = await getUsersBySurnames(surnames);
+            return res.json({userIds});
+        } catch (e) {
+            const errorMessage = parseErrorMessage(e);
+            return res.status(400).json({error: errorMessage});
+        }
     }
+    return res.status(400).json({error: 'Surnames not included'});
 });
 
-router.get('/:userId', async (req: Request, res: Response): Promise<Response> => {
+router.get('/users/:userId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     try {
         const familyTree = await getFamilyTree(userId);
@@ -36,7 +40,7 @@ router.get('/:userId', async (req: Request, res: Response): Promise<Response> =>
     }
 });
 
-router.post('/:userId/persons', async (req: Request, res: Response): Promise<Response> => {
+router.post('/users/:userId/persons', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
     try {
@@ -53,7 +57,7 @@ router.post('/:userId/persons', async (req: Request, res: Response): Promise<Res
     }
 });
 
-router.put('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.put('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const data = req.body;
@@ -75,7 +79,7 @@ router.put('/:userId/persons/:personId', async (req: Request, res: Response): Pr
     }
 });
 
-router.delete('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     try {
@@ -89,7 +93,7 @@ router.delete('/:userId/persons/:personId', async (req: Request, res: Response):
     }
 });
 
-router.post('/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
+router.post('/users/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -111,7 +115,7 @@ router.post('/:userId/relationships/parents', async (req: Request, res: Response
     }
 });
 
-router.delete('/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/users/:userId/relationships/parents', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -133,7 +137,7 @@ router.delete('/:userId/relationships/parents', async (req: Request, res: Respon
     }
 });
 
-router.post('/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
+router.post('/users/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -155,7 +159,7 @@ router.post('/:userId/relationships/partners', async (req: Request, res: Respons
     }
 });
 
-router.delete('/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
+router.delete('/users/:userId/relationships/partners', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
 
@@ -177,7 +181,7 @@ router.delete('/:userId/relationships/partners', async (req: Request, res: Respo
     }
 });
 
-router.copy('/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
+router.copy('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
     const numberOfGenerations = req.query.n || 0;
