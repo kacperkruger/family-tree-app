@@ -1,6 +1,6 @@
 {
   "name": "@kacperkruger/clients",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,12 +8,16 @@
     "/dist"
   ],
   "exports": {
+    ".": "./dist/index.js",
     "./user": "./dist/user/index.js"
   },
   "typesVersions": {
     "*": {
       "user": [
         "dist/user"
+      ],
+      ".": [
+        "dist"
       ]
     }
   },

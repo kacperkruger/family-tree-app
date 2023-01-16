@@ -13,7 +13,7 @@ router.get('/:id', async (req: Request, res: Response) => {
     let privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
     if (!privateChat) return res.sendStatus(404);
-    if (!privateChat.users.includes(userId)) return res.sendStatus(401);
+    if (!privateChat.users.includes(userId)) return res.sendStatus(405);
 
     privateChat = await privateChat.populate('messages');
     return res.status(200).json({privateChat});
@@ -42,7 +42,7 @@ router.post('/:id/messages', async (req: Request, res: Response) => {
         const privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
         if (!privateChat) return res.sendStatus(404);
-        if (!privateChat.users.includes(userId)) return res.sendStatus(401);
+        if (!privateChat.users.includes(userId)) return res.sendStatus(405);
 
         const message = await MessageModel.create({user: userId, text});
         const updatedPrivateChat = await PrivateChatModel
@@ -67,7 +67,7 @@ router.post('/:id/users', async (req: Request, res: Response): Promise<Response>
         const privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
         if (!privateChat) return res.sendStatus(404);
-        if (!privateChat.users.includes(userId)) return res.sendStatus(401);
+        if (!privateChat.users.includes(userId)) return res.sendStatus(405);
 
         const updatedPrivateChat = await PrivateChatModel
             .findOneAndUpdate({_id: privateChatId},
