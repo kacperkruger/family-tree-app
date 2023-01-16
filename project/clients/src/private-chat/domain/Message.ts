@@ -1,6 +1,4 @@
-import {UserDetails} from '../../user';
-
 export interface Message {
-    user: UserDetails,
+    user: string,
     text: string
 }
