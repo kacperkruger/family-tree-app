@@ -4,23 +4,23 @@ import Message from '../models/Message';
 
 const router: Router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/messages', async (req: Request, res: Response) => {
     const data = req.body;
     try {
         let createdMessage = await Message.create({
             user: data.userId,
             text: data.text
         });
-        return res.status(201).json({createdMessage});
+        return res.status(201).json({message: createdMessage});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).send({error: errorMessage});
     }
 });
 
-router.get('/', async (_req: Request, res: Response): Promise<Response> => {
+router.get('/messages', async (_req: Request, res: Response): Promise<Response> => {
     const messages = await Message.find();
-    return res.json(messages);
+    return res.json({messages});
 });
 
 export default router;
