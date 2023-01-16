@@ -1,7 +1,6 @@
-import {Types} from 'mongoose';
-import {UserDetails} from '@kacperkruger/clients/dist/user';
+import {UserDetails} from '../../user';
 
 export interface Message {
-    user: UserDetails | Types.ObjectId,
+    user: UserDetails,
     text: string
 }

@@ -1,6 +1,7 @@
-import {Types} from 'mongoose';
+import {UserDetails} from '../../user';
+import {Message} from './Message';
 
 export interface PrivateChat {
-    users: Types.ObjectId[],
-    messages: Types.ObjectId[]
+    users: UserDetails[],
+    messages: Message[]
 }
