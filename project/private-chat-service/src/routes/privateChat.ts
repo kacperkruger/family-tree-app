@@ -26,8 +26,7 @@ router.post('/', async (req: Request, res: Response) => {
             users: data.users,
             messages: []
         });
-        createdChat = await createdChat.populate('users');
-        return res.status(201).json({createdChat});
+        return res.status(201).json({privateChat: createdChat});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).send({error: errorMessage});
@@ -51,7 +50,7 @@ router.post('/:id/messages', async (req: Request, res: Response) => {
                 {new: true})
             .populate('messages');
 
-        return res.status(200).send(updatedPrivateChat);
+        return res.status(200).json({privateChat: updatedPrivateChat});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
@@ -75,7 +74,7 @@ router.post('/:id/users', async (req: Request, res: Response): Promise<Response>
                 {new: true})
             .populate('messages');
 
-        return res.send(updatedPrivateChat);
+        return res.json({privateChat: updatedPrivateChat});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
@@ -88,7 +87,7 @@ router.get('/', async (req: Request, res: Response): Promise<Response> => {
         if (typeof usersId === 'string') usersId = [usersId];
         try {
             const privateChats = await PrivateChatModel.find({users: {$all: usersId}});
-            return res.json(privateChats);
+            return res.json({privateChats});
         } catch (e) {
             const errorMessage = parseErrorMessage(e);
             return res.status(404).json({error: errorMessage});
