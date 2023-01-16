@@ -14,7 +14,7 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
             email: data.email,
             password: hashedPassword
         });
-        return res.status(201).json({createdUser});
+        return res.status(201).json({user: createdUser});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
