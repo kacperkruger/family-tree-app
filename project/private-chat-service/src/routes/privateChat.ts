@@ -6,7 +6,7 @@ import MessageModel from '../models/message/Message';
 
 const router: Router = express.Router();
 
-router.get('/:id/users:/userId', async (req: Request, res: Response) => {
+router.get('/:id/users/:userId', async (req: Request, res: Response) => {
     const privateChatId = req.params.id;
     const userId = new Types.ObjectId(req.params.userId);
     let privateChat = await PrivateChatModel.findOne({_id: privateChatId});
@@ -48,7 +48,6 @@ router.post('/:id/messages', async (req: Request, res: Response) => {
                 {$push: {messages: message._id}},
                 {new: true})
             .populate('messages');
-
         return res.status(200).json({privateChat: updatedPrivateChat});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
