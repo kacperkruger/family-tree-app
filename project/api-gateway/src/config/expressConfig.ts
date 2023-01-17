@@ -1,5 +1,6 @@
 import express, {Express} from 'express';
 import passport from 'passport';
+import cookieParser from 'cookie-parser';
 
 
 declare global {
@@ -12,6 +13,7 @@ declare global {
 
 const expressConfig = (app: Express) => {
     app.use(express.json());
+    app.use(cookieParser());
     app.use(passport.initialize());
 };
 

@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kacperkruger/clients": "^1.1.5",
+    "@kacperkruger/clients": "^1.1.10",
     "@kacperkruger/common-server-utils": "^1.0.7",
     "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "passport": "^0.6.0",
@@ -21,6 +22,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.3",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/passport": "^1.0.11",
     "@types/passport-jwt": "^3.0.8",
