@@ -6,10 +6,9 @@ import MessageModel from '../models/message/Message';
 
 const router: Router = express.Router();
 
-router.get('/:id', async (req: Request, res: Response) => {
+router.get('/:id/users:/userId', async (req: Request, res: Response) => {
     const privateChatId = req.params.id;
-    const data = req.body;
-    const userId = new Types.ObjectId(data.userId);
+    const userId = new Types.ObjectId(req.params.userId);
     let privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
     if (!privateChat) return res.sendStatus(404);
