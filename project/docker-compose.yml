@@ -13,31 +13,31 @@ services:
       - db-family-tree:/data
   mongodb-user:
     image: mongo
-    ports:
-      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${USER_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${USER_DB_PASSWORD}
     volumes:
       - db-user:/data/db
+    networks:
+      - user
   mongodb-private-chat:
     image: mongo
-    ports:
-      - "27018:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PRIVATE_CHAT_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${PRIVATE_CHAT_DB_PASSWORD}
     volumes:
       - db-private-chat:/data/db
+    networks:
+      - private-chat
   mongodb-public-chat:
     image: mongo
-    ports:
-      - "27019:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PUBLIC_CHAT_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${PUBLIC_CHAT_DB_PASSWORD}
     volumes:
       - db-public-chat:/data/db
+    networks:
+      - public-chat
   user-service:
     image:
       kacperkruger/tsw-user-service:latest
@@ -51,6 +51,8 @@ services:
       - MONGO_PASS=${USER_DB_PASSWORD}
     depends_on:
       - mongodb-user
+    networks:
+      - user
   private-chat-service:
     image:
       kacperkruger/tsw-private-chat-service:latest
@@ -64,6 +66,30 @@ services:
       - MONGO_PASS=${PRIVATE_CHAT_DB_PASSWORD}
     depends_on:
       - mongodb-private-chat
+    networks:
+      - private-chat
+  public-chat-service:
+    image:
+      kacperkruger/tsw-public-chat-service:latest
+    ports:
+      - "7000:7000"
+    environment:
+      - PORT=7000
+      - MONGO_HOST=mongodb-public-chat
+      - MONGO_USER=${PUBLIC_CHAT_DB_USERNAME}
+      - MONGO_PASS=${PUBLIC_CHAT_DB_PASSWORD}
+    depends_on:
+      - mongodb-public-chat
+    networks:
+      - public-chat
+
+networks:
+  public-chat:
+    driver: bridge
+  private-chat:
+    driver: bridge
+  user:
+    driver: bridge
 
 volumes:
   db-user:
