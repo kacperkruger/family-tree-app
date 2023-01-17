@@ -1,5 +1,5 @@
 import {getUsersDetails, UserDetails} from '@kacperkruger/clients/user';
-import {PrivateChatResponse} from '../domain/PrivateChatResponse';
+import {PrivateChatResponse} from '../domain/chat/private/PrivateChatResponse';
 import {PrivateChat} from '@kacperkruger/clients/private-chat';
 
 const populatePrivateChat = async (privateChat: PrivateChat): Promise<PrivateChatResponse> => {
