@@ -1,7 +1,7 @@
 import express, {Request, Response, Router} from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import {getUserDetails} from '@kacperkruger/clients/user';
+import {addUser, getUserDetails} from '@kacperkruger/clients/user';
 import {isClientError} from '@kacperkruger/clients';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 
@@ -24,5 +24,14 @@ router.get('/me', passport.authenticate('jwt', {session: false}), async (req: Re
     }
 });
 
+router.post('/register', async (req: Request, res: Response): Promise<Response> => {
+    try {
+        const addedUser = await addUser(req.body);
+        return res.json({user: addedUser});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
 
 export default router;
