@@ -1,6 +1,6 @@
 {
   "name": "@kacperkruger/clients",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,8 @@
     ".": "./dist/index.js",
     "./user": "./dist/user/index.js",
     "./private-chat": "./dist/private-chat/index.js",
-    "./public-chat": "./dist/public-chat/index.js"
+    "./public-chat": "./dist/public-chat/index.js",
+    "./family-tree": "./dist/family-tree/index.js"
   },
   "typesVersions": {
     "*": {
@@ -26,6 +27,9 @@
       ],
       "private-chat": [
         "dist/private-chat"
+      ],
+      "family-tree": [
+        "dist/family-tree"
       ]
     }
   },
