@@ -55,7 +55,7 @@ services:
     image:
       kacperkruger/tsw-private-chat-service:latest
     ports:
-      - "4000:4000"
+      - "6000:6000"
     environment:
       - PORT=6000
       - MONGO_HOST=mongodb-private-chat
