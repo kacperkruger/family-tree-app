@@ -13,5 +13,6 @@ apiConfig(app);
 connectToNeo4jOrGetDriver().then(_ => {
     startServer(app);
 }).catch(e => {
+    console.log(e);
     console.log(parseErrorMessage(e));
 });
