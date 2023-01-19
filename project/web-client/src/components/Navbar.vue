@@ -1,25 +1,48 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
+import {useRouter} from "vue-router";
+import {useAuthenticationStore} from "@/stores/authentication";
+import axios from "axios";
+
+const router = useRouter();
+const authStore = useAuthenticationStore();
+
+const loginProperties = computed(() => {
+  return authStore.isAuthenticated ? 'cursor-pointer' : 'cursor-not-allowed text-gray-500'
+})
 
 const isMenuOpen = ref(false);
 const menuStatus = computed(() => {
-  return isMenuOpen.value ? '' : 'hidden'
+  return isMenuOpen.value ? 'bg-white' : 'hidden'
 })
 
-const menuSize = computed(() => {
-  return isMenuOpen.value ? 'lg:static absolute lg:h-auto h-screen lg:w-auto w-full lg:overflow-visible overflow-hidden' : ''
+const menuProperties = computed(() => {
+  return isMenuOpen.value ? 'lg:static z-50 absolute lg:h-auto h-screen lg:w-auto w-full lg:overflow-visible' : ''
 })
 
 const handleMenuClick = () => {
-  console.log(isMenuOpen.value)
   isMenuOpen.value = !isMenuOpen.value
+}
+
+const navigate = (to: string) => {
+  router.push({name: to})
+  isMenuOpen.value = false
+}
+
+const logOut = async () => {
+  try {
+    await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/logout`)
+    authStore.isAuthenticated = false
+  } catch (e) {
+    alert('Internal error')
+  }
 }
 </script>
 
 <template>
-  <nav :class="`flex lg:items-center p-4 flex-col lg:flex-row ${menuSize}`">
+  <nav :class="`flex lg:items-center p-4 flex-col lg:flex-row ${menuProperties}`">
     <section class="flex justify-between items-center">
-      <div class="flex items-center gap-4 cursor-pointer">
+      <div @click="navigate('home')" class="flex items-center gap-4 cursor-pointer">
         <img src="@/assets/logo.svg" alt="logo" width="75" height="75">
         <span class="font-semibold text-xl tracking-tight">Family Tree App</span>
       </div>
@@ -37,14 +60,17 @@ const handleMenuClick = () => {
       </div>
     </section>
     <section :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center gap-6 flex-grow justify-center`">
-      <p class="cursor-pointer">Private Chat</p>
-      <p class="cursor-pointer">Public Chat</p>
-      <p class="cursor-pointer">Users</p>
-      <p class="px-4 py-2 leading-none border rounded mt-2 lg:mt-0 cursor-pointer">Login</p>
+      <p @click="navigate('private chat')" :class="`${loginProperties} cursor-pointer text-`">Private Chat</p>
+      <p @click="navigate('public chat')" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
+      <p @click="navigate('users')" :class="`${loginProperties} cursor-pointer`">Users</p>
+      <p v-if="authStore.isAuthenticated" @click="logOut" class="px-4 py-2 leading-none border rounded mt-2 lg:mt-0 cursor-pointer">Logout</p>
+      <p v-else @click="navigate('login')" class="px-4 py-2 leading-none border rounded mt-2 lg:mt-0 cursor-pointer">Login</p>
     </section>
   </nav>
 </template>
 
 <style scoped lang="scss">
-
+body {
+  overflow: hidden;
+}
 </style>
