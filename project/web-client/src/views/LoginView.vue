@@ -3,6 +3,8 @@ import axios from 'axios';
 import {computed, ref} from "vue";
 import {useAuthenticationStore} from "@/stores/authentication";
 import {useRouter} from "vue-router";
+import LoginButton from "@/components/LoginButton.vue";
+import RegisterButton from "@/components/RegisterButton.vue";
 
 const authStore = useAuthenticationStore();
 const router = useRouter();
@@ -37,10 +39,9 @@ const logIn = async () => {
       <p :class="`${errorProperties} text-red-600 text-sm`">
         Invalid username or password
       </p>
-      <button @click="logIn" class="border w-full rounded text-sm p-2 bg-blue-500 hover:bg-blue-600 text-white">Log in
-      </button>
+      <LoginButton @click="logIn" />
       <p class="self-center">OR</p>
-      <button @click="router.push({name: 'register'})" class="border rounded w-full p-2 bg-red-500 text-white hover:bg-red-600">Register</button>
+      <RegisterButton @click="router.push({name: 'register'})" />
     </div>
   </div>
 </template>
