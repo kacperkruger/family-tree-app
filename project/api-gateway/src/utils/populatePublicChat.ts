@@ -13,6 +13,7 @@ const populatePublicChat = async (messages: Message[]): Promise<MessageResponse[
         const userDetails = userMap.get(message.user);
         if (userDetails === undefined) throw new Error('User not found');
         return {
+            _id: message._id,
             user: userDetails,
             text: message.text
         };

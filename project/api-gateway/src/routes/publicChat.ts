@@ -7,7 +7,7 @@ import populatePublicChat from '../utils/populatePublicChat';
 
 const router = express.Router();
 
-router.get('/messages', async (req: Request, res: Response): Promise<Response> => {
+router.get('/', async (req: Request, res: Response): Promise<Response> => {
     try {
         const publicChat = await getMessagesFromPublicChat();
         const populatedChat = await populatePublicChat(publicChat);
