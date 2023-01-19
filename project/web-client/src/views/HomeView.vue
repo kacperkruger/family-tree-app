@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="view">Welcome to family tree app</div>
+  <div class="view text-4xl">Welcome to family tree app</div>
 </template>
 
 <style scoped>

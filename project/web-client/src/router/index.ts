@@ -1,7 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import {useAuthenticationStore} from "@/stores/authentication";
-import axios from "axios";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,9 +21,9 @@ const router = createRouter({
             component: () => import('../views/RegisterView.vue')
         },
         {
-            path: '/users',
-            name: 'users',
-            component: () => import('../views/UsersView.vue')
+            path: '/public-chat',
+            name: 'public-chat',
+            component: () => import('../views/PublicChatView.vue')
         }
     ]
 })
@@ -33,7 +32,8 @@ router.beforeEach(async (to, from, next) => {
     const authStore = useAuthenticationStore()
     if ((to.name !== 'login' && to.name !== 'home') && !authStore.isAuthenticated) {
         try {
-            await axios.get(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/me`, {withCredentials: true})
+            authStore.getLoggedUser();
+            next()
         } catch (e) {
             next({ name: 'login' })
         }
