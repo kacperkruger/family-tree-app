@@ -33,8 +33,8 @@ router.get('/:id/details', async (req: Request, res: Response): Promise<Response
     }
 });
 
-router.get('/username:username/sensitive-data', async (req: Request, res: Response): Promise<Response> => {
-    const username = req.params.username.slice(1);
+router.get('/username/:username/sensitive-data', async (req: Request, res: Response): Promise<Response> => {
+    const username = req.params.username;
     try {
         const user = await User.findOne({username}).select('username password');
         if (user === null) return res.status(404).json({error: 'User not found'});
