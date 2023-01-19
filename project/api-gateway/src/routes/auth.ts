@@ -11,7 +11,7 @@ router.post('/login', passport.authenticate('local', {session: false}), (req: Re
     const token = jwt.sign({id: req.user?._id}, process.env.JWT_SECRET || '', {expiresIn: 1200});
 
     res.cookie('Access-Token', token, {httpOnly: true});
-    return res.sendStatus(200);
+    return res.json({user: req.user});
 });
 
 router.get('/me', passport.authenticate('jwt', {session: false}), async (req: Request, res: Response): Promise<Response> => {
@@ -32,6 +32,11 @@ router.post('/register', async (req: Request, res: Response): Promise<Response> 
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
+});
+
+router.post('/logout', (req: Request, res: Response): Response => {
+    res.clearCookie('Access-Token');
+    return res.sendStatus(200);
 });
 
 export default router;
