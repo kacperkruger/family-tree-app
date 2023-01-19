@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.view {
+    @apply container mx-auto flex flex-grow justify-center items-center;
+}
