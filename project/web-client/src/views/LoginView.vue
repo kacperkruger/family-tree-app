@@ -22,7 +22,7 @@ const logIn = async () => {
     await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/login`, {
       username: username.value,
       password: password.value
-    })
+    }, {withCredentials: true})
     authStore.reverseState()
     await router.push({name: 'home'})
   } catch (_e) {
