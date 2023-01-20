@@ -64,8 +64,8 @@ const logout = () => {
       <p @click="navigate('private chat', true)" :class="`${loginProperties} cursor-pointer text-`">Private Chat</p>
       <p @click="navigate('public-chat', true)" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
       <p @click="navigate('users', true)" :class="`${loginProperties} cursor-pointer`">Users</p>
-      <p v-if="authStore.isAuthenticated" @click="logout" class="px-4 py-2 leading-none border rounded mt-2 lg:mt-0 cursor-pointer">Logout</p>
-      <p v-else @click="login" class="px-4 py-2 leading-none border rounded mt-2 lg:mt-0 cursor-pointer">Login</p>
+      <p v-if="authStore.isAuthenticated" @click="logout" class="px-4 py-2 leading-none border bg-red-500 hover:bg-red-600 text-white rounded mt-2 lg:mt-0 cursor-pointer">Logout</p>
+      <p v-else @click="login" class="px-4 py-2 leading-none border rounded mt-2 bg-blue-500 text-white hover:bg-blue-600 lg:mt-0 cursor-pointer">Login</p>
     </section>
   </nav>
 </template>
