@@ -11,6 +11,7 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@balkangraph/familytree.js": "^1.7.23",
     "axios": "^1.2.3",
     "pinia": "^2.0.28",
     "sass": "^1.57.1",

@@ -9,7 +9,7 @@ const publicChatStore = usePublicChatStore();
 const authStore = useAuthenticationStore();
 
 onMounted(async () => {
-  publicChatStore.getMessages()
+  await publicChatStore.getMessages()
 })
 
 const onSendMessage = (message: string) => {
