@@ -12,7 +12,7 @@ const isLoggedIn = computed(() => {
 <template>
   <div class="view">
     <FamilyTreeComponent v-if="isLoggedIn" />
-    <div v-else class="text-4xl">Welcome to family tree app</div>
+    <div v-else class="text-4xl">Welcome to Family Tree App</div>
   </div>
 </template>
 
