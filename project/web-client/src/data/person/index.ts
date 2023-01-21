@@ -1,4 +1,4 @@
-export interface PersonRequest {
+export interface PersonResponse {
     id: string,
     name: string,
     surname: string,
@@ -17,4 +17,11 @@ export interface Person {
     mid: string,
     fid: string,
     pids: string[]
+}
+
+export interface PersonRequest {
+    name: string,
+    surname?: string,
+    gender?: string,
+    dateOfBirth?: string
 }
