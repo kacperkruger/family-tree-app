@@ -30,15 +30,13 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     const authStore = useAuthenticationStore()
-    if ((to.name !== 'login' && to.name !== 'home' && to.name !== 'register') && !authStore.isAuthenticated) {
-        try {
-            authStore.getLoggedUser();
-            next()
-        } catch (e) {
-            next({ name: 'login' })
-        }
-    }
-    else next()
+    if (to.name === 'home') {
+        await authStore.getLoggedUser(() => next());
+        next()
+    } else if (to.name !== 'login' && to.name !== 'register' && !authStore.isAuthenticated) {
+        await authStore.getLoggedUser(() => next({name: 'login'}));
+        next()
+    } else next()
 })
 
 export default router

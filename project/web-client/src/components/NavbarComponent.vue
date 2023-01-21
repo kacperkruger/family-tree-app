@@ -30,7 +30,7 @@ const navigate = (to: string, auth: boolean) => {
 }
 
 const login = () => {
-  authStore.getLoggedUser()
+  authStore.getLoggedUser(() => router.push({name: 'login'}))
   isMenuOpen.value = false
 }
 
@@ -41,31 +41,38 @@ const logout = () => {
 </script>
 
 <template>
-  <nav :class="`flex lg:items-center p-4 flex-col lg:flex-row ${menuProperties}`">
+  <nav :class="`flex lg:items-center p-4 flex-col lg:flex-row ${menuProperties} bg-white`">
     <section class="flex justify-between items-center">
-      <div @click="navigate('home')" class="flex items-center gap-4 cursor-pointer">
+      <div @click="navigate('home', false)" class="flex items-center gap-4 cursor-pointer">
         <img src="@/assets/logo.svg" alt="logo" width="75" height="75">
         <span class="font-semibold text-xl tracking-tight">Family Tree App</span>
       </div>
       <div class="block lg:hidden">
         <button
             @click="handleMenuClick" class="flex items-center px-3 py-2">
-          <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" class="w-10 h-10 hover:stroke-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
           </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+               stroke="currentColor" class="w-10 h-10 hover:stroke-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
           </svg>
 
         </button>
       </div>
     </section>
-    <section :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center gap-6 flex-grow justify-center`">
+    <section
+        :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center gap-6 flex-grow justify-center`">
       <p @click="navigate('private chat', true)" :class="`${loginProperties} cursor-pointer text-`">Private Chat</p>
       <p @click="navigate('public-chat', true)" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
       <p @click="navigate('users', true)" :class="`${loginProperties} cursor-pointer`">Users</p>
-      <p v-if="authStore.isAuthenticated" @click="logout" class="px-4 py-2 leading-none border bg-red-500 hover:bg-red-600 text-white rounded mt-2 lg:mt-0 cursor-pointer">Logout</p>
-      <p v-else @click="login" class="px-4 py-2 leading-none border rounded mt-2 bg-blue-500 text-white hover:bg-blue-600 lg:mt-0 cursor-pointer">Login</p>
+      <p v-if="authStore.isAuthenticated" @click="logout"
+         class="px-4 py-2 leading-none border bg-red-500 hover:bg-red-600 text-white rounded mt-2 lg:mt-0 cursor-pointer">
+        Logout</p>
+      <p v-else @click="login"
+         class="px-4 py-2 leading-none border rounded mt-2 bg-blue-500 text-white hover:bg-blue-600 lg:mt-0 cursor-pointer">
+        Login</p>
     </section>
   </nav>
 </template>
