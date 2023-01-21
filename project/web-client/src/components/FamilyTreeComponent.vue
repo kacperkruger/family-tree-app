@@ -1,13 +1,16 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import FamilyTree from "@balkangraph/familytree.js";
 import {useFamilyTreeStore} from "@/stores/familyTree";
+import {storeToRefs} from "pinia";
 
 const treeStore = useFamilyTreeStore()
+const {familyTree} = storeToRefs(treeStore)
 const tree = ref('')
+const family = ref<FamilyTree>()
 
 const displayFamilyTree = () => {
-  FamilyTree.templates.myTemplate = Object.assign({}, FamilyTree.templates.tommy);
+  FamilyTree.templates.myTemplate = Object.assign({}, FamilyTree.templates.base);
   FamilyTree.templates.myTemplate.size = [150, 150];
   FamilyTree.templates.myTemplate.node =
       '<circle cx="75" cy="75" r="75" fill="#4D4D4D" stroke-width="1" stroke="#aeaeae"></circle>';
@@ -29,20 +32,27 @@ const displayFamilyTree = () => {
   //   rect: undefined
   // };
 
-  new FamilyTree(tree.value, {
+  family.value = new FamilyTree(tree.value, {
     template: "myTemplate",
+    scaleInitial: FamilyTree.match.boundary,
     enableSearch: false,
     mouseScrool: FamilyTree.action.none,
-    nodes: treeStore.familyTree,
+    nodes: familyTree.value,
     nodeBinding: {
       field_0: "name",
       field_1: "surname",
     },
+    nodeMouseClick: undefined
   });
+
 }
 
 onMounted(async () => {
   await treeStore.getFamilyTree();
+  displayFamilyTree()
+})
+
+watch(familyTree, () => {
   displayFamilyTree()
 })
 

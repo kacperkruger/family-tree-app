@@ -3,6 +3,8 @@ import {defineStore} from 'pinia'
 import type {User} from "@/data/user";
 import axios from "axios";
 import {useRouter} from "vue-router";
+import {usePublicChatStore} from "@/stores/publicChat";
+import {useFamilyTreeStore} from "@/stores/familyTree";
 
 export const useAuthenticationStore = defineStore('authentication', () => {
   const isAuthenticated = ref(false)
@@ -10,6 +12,8 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   const errorMessage = ref('');
 
   const router = useRouter()
+  const publicChatStore = usePublicChatStore()
+  const treeStore = useFamilyTreeStore();
 
   const login = async (username: string, password: string) => {
     if (loggedUser.value !== undefined) return
@@ -35,13 +39,17 @@ export const useAuthenticationStore = defineStore('authentication', () => {
       await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/logout`, {}, {withCredentials: true})
       isAuthenticated.value = false
       loggedUser.value = undefined
+
+      publicChatStore.messages = []
+      treeStore.familyTree = []
+
       await router.push({name: 'home'})
     } catch (e) {
       alert('Internal error')
     }
   }
 
-  const getLoggedUser = async () => {
+  const getLoggedUser = async (errorCb: Function) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/me`, { withCredentials: true })
       loggedUser.value = response.data.user;
@@ -49,7 +57,7 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     } catch (_e) {
       isAuthenticated.value = false
       loggedUser.value = undefined
-      await router.push({name: 'login'})
+      errorCb()
     }
   }
 
