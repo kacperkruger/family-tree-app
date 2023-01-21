@@ -43,9 +43,10 @@ router.get('/users/:userId', async (req: Request, res: Response): Promise<Respon
 router.post('/users/:userId/persons', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
+    if (!data.name) return res.status(400).json({error: 'Name property is required'});
     try {
         const addedPerson = await addPerson(userId, {
-            name: data.name || '',
+            name: data.name,
             surname: data.surname || '',
             gender: data.gender || '',
             dateOfBirth: data.dateOfBirth || null
