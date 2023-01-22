@@ -1,7 +1,6 @@
 import {Record, String} from 'runtypes';
 
-export const MessageResponse = Record({
-    id: String,
+export const MessageRequest = Record({
     userId: String,
     text: String
 });

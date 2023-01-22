@@ -1,16 +1,14 @@
 import express, {Request, Response, Router} from 'express';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 import Message from '../models/Message';
+import {MessageRequest} from '../models/MessageRequest';
 
 const router: Router = express.Router();
 
 router.post('/messages', async (req: Request, res: Response) => {
-    const data = req.body;
+    const messageRequest = MessageRequest.check(req.body);
     try {
-        let createdMessage = await Message.create({
-            user: data.userId,
-            text: data.text
-        });
+        const createdMessage = await Message.create(messageRequest);
         return res.status(201).json({message: createdMessage});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
