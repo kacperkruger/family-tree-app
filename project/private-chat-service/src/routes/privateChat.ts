@@ -11,19 +11,19 @@ const router: Router = express.Router();
 router.get('/:id/users/:userId', async (req: Request, res: Response) => {
     const privateChatId = req.params.id;
     const userId = req.params.userId;
-    let privateChat = await PrivateChatModel.findOne({_id: privateChatId});
+    const privateChat = await PrivateChatModel.findOne({_id: privateChatId});
 
     if (!privateChat) return res.sendStatus(404);
     if (!privateChat.users.includes(userId)) return res.sendStatus(405);
 
-    privateChat = await privateChat.populate('messages');
-    return res.status(200).json({privateChat});
+    const populatedChat = await privateChat.populate('messages');
+    return res.status(200).json({privateChat: populatedChat});
 });
 
 router.post('/', async (req: Request, res: Response) => {
     const privateChatRequest = PrivateChatRequest.check(req.body);
     try {
-        let createdChat = await PrivateChatModel.create(privateChatRequest);
+        const createdChat = await PrivateChatModel.create(privateChatRequest);
         return res.status(201).json({privateChat: createdChat});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
