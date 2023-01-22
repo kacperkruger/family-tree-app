@@ -14,7 +14,6 @@ const router: Router = express.Router();
 
 router.post('/', async (req: Request, res: Response): Promise<Response> => {
     const userId = <string>req.user?._id;
-
     const users = req.body.users;
 
     try {
@@ -22,7 +21,7 @@ router.post('/', async (req: Request, res: Response): Promise<Response> => {
         const populatedChat = await populatePrivateChat(createdPrivateChat);
         return res.status(201).json({privateChat: populatedChat});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });
@@ -34,7 +33,7 @@ router.get('/:chatId', async (req: Request, res: Response): Promise<Response> =>
         const populatedChat = await populatePrivateChat(privateChat);
         return res.json({privateChat: populatedChat});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });
@@ -48,7 +47,7 @@ router.post('/:chatId/users', async (req: Request, res: Response): Promise<Respo
         const populatedChat = await populatePrivateChat(updatedChat);
         return res.json({privateChat: populatedChat});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });
@@ -63,9 +62,8 @@ router.post('/:chatId/messages', async (req: Request, res: Response): Promise<Re
         const populatedChat = await populatePrivateChat(updatedChat);
         return res.json({privateChat: populatedChat});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
-
     }
 });
 
@@ -82,7 +80,7 @@ router.get('/', async (req: Request<{}, {}, {}, { userId: string | string[] | un
         const populatedUsersChats = usersChats.map(async chat => await populatePrivateChat(chat));
         return res.json({privateChats: populatedUsersChats});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });

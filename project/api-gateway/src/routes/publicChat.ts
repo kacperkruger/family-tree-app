@@ -13,7 +13,7 @@ router.get('/', async (req: Request, res: Response): Promise<Response> => {
         const populatedChat = await populatePublicChat(publicChat);
         return res.json({publicChat: populatedChat});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });
@@ -26,7 +26,7 @@ router.post('/messages', async (req: Request, res: Response): Promise<Response> 
         const populatedMessage = await populatePublicChat([addedMessage]);
         return res.json({message: populatedMessage[0]});
     } catch (e) {
-        if (isClientError(e) && e.response?.status) return res.status(e.response.status).json({error: e.response.data.error});
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });

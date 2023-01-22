@@ -10,7 +10,6 @@ router.get('/', async (req: Request, res: Response) => {
         const users = await getUsersDetails([]);
         res.json({users});
     } catch (e) {
-        console.log(e);
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
