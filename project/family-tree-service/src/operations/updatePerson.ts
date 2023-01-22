@@ -1,10 +1,11 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
 import parsePerson from '../utils/parsePerson';
-import {PersonRequest} from '../requests/PersonRequest';
+import {PersonRequest} from '../models/PersonRequest';
 import editPerson from '../queries/editPerson';
+import {Static} from 'runtypes';
 
-const updatePerson = async (personId: string, personRequest: PersonRequest): Promise<Person> => {
+const updatePerson = async (personId: string, personRequest: Static<typeof PersonRequest>): Promise<Static<typeof PersonResponse>> => {
     const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(editPerson, {
@@ -17,7 +18,7 @@ const updatePerson = async (personId: string, personRequest: PersonRequest): Pro
 
     return result.then(queryResult => {
         const records = queryResult.records;
-        if (!records.length) throw new Error('Person not found');
+        if (!records.length) throw new Error('PersonResponse not found');
         return records.map(record => parsePerson(record))[0];
     }).finally(() => session.close());
 };

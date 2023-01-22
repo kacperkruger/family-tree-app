@@ -1,9 +1,10 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
 import parsePerson from '../utils/parsePerson';
 import addPartner from '../queries/addPartner';
+import {Static} from 'runtypes';
 
-const addPartnerRelationship = async (partner1Id: string, partner2Id: string): Promise<Person[]> => {
+const addPartnerRelationship = async (partner1Id: string, partner2Id: string): Promise<Static<typeof PersonResponse>[]> => {
     const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(addPartner, {

@@ -1,4 +1,4 @@
-const deletePerson = 'MATCH (user)-[:OWNS]->(person: Person {id: $personId})\n' +
+const deletePerson = 'MATCH (user)-[:OWNS]->(person: PersonResponse {id: $personId})\n' +
     'DETACH DELETE person';
 
 export default deletePerson;

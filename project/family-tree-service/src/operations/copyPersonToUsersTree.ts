@@ -1,10 +1,11 @@
 import getPerson from './getPerson';
 import addPerson from './addPerson';
 import addChild from './addChild';
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
+import {Static} from 'runtypes';
 
-const copyPersonToUsersTree = async (userId: string, personId: string, nGenerations: number): Promise<Person[]> => {
-    const copiedPersons: Person[] = [];
+const copyPersonToUsersTree = async (userId: string, personId: string, nGenerations: number): Promise<Static<typeof PersonResponse>[]> => {
+    const copiedPersons: Static<typeof PersonResponse>[] = [];
 
     const copyPersonHelper = async (userId: string, personId: string, nGenerations: number, childId: string = ''): Promise<void> => {
         try {

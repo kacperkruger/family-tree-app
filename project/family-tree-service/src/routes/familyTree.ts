@@ -11,6 +11,7 @@ import deleteChildRelationship from '../operations/deleteChildRelationship';
 import addPartnerRelationship from '../operations/addPartnerRelationship';
 import deletePartnerRelationship from '../operations/deletePartnerRelationship';
 import getUsersBySurnames from '../operations/getUsersBySurnames';
+import {PersonRequest} from '../models/PersonRequest';
 
 const router: Router = express.Router();
 
@@ -43,16 +44,13 @@ router.get('/users/:userId', async (req: Request, res: Response): Promise<Respon
 router.post('/users/:userId/persons', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const data = req.body;
-    if (!data.name) return res.status(400).json({error: 'Name property is required'});
+
     try {
-        const addedPerson = await addPerson(userId, {
-            name: data.name,
-            surname: data.surname || '',
-            gender: data.gender || '',
-            dateOfBirth: data.dateOfBirth || null
-        });
+        const personRequest = PersonRequest.check(data);
+        const addedPerson = await addPerson(userId, personRequest);
         return res.status(201).json({person: addedPerson});
     } catch (e) {
+        console.log(e);
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
@@ -62,17 +60,13 @@ router.put('/users/:userId/persons/:personId', async (req: Request, res: Respons
     const userId = req.params.userId;
     const personId = req.params.personId;
     const data = req.body;
-
     try {
+        const personRequest = PersonRequest.check(data);
+
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
         if (!hasAccess) return res.sendStatus(405);
 
-        const updatedPerson = await updatePerson(personId, {
-            name: data.name,
-            surname: data.surname,
-            gender: data.gender,
-            dateOfBirth: data.dateOfBirth
-        });
+        const updatedPerson = await updatePerson(personId, personRequest);
         return res.json({person: updatedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);

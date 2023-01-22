@@ -1,7 +1,8 @@
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
 import {Record} from 'neo4j-driver';
+import {Static} from 'runtypes';
 
-const parsePerson = (record: Record): Person => {
+const parsePerson = (record: Record): Static<typeof PersonResponse> => {
     return {
         id: record.get('id'),
         name: record.get('name'),

@@ -1,9 +1,10 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import findFamilyTreeByUser from '../queries/findFamilyTreeByUser';
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
 import parsePerson from '../utils/parsePerson';
+import {Static} from 'runtypes';
 
-const getFamilyTree = async (userId: string): Promise<Person[]> => {
+const getFamilyTree = async (userId: string): Promise<Static<typeof PersonResponse>[]> => {
     const session = await connectToNeo4jOrGetDriver();
     const result = session.run(findFamilyTreeByUser, {userId});
 

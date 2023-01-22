@@ -1,9 +1,10 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import parsePerson from '../utils/parsePerson';
 import deleteChildFromParent from '../queries/deleteChildFromParent';
-import {Person} from '../models/Person';
+import {PersonResponse} from '../models/PersonResponse';
+import {Static} from 'runtypes';
 
-const deleteChildRelationship = async (parentId: string, childId: string): Promise<Person> => {
+const deleteChildRelationship = async (parentId: string, childId: string): Promise<Static<typeof PersonResponse>> => {
     const session = await connectToNeo4jOrGetDriver();
 
     const result = session.run(deleteChildFromParent, {
