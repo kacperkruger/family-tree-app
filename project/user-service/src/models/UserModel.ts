@@ -15,6 +15,6 @@ const userSchema: Schema = new Schema({
         required: true,
         select: false
     }
-});
+}, {versionKey: false});
 
 export default model('User', userSchema);

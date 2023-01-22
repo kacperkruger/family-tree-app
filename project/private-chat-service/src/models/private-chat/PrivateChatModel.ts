@@ -11,6 +11,6 @@ const chatSchema: Schema = new Schema({
         default: [],
         required: true
     }]
-});
+}, {versionKey: false});
 
 export default model('PrivateChat', chatSchema);

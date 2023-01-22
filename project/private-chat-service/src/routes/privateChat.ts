@@ -81,7 +81,7 @@ router.get('/', async (req: Request, res: Response): Promise<Response> => {
     if (usersId) {
         if (typeof usersId === 'string') usersId = [usersId];
         try {
-            const privateChats = await PrivateChatModel.find({users: {$all: usersId}});
+            const privateChats = await PrivateChatModel.find({users: {$all: usersId}}).populate('messages');
             return res.json({privateChats});
         } catch (e) {
             const errorMessage = parseErrorMessage(e);
@@ -89,7 +89,7 @@ router.get('/', async (req: Request, res: Response): Promise<Response> => {
         }
     }
 
-    const privateChats = await PrivateChatModel.find({});
+    const privateChats = await PrivateChatModel.find({}).populate('messages');
     return res.json({privateChats});
 });
 

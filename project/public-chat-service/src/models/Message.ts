@@ -9,7 +9,7 @@ const messageScheme: Schema = new Schema({
         type: String,
         required: true
     }
-});
+}, {versionKey: false});
 
 
 export default model('Message', messageScheme);
