@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type {PropType} from "vue";
-import type {Message} from "@/data/message";
+import type {MessageRequest} from "@/data/message";
 import {useAuthenticationStore} from "@/stores/authentication";
 
 const authStore = useAuthenticationStore();
 const props = defineProps({
-  message: { type: Object as PropType<Message>, required: true }
+  message: { type: Object as PropType<MessageRequest>, required: true }
 })
 
 const isUserMessage = authStore.loggedUser?._id === props.message.user._id

@@ -45,7 +45,7 @@ import {useFamilyTreeStore} from "@/stores/familyTree";
       <input v-model="surname" type="text" placeholder="Surname" class="border w-full rounded p-2">
       <input v-model="gender" type="text" placeholder="Gender" class="border w-full rounded p-2">
       <input v-model="dateOfBirth" type="date" class="border w-full rounded p-2">
-      <button @click="addPerson" class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end">Add Person</button>
+      <button @click="addPerson" class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end">Add PersonResponse</button>
     </div>
   </div>
   <div class="flex gap-8 w-full justify-end p-2">

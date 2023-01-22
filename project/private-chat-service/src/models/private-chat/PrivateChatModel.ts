@@ -8,6 +8,7 @@ const chatSchema: Schema = new Schema({
     messages: [{
         type: Schema.Types.ObjectId,
         ref: 'Message',
+        default: [],
         required: true
     }]
 });
