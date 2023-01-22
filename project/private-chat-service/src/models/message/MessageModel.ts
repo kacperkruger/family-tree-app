@@ -2,7 +2,7 @@ import {model, Schema} from 'mongoose';
 
 const messageScheme: Schema = new Schema({
     user: {
-        type: Schema.Types.ObjectId,
+        type: String,
         required: true
     },
     text: {
