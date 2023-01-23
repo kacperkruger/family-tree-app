@@ -1,7 +1,7 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import type {User} from "@/data/user";
-import axios from "axios";
+import axios, {isAxiosError} from "axios";
 import {useRouter} from "vue-router";
 import {usePublicChatStore} from "@/stores/publicChat";
 import {useFamilyTreeStore} from "@/stores/familyTree";
@@ -30,7 +30,8 @@ export const useAuthenticationStore = defineStore('authentication', () => {
       await router.push({name: 'home'})
     } catch (e) {
       console.log(e)
-      errorMessage.value = "Invalid username or password"
+      if (isAxiosError((e))) errorMessage.value = e.response?.data.error || "Invalid username or password"
+      else errorMessage.value = "Invalid username or password"
     }
   }
 
@@ -49,11 +50,12 @@ export const useAuthenticationStore = defineStore('authentication', () => {
     }
   }
 
-  const getLoggedUser = async (errorCb: Function) => {
+  const getLoggedUser = async (successCb: Function, errorCb: Function) => {
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/me`, { withCredentials: true })
       loggedUser.value = response.data.user;
       isAuthenticated.value = true
+      successCb()
     } catch (_e) {
       isAuthenticated.value = false
       loggedUser.value = undefined

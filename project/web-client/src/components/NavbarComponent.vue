@@ -30,7 +30,7 @@ const navigate = (to: string, auth: boolean) => {
 }
 
 const login = () => {
-  authStore.getLoggedUser(() => router.push({name: 'login'}))
+  authStore.getLoggedUser(() => true,() => router.push({name: 'login'}))
   isMenuOpen.value = false
 }
 

@@ -14,14 +14,14 @@ export interface Person {
     surname: string,
     gender: string,
     dateOfBirth: string,
-    mid: string,
-    fid: string,
+    mid?: string ,
+    fid?: string,
     pids: string[]
 }
 
 export interface PersonRequest {
     name: string,
-    surname?: string,
-    gender?: string,
-    dateOfBirth?: string
+    surname: string | null,
+    gender: string | null,
+    dateOfBirth: string | null
 }
