@@ -13,7 +13,7 @@ const addPerson = async (userId: string, personRequest: Static<typeof PersonRequ
         userId,
         name: personRequest.name,
         surname: personRequest.surname || '',
-        gender: personRequest.gender || '',
+        gender: personRequest.gender?.toUpperCase() || '',
         dateOfBirth: Neo4jDate.fromStandardDate(new Date(personRequest.dateOfBirth || 0))
     });
 

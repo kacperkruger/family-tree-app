@@ -1,7 +1,7 @@
 const editPerson = 'MATCH (person: Person {id: $personId})\n' +
     'SET person.name = $name\n' +
     'SET person.surname = $surname\n' +
-    'SET person.male = $gender\n' +
+    'SET person.gender = $gender\n' +
     'SET person.dateOfBirth = $dateOfBirth\n' +
     'WITH person\n' +
     'OPTIONAL MATCH (person)-[:CHILD_OF]->(parents: Person)\n' +

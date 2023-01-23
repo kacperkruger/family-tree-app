@@ -12,7 +12,7 @@ const updatePerson = async (personId: string, personRequest: Static<typeof Perso
         personId,
         name: personRequest.name,
         surname: personRequest.surname,
-        gender: personRequest.gender,
+        gender: personRequest.gender.toUpperCase(),
         dateOfBirth: personRequest.dateOfBirth
     });
 

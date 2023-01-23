@@ -59,16 +59,18 @@ router.post('/users/:userId/persons', async (req: Request, res: Response): Promi
 router.put('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
-    const data = req.body;
+    console.log(req.body);
     try {
-        const personRequest = PersonRequest.check(data);
+        const personRequest = PersonRequest.check(req.body);
 
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
         if (!hasAccess) return res.sendStatus(405);
 
         const updatedPerson = await updatePerson(personId, personRequest);
+        console.log(updatedPerson);
         return res.json({person: updatedPerson});
     } catch (e) {
+        console.log(e);
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
