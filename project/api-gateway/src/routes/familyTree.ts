@@ -142,4 +142,15 @@ router.get('/users', async (req: Request<{}, {}, {}, { surname: string | string[
     }
 });
 
+router.get('/users/:userId', async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.params.userId;
+    try {
+        const familyTree = await getFamilyTree(userId);
+        return res.json({familyTree});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
 export default router;

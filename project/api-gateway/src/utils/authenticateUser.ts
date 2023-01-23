@@ -5,6 +5,7 @@ import verifyPassword from './verifyPassword';
 const authenticateUser = async (username: string, password: string, done: Function) => {
     try {
         const userSensitiveData = await getUserSensitiveData(username);
+        if (!userSensitiveData) return done(null, false, {message: 'Incorrect username or password.'});
         const isCorrectPass = await verifyPassword(password, userSensitiveData.password);
         if (!isCorrectPass) return done(null, false, {message: 'Incorrect username or password.'});
         const user = await getUserDetails(userSensitiveData._id);
