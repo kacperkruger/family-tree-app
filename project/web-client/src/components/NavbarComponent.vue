@@ -30,7 +30,7 @@ const navigate = (to: string, auth: boolean) => {
 }
 
 const login = () => {
-  authStore.getLoggedUser(() => true,() => router.push({name: 'login'}))
+  authStore.getLoggedUser(() => true, () => router.push({name: 'login'}))
   isMenuOpen.value = false
 }
 
@@ -41,13 +41,13 @@ const logout = () => {
 </script>
 
 <template>
-  <nav :class="`flex lg:items-center p-4 flex-col lg:flex-row ${menuProperties} bg-white`">
+  <nav :class="`flex lg:items-center justify-between p-4 flex-col lg:flex-row ${menuProperties} bg-white`">
     <section class="flex justify-between items-center">
       <div @click="navigate('home', false)" class="flex items-center gap-4 cursor-pointer">
         <img src="@/assets/logo.svg" alt="logo" width="75" height="75">
         <span class="font-semibold text-xl tracking-tight">Family Tree App</span>
       </div>
-      <div class="block lg:hidden">
+      <div class="lg:hidden">
         <button
             @click="handleMenuClick" class="flex items-center px-3 py-2">
           <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -58,13 +58,12 @@ const logout = () => {
                stroke="currentColor" class="w-10 h-10 hover:stroke-2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
           </svg>
-
         </button>
       </div>
     </section>
     <section
-        :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center gap-6 flex-grow justify-center`">
-      <p @click="navigate('private chat', true)" :class="`${loginProperties} cursor-pointer text-`">Private Chat</p>
+        :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center flex-grow lg:flex-grow-0 gap-6 justify-center`">
+      <p @click="navigate('private-chat', true)" :class="`${loginProperties} cursor-pointer`">Private Chat</p>
       <p @click="navigate('public-chat', true)" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
       <p @click="navigate('users', true)" :class="`${loginProperties} cursor-pointer`">Users</p>
       <p v-if="authStore.isAuthenticated" @click="logout"
