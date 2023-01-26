@@ -8,7 +8,7 @@ const router: Router = express.Router();
 router.post('/messages', async (req: Request, res: Response) => {
     const messageRequest = MessageRequest.check(req.body);
     try {
-        const createdMessage = await Message.create(messageRequest);
+        const createdMessage = await Message.create({...messageRequest, user: messageRequest.userId});
         return res.status(201).json({message: createdMessage});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
