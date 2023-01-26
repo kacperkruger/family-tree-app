@@ -1,4 +1,4 @@
-import {Message} from '@kacperkruger/clients/private-chat';
+import {MessageResponse as Message} from '@kacperkruger/clients/private-chat';
 import {MessageResponse} from '../domain/chat/public/MessageResponse';
 import {getUsersDetails, UserDetails} from '@kacperkruger/clients/user';
 
