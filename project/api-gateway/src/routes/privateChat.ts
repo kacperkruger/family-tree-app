@@ -9,6 +9,7 @@ import {
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 import populatePrivateChat from '../utils/populatePrivateChat';
 import {isClientError} from '@kacperkruger/clients';
+import {getUsersDetails} from '@kacperkruger/clients/user';
 
 const router: Router = express.Router();
 
@@ -58,17 +59,18 @@ router.post('/:chatId/messages', async (req: Request, res: Response): Promise<Re
 
     const userId = <string>req.user?._id;
     try {
-        const updatedChat = await addMessageToPrivateChat(chatId, {userId, text});
-        const populatedChat = await populatePrivateChat(updatedChat);
-        return res.json({privateChat: populatedChat});
+        let message = await addMessageToPrivateChat(chatId, {userId, text});
+        const userDetails = await getUsersDetails([message.user]);
+        return res.json({message: {...message, user: userDetails[0]}});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }
 });
 
-router.get('/', async (req: Request<{}, {}, {}, { userId: string | string[] | undefined }>, res: Response): Promise<Response> => {
+router.get('/', async (req: Request<{}, {}, {}, { userId: string | string[] | undefined, username: string | undefined }>, res: Response): Promise<Response> => {
     let usersId = req.query.userId;
+    const usernameToFind = req.query.username;
     const userId = <string>req.user?._id;
 
     if (usersId === undefined) usersId = [userId];
@@ -77,7 +79,13 @@ router.get('/', async (req: Request<{}, {}, {}, { userId: string | string[] | un
 
     try {
         const usersChats = await getUsersPrivateChats(usersId);
-        const populatedUsersChats = usersChats.map(async chat => await populatePrivateChat(chat));
+        const populatedUsersChats = await Promise.all(usersChats.map(async chat => await populatePrivateChat(chat)));
+        if (usernameToFind) {
+            const filteredChats = populatedUsersChats.filter(chat => chat.users
+                .map(user => user.username)
+                .some(username => username.match(usernameToFind) !== null));
+            return res.json({privateChats: filteredChats});
+        }
         return res.json({privateChats: populatedUsersChats});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
