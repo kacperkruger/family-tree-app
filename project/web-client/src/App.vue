@@ -3,7 +3,7 @@ import {RouterView} from 'vue-router'
 import NavBar from "@/components/NavbarComponent.vue";</script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex flex-col h-screen">
     <NavBar />
     <RouterView />
   </div>

@@ -4,7 +4,6 @@ import {ref} from "vue";
 const emit = defineEmits<{ (e: "sendMessage", message: String): Promise<void> }>()
 const message = ref('')
 const emitSendMessage = () => {
-  console.log(message.value)
   emit("sendMessage", message.value)
   message.value = ''
 }
