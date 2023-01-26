@@ -1,7 +1,7 @@
-import {Message} from './Message';
+import {MessageResponse} from './MessageResponse';
 
 export interface PrivateChat {
     _id: string,
     users: string[],
-    messages: Message[]
+    messages: MessageResponse[]
 }

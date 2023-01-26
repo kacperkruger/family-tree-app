@@ -3,7 +3,7 @@ import getUsersPrivateChats from './getUsersPrivateChats';
 import addUserToPrivateChat from './addUserToPrivateChat';
 import addPrivateChat from './addPrivateChat';
 import addMessageToPrivateChat from './addMessageToPrivateChat';
-import {Message} from './domain/Message';
+import {MessageResponse} from './domain/MessageResponse';
 import {PrivateChat} from './domain/PrivateChat';
 
 export {
@@ -12,6 +12,6 @@ export {
     addUserToPrivateChat,
     addPrivateChat,
     addMessageToPrivateChat,
-    Message,
+    MessageResponse,
     PrivateChat
 };
