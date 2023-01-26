@@ -21,9 +21,14 @@ const router = createRouter({
             component: () => import('../views/RegisterView.vue')
         },
         {
-            path: '/public-chat',
+            path: '/chat/public',
             name: 'public-chat',
             component: () => import('../views/PublicChatView.vue')
+        },
+        {
+            path: '/chat/private',
+            name: 'private-chat',
+            component: () => import('../views/PrivateChatView.vue')
         }
     ]
 })
