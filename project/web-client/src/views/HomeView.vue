@@ -13,7 +13,7 @@ provide('userId', userId)
 </script>
 
 <template>
-  <div class="view">
+  <div class="view items-center">
     <FamilyTreeView v-if="isAuthenticated" :read-only="false"/>
     <div v-else class="text-4xl">Welcome to Family Tree App</div>
   </div>

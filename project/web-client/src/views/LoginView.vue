@@ -26,7 +26,7 @@ const login = () => {
 </script>
 
 <template>
-  <div class="view">
+  <div class="view flex-col items-center">
     <div class="flex flex-col gap-3">
       <input v-model.trim="username" placeholder="Login" class="border rounded p-1" type="text" id="username"/>
       <input v-model.trim="password" placeholder="Password" class="border rounded p-1" type="password" id="password"/>

@@ -31,7 +31,7 @@ const register = async () => {
 </script>
 
 <template>
-  <div class="view">
+  <div class="view flex-col">
     <div class="flex flex-col gap-2 w-min">
       <input type="text" v-model="username" placeholder="Username" class="border rounded p-1" />
       <input type="email" v-model="email" placeholder="E-mail" class="border rounded p-1" />

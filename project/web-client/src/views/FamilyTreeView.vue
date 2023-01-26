@@ -82,7 +82,7 @@ const selectPerson = (personId: string | number | undefined): void => {
 </script>
 
 <template>
-  <div class="view">
+  <div class="view flex-col">
     <SideMenuComponent :menu-status="isOpenAddPerson" @closeMenu="isOpenAddPerson = false">
       <div class="flex flex-col gap-2 h-1/2 justify-end">
         <input v-model="name" type="text" placeholder="Name*" class="border w-full rounded p-2">
