@@ -30,8 +30,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
             familyTree.value = response.data.familyTree.map(personResponse => parsePersonResponse(personResponse))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)
@@ -44,8 +43,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
             return response.data.familyTree.map(personResponse => parsePersonResponse(personResponse))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
                 return []
             }
@@ -59,8 +57,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
             familyTree.value = [...familyTree.value, parsePersonResponse(response.data.person)]
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)
@@ -84,8 +81,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
                     }))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)
@@ -100,8 +96,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
             familyTree.value = familyTree.value.map(person => person.id === id ? parsePersonResponse(response.data.person) : person)
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)

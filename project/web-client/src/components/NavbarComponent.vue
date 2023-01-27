@@ -37,6 +37,7 @@ const login = () => {
 const logout = () => {
   authStore.logout()
   isMenuOpen.value = false
+  router.push({name: 'home'})
 }
 </script>
 

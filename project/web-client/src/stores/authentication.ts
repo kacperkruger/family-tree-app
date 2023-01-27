@@ -5,6 +5,8 @@ import axios, {isAxiosError} from "axios";
 import {useRouter} from "vue-router";
 import {usePublicChatStore} from "@/stores/publicChat";
 import {useFamilyTreeStore} from "@/stores/familyTree";
+import {usePrivateChatStore} from "@/stores/privateChat";
+import {useUsersStore} from "@/stores/users";
 
 export const useAuthenticationStore = defineStore('authentication', () => {
   const isAuthenticated = ref(false)
@@ -14,6 +16,8 @@ export const useAuthenticationStore = defineStore('authentication', () => {
   const router = useRouter()
   const publicChatStore = usePublicChatStore()
   const treeStore = useFamilyTreeStore();
+  const privateChatStore = usePrivateChatStore()
+  const usersStore = useUsersStore()
 
   const login = async (username: string, password: string) => {
     if (loggedUser.value !== undefined) return
@@ -43,8 +47,9 @@ export const useAuthenticationStore = defineStore('authentication', () => {
 
       publicChatStore.messages = []
       treeStore.familyTree = []
-
-      await router.push({name: 'home'})
+      privateChatStore.privateChats = []
+      privateChatStore.fetchedPrivateChats = new Map()
+      usersStore.users = []
     } catch (e) {
       alert('Internal error')
     }

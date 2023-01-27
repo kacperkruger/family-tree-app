@@ -17,8 +17,7 @@ export const usePublicChatStore = defineStore('publicChat', () => {
             messages.value.push(response.data.message)
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)
@@ -32,8 +31,7 @@ export const usePublicChatStore = defineStore('publicChat', () => {
             messages.value = response.data.publicChat
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
-                authStore.isAuthenticated = false
-                authStore.loggedUser = undefined
+                authStore.logout()
                 await router.push({name: 'login'})
             }
             console.log(e)
