@@ -24,8 +24,7 @@ export const usePrivateChatStore = defineStore('privateChat', () => {
       privateChats.value = response.data.privateChats
     } catch (e) {
       if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.isAuthenticated = false
-        authStore.loggedUser = undefined
+        authStore.logout()
         await router.push({name: 'login'})
       }
       console.log(e)
@@ -40,8 +39,7 @@ export const usePrivateChatStore = defineStore('privateChat', () => {
       fetchedPrivateChats.value.set(chatId, response.data.privateChat.messages)
     } catch (e) {
       if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.isAuthenticated = false
-        authStore.loggedUser = undefined
+        authStore.logout()
         await router.push({name: 'login'})
       }
       console.log(e)
@@ -57,13 +55,28 @@ export const usePrivateChatStore = defineStore('privateChat', () => {
       fetchedPrivateChats.value.set(chatId, [...fetchedPrivateChats.value.get(chatId) || [], response.data.message])
     } catch (e) {
       if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.isAuthenticated = false
-        authStore.loggedUser = undefined
+        authStore.logout()
         await router.push({name: 'login'})
       }
       console.log(e)
     }
   }
 
-  return { privateChats, fetchedPrivateChats, getPrivateChats, getPrivateChatMessages, sendMessage }
+  const create = async (usersToAdd: string[]) => {
+    if (!loggedUser.value) return
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private/`,
+          {users: usersToAdd},
+          { withCredentials: true })
+      privateChats.value.push(response.data.privateChat)
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 401) {
+        authStore.logout()
+        await router.push({name: 'login'})
+      }
+      console.log(e)
+    }
+  }
+
+  return { privateChats, fetchedPrivateChats, getPrivateChats, getPrivateChatMessages, sendMessage, create }
 })
