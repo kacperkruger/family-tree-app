@@ -29,6 +29,16 @@ const router = createRouter({
             path: '/chat/private',
             name: 'private-chat',
             component: () => import('../views/PrivateChatView.vue')
+        },
+        {
+            path: '/users',
+            name: 'users',
+            component: () => import('../views/UserListView.vue')
+        },
+        {
+            path: '/users/:username',
+            name: 'user',
+            component: () => import('../views/UserView.vue')
         }
     ]
 })
