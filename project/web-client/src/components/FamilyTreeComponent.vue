@@ -5,13 +5,16 @@ import {useAuthenticationStore} from "@/stores/authentication";
 import {useFamilyTreeStore} from "@/stores/familyTree";
 import {storeToRefs} from "pinia";
 
+const props = defineProps({
+  userId: { type: String, required: true }
+})
+
 const authStore = useAuthenticationStore()
 const { loggedUser } = storeToRefs(authStore)
 const treeStore = useFamilyTreeStore()
 const { familyTree } = storeToRefs(treeStore)
 
 const tree = ref('')
-const userId = inject<string>('userId')
 
 const emit = defineEmits<{
   (e: 'openPersonDetailsMenu'): void
@@ -47,11 +50,11 @@ const displayFamilyTree = async () => {
     nodeMouseClick: undefined
   });
 
-  if (userId === loggedUser.value?._id) {
+  if (props.userId === loggedUser.value?._id) {
     await treeStore.getFamilyTree();
     family.load(familyTree.value)
-  } else if (userId) {
-    const nodes = await treeStore.getUsersFamilyTree(userId)
+  } else if (props.userId) {
+    const nodes = await treeStore.getUsersFamilyTree(props.userId)
     family.load(nodes)
   } else {
     family.load([])
@@ -66,7 +69,7 @@ onMounted( () => {
   displayFamilyTree()
 })
 
-if (userId === loggedUser.value?._id) {
+if (props.userId === loggedUser.value?._id) {
   watch(familyTree, () => {
     displayFamilyTree()
   })

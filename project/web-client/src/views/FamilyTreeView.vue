@@ -20,6 +20,7 @@ const dateOfBirth = ref<Date | undefined>(undefined)
 
 defineProps({
   readOnly: { type: Boolean, required: true },
+  userId: { type: String, required: true }
 })
 
 const openAddPersonMenu = () => {
@@ -138,6 +139,6 @@ const selectPerson = (personId: string | number | undefined): void => {
       </div>
     </SideMenuComponent>
     <FamilyTreeButtons v-if="!readOnly" @openAddPersonMenu="openAddPersonMenu" />
-    <FamilyTreeComponent @openPersonDetailsMenu="openPersonDetailsMenu" @selectPerson="selectPerson" />
+    <FamilyTreeComponent :userId="userId" @openPersonDetailsMenu="openPersonDetailsMenu" @selectPerson="selectPerson" />
   </div>
 </template>

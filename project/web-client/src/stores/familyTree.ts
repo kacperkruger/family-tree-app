@@ -26,7 +26,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
     const getFamilyTree = async () => {
         if (familyTree.value.length !== 0) return
         try {
-            const response = await axios.get<{familyTree: PersonResponse[] }>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/`, { withCredentials: true })
+            const response = await axios.get<{ familyTree: PersonResponse[] }>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/`, {withCredentials: true})
             familyTree.value = response.data.familyTree.map(personResponse => parsePersonResponse(personResponse))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
@@ -39,21 +39,20 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
 
     const getUsersFamilyTree = async (userId: string): Promise<Person[]> => {
         try {
-            const response = await axios.get<{familyTree: PersonResponse[] }>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/users/${userId}`, { withCredentials: true })
+            const response = await axios.get<{ familyTree: PersonResponse[] }>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/users/${userId}`, {withCredentials: true})
             return response.data.familyTree.map(personResponse => parsePersonResponse(personResponse))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
                 authStore.logout()
                 await router.push({name: 'login'})
                 return []
-            }
-            else throw e
+            } else throw e
         }
     }
 
     const addPerson = async (person: PersonRequest) => {
         try {
-            const response = await axios.post<{person: PersonResponse}>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/`, person, { withCredentials: true })
+            const response = await axios.post<{ person: PersonResponse }>(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/`, person, {withCredentials: true})
             familyTree.value = [...familyTree.value, parsePersonResponse(response.data.person)]
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
@@ -70,15 +69,15 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
 
     const deletePerson = async (id: string | number | undefined) => {
         try {
-            await axios.delete(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/${id}`, { withCredentials: true })
+            await axios.delete(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/${id}`, {withCredentials: true})
             familyTree.value = familyTree.value
                 .filter(person => person.id !== id)
                 .map(person => ({
-                        ...person,
-                        fid: person.fid === id ? undefined : person.fid,
-                        mid: person.mid === id ? undefined : person.mid,
-                        pids: person.pids.filter(pid => pid !== id)
-                    }))
+                    ...person,
+                    fid: person.fid === id ? undefined : person.fid,
+                    mid: person.mid === id ? undefined : person.mid,
+                    pids: person.pids.filter(pid => pid !== id)
+                }))
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
                 authStore.logout()
@@ -90,9 +89,7 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
 
     const editPerson = async (id: string | number | undefined, personRequest: PersonRequest) => {
         try {
-            console.log(personRequest.gender)
-            const response = await axios.put(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/${id}`, personRequest, { withCredentials: true })
-            console.log(response.data.person)
+            const response = await axios.put(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/${id}`, personRequest, {withCredentials: true})
             familyTree.value = familyTree.value.map(person => person.id === id ? parsePersonResponse(response.data.person) : person)
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
@@ -103,5 +100,27 @@ export const useFamilyTreeStore = defineStore('familyTree', () => {
         }
     }
 
-    return { familyTree, getFamilyTree, addPerson, getPersonDetailsFromTree, deletePerson, editPerson, getUsersFamilyTree }
+    const copyPerson = async (id: string, nGenerations: number) => {
+        try {
+            const response = await axios.put(`${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/${id}?n=${nGenerations}`, {withCredentials: true})
+            familyTree.value = familyTree.value.map(person => person.id === id ? parsePersonResponse(response.data.person) : person)
+        } catch (e) {
+            if (isAxiosError(e) && e.response?.status === 401) {
+                authStore.logout()
+                await router.push({name: 'login'})
+            }
+            console.log(e)
+        }
+    }
+
+    return {
+        familyTree,
+        getFamilyTree,
+        addPerson,
+        getPersonDetailsFromTree,
+        deletePerson,
+        editPerson,
+        getUsersFamilyTree,
+        copyPerson
+    }
 })
