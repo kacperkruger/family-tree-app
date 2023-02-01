@@ -9,7 +9,8 @@ import {
     deletePerson,
     editPerson,
     getFamilyTree,
-    getUsersBySurnames
+    getUsersBySurnames,
+    getUsersBySurnamesWithDateOfBirth
 } from '@kacperkruger/clients/family-tree';
 import {isClientError} from '@kacperkruger/clients';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
@@ -128,10 +129,18 @@ router.post('/persons/:personId', async (req: Request, res: Response): Promise<R
     }
 });
 
-router.get('/users', async (req: Request<{}, {}, {}, { surname: string | string[] }>, res: Response): Promise<Response> => {
+router.get('/users', async (req: Request<{}, {}, {}, { surname: string | string[], dateOfBirth: string | undefined }>, res: Response): Promise<Response> => {
     let surnames = req.query.surname;
+    const dateOfBirth = req.query.dateOfBirth;
+
     if (typeof surnames === 'string') surnames = [surnames];
     try {
+        if (dateOfBirth) {
+            const usersToFetch = await getUsersBySurnamesWithDateOfBirth(surnames, dateOfBirth);
+            if (usersToFetch.length === 0) return res.status(404).json({error: 'Persons not found'});
+            const users = await getUsersDetails(usersToFetch);
+            return res.json({users});
+        }
         const usersToFetch = await getUsersBySurnames(surnames);
         if (usersToFetch.length === 0) return res.status(404).json({error: 'Persons not found'});
         const users = await getUsersDetails(usersToFetch);
