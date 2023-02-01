@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {ref} from "vue";
 
-const emit = defineEmits<{ (e: "sendMessage", message: String): Promise<void> }>()
+const emit = defineEmits<{ (e: "sendMessage", message: string): Promise<void> }>()
 const message = ref('')
 const emitSendMessage = () => {
   emit("sendMessage", message.value)

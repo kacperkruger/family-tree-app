@@ -5,11 +5,18 @@ import {useAuthenticationStore} from "@/stores/authentication";
 import router from "@/router";
 import type {PrivateChat} from "@/data/private-chat";
 import type {Message} from "@/data/message";
+import {useSocketStore} from "@/stores/socket";
 
 export const usePrivateChatStore = defineStore('privateChat', () => {
     const authStore = useAuthenticationStore();
     const privateChats = ref<PrivateChat[]>([]);
+    const socketStore = useSocketStore();
+
     const fetchedPrivateChats = ref<Map<string, Message[]>>(new Map());
+
+    const addMessage = (chatId: string, message: Message) => {
+        fetchedPrivateChats.value.set(chatId, [...fetchedPrivateChats.value.get(chatId) || [], message])
+    }
 
     const getPrivateChats = async (username?: string) => {
         if (!authStore.isAuthenticated || !authStore.loggedUser) return
@@ -47,7 +54,9 @@ export const usePrivateChatStore = defineStore('privateChat', () => {
             const response = await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private/${chatId}/messages`,
                 {text: message, user: authStore.loggedUser._id},
                 {withCredentials: true})
-            fetchedPrivateChats.value.set(chatId, [...fetchedPrivateChats.value.get(chatId) || [], response.data.message])
+            const messageResponse = response.data.message
+            addMessage(chatId, messageResponse)
+            socketStore.emitMessage(chatId, messageResponse)
         } catch (e) {
             if (isAxiosError(e) && e.response?.status === 401) {
                 authStore.logout()
@@ -73,5 +82,5 @@ export const usePrivateChatStore = defineStore('privateChat', () => {
         }
     }
 
-    return {privateChats, fetchedPrivateChats, getPrivateChats, getPrivateChatMessages, sendMessage, create}
+    return {privateChats, fetchedPrivateChats, getPrivateChats, getPrivateChatMessages, sendMessage, create, addMessage}
 })

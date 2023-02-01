@@ -9,7 +9,7 @@ const { isAuthenticated, loggedUser } = storeToRefs(authStore)
 
 <template>
   <div class="view items-center">
-    <FamilyTreeView v-if="isAuthenticated" :read-only="false" :user-id="loggedUser?._id"/>
+    <FamilyTreeView v-if="isAuthenticated && loggedUser" :read-only="false" :user-id="loggedUser._id"/>
     <div v-else class="text-4xl">Welcome to Family Tree App</div>
   </div>
 </template>

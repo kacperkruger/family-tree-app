@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {inject, onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch} from "vue";
 import FamilyTree from "@balkangraph/familytree.js";
 import {useAuthenticationStore} from "@/stores/authentication";
 import {useFamilyTreeStore} from "@/stores/familyTree";

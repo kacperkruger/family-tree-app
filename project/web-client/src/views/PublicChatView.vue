@@ -4,12 +4,15 @@ import MessageComponent from "@/components/MessageComponent.vue"
 import {onMounted} from "vue";
 import {usePublicChatStore} from "@/stores/publicChat";
 import {useAuthenticationStore} from "@/stores/authentication";
+import {useSocketStore} from "@/stores/socket";
 
 const publicChatStore = usePublicChatStore();
 const authStore = useAuthenticationStore();
+const socketStore = useSocketStore()
 
 onMounted(async () => {
   await publicChatStore.getMessages()
+  socketStore.connect('public', publicChatStore.addMessage)
 })
 
 const onSendMessage = (message: string) => {
