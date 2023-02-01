@@ -12,14 +12,21 @@ import addPartnerRelationship from '../operations/addPartnerRelationship';
 import deletePartnerRelationship from '../operations/deletePartnerRelationship';
 import getUsersBySurnames from '../operations/getUsersBySurnames';
 import {PersonRequest} from '../models/PersonRequest';
+import getUsersBySurnamesWithDateOfBirth from '../operations/getUsersBySurnamesWithDateOfBirth';
 
 const router: Router = express.Router();
 
-router.get('/users', async (req: Request<{}, {}, {}, { surname: string[] | string | undefined }>, res: Response): Promise<Response> => {
+router.get('/users', async (req: Request<{}, {}, {}, { surname: string[] | string | undefined, dateOfBirth: string | undefined }>, res: Response): Promise<Response> => {
     let surnames = req.query.surname;
+    const dateOfBirth = req.query.dateOfBirth;
+
     if (surnames) {
         if (typeof surnames === 'string') surnames = [surnames];
         try {
+            if (dateOfBirth) {
+                const userIds = await getUsersBySurnamesWithDateOfBirth(surnames, dateOfBirth);
+                return res.json({userIds});
+            }
             const userIds = await getUsersBySurnames(surnames);
             return res.json({userIds});
         } catch (e) {
