@@ -41,6 +41,17 @@ router.get('/username/:username/sensitive-data', async (req: Request, res: Respo
     }
 });
 
+router.get('/username/:username/details', async (req: Request, res: Response): Promise<Response> => {
+    const username = req.params.username;
+    try {
+        const user = await User.findOne({username}).select('--password');
+        return res.json({user});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        return res.status(400).json({error: errorMessage});
+    }
+});
+
 router.get('/', async (req: Request, res: Response): Promise<Response> => {
     let usersId = req.query.id;
     if (usersId) {
