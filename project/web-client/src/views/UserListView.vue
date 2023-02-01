@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import {useUsersStore} from "@/stores/users";
-import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+import { useUsersStore } from "@/stores/users";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 const usersStore = useUsersStore();
 const router = useRouter();
 
-const searchSurnames = ref('')
-const searchDateOfBirth = ref<string | undefined>(undefined)
+const searchSurnames = ref("");
+const searchDateOfBirth = ref<string | undefined>(undefined);
 
 const searchUsersByPersonSurname = async () => {
-  await usersStore.getUsersByPersonsSurnames(searchSurnames.value.split(' '), searchDateOfBirth.value)
-}
+  await usersStore.getUsersByPersonsSurnames(searchSurnames.value.split(" "), searchDateOfBirth.value);
+};
 
 onMounted(async () => {
   await usersStore.getAllUsers();
-})
+});
 </script>
 
 <template>
@@ -26,8 +26,10 @@ onMounted(async () => {
         <div class="flex items-center border-b-2">
           <input v-model.trim="searchSurnames" type="text" class="p-2" placeholder="Search in users...">
           <button class="p-2" @click="searchUsersByPersonSurname">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:stroke-2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                 stroke="currentColor" class="w-6 h-6 hover:stroke-2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
           </button>
         </div>
@@ -36,7 +38,10 @@ onMounted(async () => {
     </div>
     <div class="text-lg flex flex-grow justify-center overflow-auto w-full">
       <div class="flex flex-col w-max gap-1">
-        <button @click="router.push(`/users/${user?.username}`)" class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in usersStore.users" :key="index">{{ user?.username }}</button>
+        <button @click="router.push(`/users/${user?.username}`)"
+                class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in usersStore.users"
+                :key="index">{{ user?.username }}
+        </button>
       </div>
     </div>
   </div>

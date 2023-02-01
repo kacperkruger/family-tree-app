@@ -17,9 +17,11 @@ export const usePublicChatStore = defineStore("publicChat", () => {
 
   const sendMessage = async (message: string): Promise<void> => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/public/messages`,
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/public/messages`,
         { text: message },
-        { withCredentials: true });
+        { withCredentials: true }
+      );
       const messageResponse = response.data.message;
       addMessage(messageResponse);
       socketServer.emitMessage("public", messageResponse);
@@ -35,7 +37,10 @@ export const usePublicChatStore = defineStore("publicChat", () => {
   const getMessages = async () => {
     if (messages.value.length) return;
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/public`, { withCredentials: true });
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/public`,
+        { withCredentials: true }
+      );
       messages.value = response.data.publicChat;
     } catch (e) {
       if (isAxiosError(e) && e.response?.status === 401) {

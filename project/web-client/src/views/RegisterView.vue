@@ -1,33 +1,33 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import { computed, ref } from "vue";
 import LoginButton from "@/components/LoginButton.vue";
-import RegisterButton from "@/components/RegisterButton.vue"
-import {useRouter} from "vue-router";
-import axios, {isAxiosError} from "axios";
+import RegisterButton from "@/components/RegisterButton.vue";
+import { useRouter } from "vue-router";
+import axios, { isAxiosError } from "axios";
 
-const router = useRouter()
+const router = useRouter();
 
-const username = ref('')
-const email = ref('')
-const password = ref('')
+const username = ref("");
+const email = ref("");
+const password = ref("");
 
-const errorMessage = ref('')
+const errorMessage = ref("");
 const errorText = computed(() => {
-  return ''
-})
+  return "";
+});
 const register = async () => {
   try {
     await axios.post(`${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/register`, {
       username: username.value,
       email: email.value,
       password: password.value
-    })
-    await router.push({name: 'login'})
+    });
+    await router.push({ name: "login" });
   } catch (e) {
-    if (isAxiosError(e)) errorMessage.value = e.response?.data.error
-    else errorMessage.value = 'Unknown error. Try again later.'
+    if (isAxiosError(e)) errorMessage.value = e.response?.data.error;
+    else errorMessage.value = "Unknown error. Try again later.";
   }
-}
+};
 </script>
 
 <template>

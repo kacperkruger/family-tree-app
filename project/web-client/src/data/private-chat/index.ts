@@ -1,6 +1,6 @@
-import type {User} from "@/data/user";
+import type { User } from "@/data/user";
 
 export interface PrivateChat {
-    _id: string,
-    users: User[],
+  _id: string;
+  users: User[];
 }

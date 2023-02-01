@@ -1,44 +1,44 @@
 <script setup lang="ts">
-import {computed, ref} from "vue";
-import {useRouter} from "vue-router";
-import {useAuthenticationStore} from "@/stores/authentication";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthenticationStore } from "@/stores/authentication";
 
 const router = useRouter();
 const authStore = useAuthenticationStore();
 
 const loginProperties = computed(() => {
-  return authStore.isAuthenticated ? 'cursor-pointer' : 'cursor-not-allowed text-gray-500'
-})
+  return authStore.isAuthenticated ? "cursor-pointer" : "cursor-not-allowed text-gray-500";
+});
 
 const isMenuOpen = ref(false);
 const menuStatus = computed(() => {
-  return isMenuOpen.value ? 'bg-white' : 'hidden'
-})
+  return isMenuOpen.value ? "bg-white" : "hidden";
+});
 
 const menuProperties = computed(() => {
-  return isMenuOpen.value ? 'lg:static z-50 absolute lg:h-auto h-screen lg:w-auto w-full lg:overflow-visible' : ''
-})
+  return isMenuOpen.value ? "lg:static z-50 absolute lg:h-auto h-screen lg:w-auto w-full lg:overflow-visible" : "";
+});
 
 const handleMenuClick = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
+  isMenuOpen.value = !isMenuOpen.value;
+};
 
 const navigate = (to: string, auth: boolean) => {
-  if (auth && !authStore.isAuthenticated) return
-  router.push({name: to})
-  isMenuOpen.value = false
-}
+  if (auth && !authStore.isAuthenticated) return;
+  router.push({ name: to });
+  isMenuOpen.value = false;
+};
 
 const login = () => {
-  authStore.getLoggedUser(() => true, () => router.push({name: 'login'}))
-  isMenuOpen.value = false
-}
+  authStore.getLoggedUser(() => true, () => router.push({ name: "login" }));
+  isMenuOpen.value = false;
+};
 
 const logout = () => {
-  authStore.logout()
-  isMenuOpen.value = false
-  router.push({name: 'home'})
-}
+  authStore.logout();
+  isMenuOpen.value = false;
+  router.push({ name: "home" });
+};
 </script>
 
 <template>
@@ -50,20 +50,20 @@ const logout = () => {
       </div>
       <div class="lg:hidden">
         <button
-            @click="handleMenuClick" class="flex items-center px-3 py-2">
+          @click="handleMenuClick" class="flex items-center px-3 py-2">
           <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                stroke="currentColor" class="w-10 h-10 hover:stroke-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
           <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                stroke="currentColor" class="w-10 h-10 hover:stroke-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
     </section>
     <section
-        :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center flex-grow lg:flex-grow-0 gap-6 justify-center`">
+      :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center flex-grow lg:flex-grow-0 gap-6 justify-center`">
       <p @click="navigate('private-chat', true)" :class="`${loginProperties} cursor-pointer`">Private Chat</p>
       <p @click="navigate('public-chat', true)" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
       <p @click="navigate('users', true)" :class="`${loginProperties} cursor-pointer`">Users</p>

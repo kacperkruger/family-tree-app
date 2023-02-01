@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import MessageFormComponent from "@/components/MessageFormComponent.vue"
-import MessageComponent from "@/components/MessageComponent.vue"
-import {onMounted} from "vue";
-import {usePublicChatStore} from "@/stores/publicChat";
-import {useAuthenticationStore} from "@/stores/authentication";
-import {useSocketStore} from "@/stores/socket";
+import MessageFormComponent from "@/components/MessageFormComponent.vue";
+import MessageComponent from "@/components/MessageComponent.vue";
+import { onMounted } from "vue";
+import { usePublicChatStore } from "@/stores/publicChat";
+import { useAuthenticationStore } from "@/stores/authentication";
+import { useSocketStore } from "@/stores/socket";
 
 const publicChatStore = usePublicChatStore();
 const authStore = useAuthenticationStore();
-const socketStore = useSocketStore()
+const socketStore = useSocketStore();
 
 onMounted(async () => {
-  await publicChatStore.getMessages()
-  socketStore.connect('public', publicChatStore.addMessage)
-})
+  await publicChatStore.getMessages();
+  socketStore.connect("public", publicChatStore.addMessage);
+});
 
 const onSendMessage = (message: string) => {
-  if (!authStore.loggedUser) return
-  publicChatStore.sendMessage(message)
-}
+  if (!authStore.loggedUser) return;
+  publicChatStore.sendMessage(message);
+};
 </script>
 
 <template>
