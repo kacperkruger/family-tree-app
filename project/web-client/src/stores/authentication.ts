@@ -81,6 +81,7 @@ export const useAuthenticationStore = defineStore("authentication", () => {
       );
       loggedUser.value = response.data.user;
       isAuthenticated.value = true;
+      treeStore.getFamilyTree();
       successCb();
     } catch (_e) {
       isAuthenticated.value = false;
