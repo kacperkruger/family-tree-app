@@ -75,6 +75,7 @@ const emitSelectPerson = (id: string | number | undefined) => {
 
 onMounted(() => {
   displayFamilyTree();
+  console.log(familyTree.value);
 });
 
 if (props.userId === loggedUser.value?._id) {

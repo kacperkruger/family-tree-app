@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import { useAuthenticationStore } from "@/stores/authentication";
+import { useFamilyTreeStore } from "@/stores/familyTree";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +46,8 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthenticationStore();
+  const treeStore = useFamilyTreeStore();
+
   if (to.name === "home") {
     await authStore.getLoggedUser(
       () => next(),
@@ -56,7 +59,10 @@ router.beforeEach(async (to, from, next) => {
     !authStore.isAuthenticated
   ) {
     await authStore.getLoggedUser(
-      () => next(),
+      () => {
+        next();
+        treeStore.getFamilyTree();
+      },
       () => next({ name: "login" })
     );
   } else next();

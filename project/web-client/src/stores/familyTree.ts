@@ -20,6 +20,7 @@ export const useFamilyTreeStore = defineStore("familyTree", () => {
       pids: personResponse.partners,
       fid: personResponse.parents[0],
       mid: personResponse.parents[1],
+      parents: personResponse.parents,
     };
   };
 
@@ -158,6 +159,112 @@ export const useFamilyTreeStore = defineStore("familyTree", () => {
     }
   };
 
+  const addParentRelationship = async (parentId: string, childId: string) => {
+    try {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_API_HOST_URL
+        }/api/v1/family-trees/relationships/parents/${parentId}/children/${childId}`,
+        {},
+        { withCredentials: true }
+      );
+      console.log(response.data.person);
+      familyTree.value = familyTree.value.map((person) =>
+        person.id === childId
+          ? parsePersonResponse(response.data.person)
+          : person
+      );
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 401) {
+        authStore.logout();
+        await router.push({ name: "login" });
+      }
+      console.log(e);
+    }
+  };
+
+  const deleteParentRelationship = async (
+    parentId: string,
+    childId: string
+  ) => {
+    try {
+      const response = await axios.delete(
+        `${
+          import.meta.env.VITE_API_HOST_URL
+        }/api/v1/family-trees/relationships/parents/${parentId}/children/${childId}`,
+        { withCredentials: true }
+      );
+      familyTree.value = familyTree.value.map((person) =>
+        person.id === childId
+          ? parsePersonResponse(response.data.person)
+          : person
+      );
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 401) {
+        authStore.logout();
+        await router.push({ name: "login" });
+      }
+      console.log(e);
+    }
+  };
+
+  const addPartnerRelationship = async (
+    partner1Id: string,
+    partner2Id: string
+  ) => {
+    try {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_API_HOST_URL
+        }/api/v1/family-trees/relationships/partners/${partner1Id}/partners/${partner2Id}`,
+        {},
+        { withCredentials: true }
+      );
+      familyTree.value = [
+        ...familyTree.value.filter(
+          (person) => person.id !== partner1Id && person.id !== partner2Id
+        ),
+        ...response.data.persons.map((person: PersonResponse) =>
+          parsePersonResponse(person)
+        ),
+      ];
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 401) {
+        authStore.logout();
+        await router.push({ name: "login" });
+      }
+      console.log(e);
+    }
+  };
+
+  const deletePartnerRelationship = async (
+    partner1Id: string,
+    partner2Id: string
+  ) => {
+    try {
+      const response = await axios.delete(
+        `${
+          import.meta.env.VITE_API_HOST_URL
+        }/api/v1/family-trees/relationships/partners/${partner1Id}/partners/${partner2Id}`,
+        { withCredentials: true }
+      );
+      familyTree.value = [
+        ...familyTree.value.filter(
+          (person) => person.id !== partner1Id && person.id !== partner2Id
+        ),
+        ...response.data.persons.map((person: PersonResponse) =>
+          parsePersonResponse(person)
+        ),
+      ];
+    } catch (e) {
+      if (isAxiosError(e) && e.response?.status === 401) {
+        authStore.logout();
+        await router.push({ name: "login" });
+      }
+      console.log(e);
+    }
+  };
+
   return {
     familyTree,
     getFamilyTree,
@@ -166,5 +273,9 @@ export const useFamilyTreeStore = defineStore("familyTree", () => {
     editPerson,
     getUsersFamilyTree,
     copyPerson,
+    addParentRelationship,
+    deleteParentRelationship,
+    addPartnerRelationship,
+    deletePartnerRelationship,
   };
 });

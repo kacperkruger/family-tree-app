@@ -17,6 +17,7 @@ export interface Person {
   mid?: string;
   fid?: string;
   pids: string[];
+  parents: string[];
 }
 
 export interface PersonRequest {
