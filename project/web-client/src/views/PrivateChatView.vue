@@ -71,6 +71,11 @@ const createChat = async () => {
   await privateChatStore.create([...usersToAdd.value].map(user => user._id));
   isOpenAddChat.value = false;
 };
+
+const addUser = () => {
+  usersToAdd.value.add(JSON.parse(userToAdd.value));
+  userToAdd.value = undefined;
+};
 </script>
 
 <template>
@@ -93,9 +98,12 @@ const createChat = async () => {
       </div>
       <ul class="flex flex-col gap-1 overflow-auto">
         <li v-if="isOpenAddChat" class="flex flex-col gap-4 border p-4 rounded">
-          <select v-model="userToAdd" @change="usersToAdd.add(userToAdd)"
-                  class="w-max border rounded bg-transparent px-4 py-2">
-            <option v-for="(user, index) in userStore.users" :value="user" :key="index">{{ user.username }}</option>
+          <select v-model="userToAdd" @change="addUser"
+                  class="border rounded px-4 py-2" name="test" id="test">
+            <option :value="undefined" disabled selected="selected">Select user to add</option>
+            <option v-for="(user, index) in userStore.users.filter(u => ![...usersToAdd].some(uu => uu?._id === u._id))"
+                    :value="JSON.stringify(user)" :key="index">{{ user.username }}
+            </option>
           </select>
           <div class="flex gap-1 flex-wrap">
             <button @click="usersToAdd.delete(user)" class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center"
