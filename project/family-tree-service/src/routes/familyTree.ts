@@ -4,19 +4,19 @@ import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
 import updatePerson from '../operations/updatePerson';
-import removePerson from '../operations/removePerson';
+import deletePerson from '../operations/deletePerson';
 import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPerson';
-import addParentRelationship from '../operations/addParentRelationship';
 import deleteChildRelationship from '../operations/deleteChildRelationship';
 import addPartnerRelationship from '../operations/addPartnerRelationship';
 import deletePartnerRelationship from '../operations/deletePartnerRelationship';
 import getUsersBySurnames from '../operations/getUsersBySurnames';
 import {PersonRequest} from '../models/PersonRequest';
 import getUsersBySurnamesWithDateOfBirth from '../operations/getUsersBySurnamesWithDateOfBirth';
-import checkIfPersonAndChildsParentArePartners from '../operations/checkIfPersonAndChildsParentArePartners';
+import checkIfPersonAndChildParentArePartners from '../operations/checkIfPersonAndChildParentArePartners';
 import checkIfHaveKids from '../operations/checkIfHaveKids';
 import deleteOptionalChildRelationship from '../operations/deleteOptionalChildRelationship';
 import addOptionalChildRelationship from '../operations/addOptionalChildRelationship';
+import addChildRelationship from '../operations/addChildRelationship';
 
 const router: Router = express.Router();
 
@@ -93,7 +93,7 @@ router.delete('/users/:userId/persons/:personId', async (req: Request, res: Resp
     try {
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
         if (!hasAccess) return res.sendStatus(405);
-        await removePerson(personId);
+        await deletePerson(personId);
         return res.sendStatus(204);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
@@ -113,10 +113,10 @@ router.post('/users/:userId/relationships/parents/:parentId/children/:childId', 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
         if (!hasAccessToParent) return res.sendStatus(405);
 
-        const ifParentsArePartners = await checkIfPersonAndChildsParentArePartners(childId, parentId);
+        const ifParentsArePartners = await checkIfPersonAndChildParentArePartners(childId, parentId);
         if (!ifParentsArePartners) return res.status(400).json({error: 'Parents are not partners'});
 
-        const editedPerson = await addParentRelationship(childId, parentId);
+        const editedPerson = await addChildRelationship(childId, parentId);
         return res.json({person: editedPerson});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);

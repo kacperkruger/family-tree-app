@@ -1,6 +1,6 @@
 import getPerson from './getPerson';
 import addPerson from './addPerson';
-import addChild from './addChild';
+import addChildRelationship from './addChildRelationship';
 import {PersonResponse} from '../models/PersonResponse';
 import {Static} from 'runtypes';
 
@@ -17,7 +17,7 @@ const copyPersonToUsersTree = async (userId: string, personId: string, nGenerati
                 dateOfBirth: person.dateOfBirth
             });
             if (childId !== '') {
-                const child = await addChild(userId, addedPerson.id, childId);
+                const child = await addChildRelationship(userId, addedPerson.id, childId);
                 copiedPersons.push(child);
             }
             if (nGenerations === 0) {

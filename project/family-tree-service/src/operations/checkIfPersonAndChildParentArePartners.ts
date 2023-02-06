@@ -1,10 +1,10 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
-import ifPersonAndChildsParentArePartners from '../queries/ifPersonAndChildsParentArePartners';
+import ifPersonAndChildParentArePartners from '../queries/ifPersonAndChildParentArePartners';
 
-const checkIfPersonAndChildsParentArePartners = async (childId: string, personId: string): Promise<boolean> => {
+const checkIfPersonAndChildParentArePartners = async (childId: string, personId: string): Promise<boolean> => {
     const session = await connectToNeo4jOrGetDriver();
 
-    const result = session.run(ifPersonAndChildsParentArePartners, {
+    const result = session.run(ifPersonAndChildParentArePartners, {
         childId,
         personId
     });
@@ -15,4 +15,4 @@ const checkIfPersonAndChildsParentArePartners = async (childId: string, personId
     }).finally(() => session.close());
 };
 
-export default checkIfPersonAndChildsParentArePartners;
+export default checkIfPersonAndChildParentArePartners;

@@ -1,10 +1,10 @@
-import deletePerson from '../queries/deletePerson';
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
+import removePerson from '../queries/removePerson';
 
-const removePerson = async (personId: string): Promise<void> => {
+const deletePerson = async (personId: string): Promise<void> => {
     const session = await connectToNeo4jOrGetDriver();
 
-    const result = session.run(deletePerson, {
+    const result = session.run(removePerson, {
         personId
     });
 
@@ -14,4 +14,4 @@ const removePerson = async (personId: string): Promise<void> => {
     }).finally(() => session.close);
 };
 
-export default removePerson;
+export default deletePerson;

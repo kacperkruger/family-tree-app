@@ -1,6 +1,6 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import parsePerson from '../utils/parsePerson';
-import deleteChildFromParent from '../queries/deleteChildFromParent';
+import deleteChildFromParent from '../queries/removeChildRelationship';
 import {PersonResponse} from '../models/PersonResponse';
 import {Static} from 'runtypes';
 

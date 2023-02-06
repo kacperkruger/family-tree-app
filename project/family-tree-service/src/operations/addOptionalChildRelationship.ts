@@ -1,13 +1,13 @@
 import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
-import addParentToPerson from '../queries/addParentToPerson';
 import {PersonResponse} from '../models/PersonResponse';
 import parsePerson from '../utils/parsePerson';
 import {Static} from 'runtypes';
+import createOptionalChildRelationship from '../queries/createOptionalChildRelationship';
 
 const addOptionalChildRelationship = async (childId: string, parentId: string): Promise<Static<typeof PersonResponse>> => {
     const session = await connectToNeo4jOrGetDriver();
 
-    const result = session.run(addParentToPerson, {
+    const result = session.run(createOptionalChildRelationship, {
         childId,
         parentId
     });
