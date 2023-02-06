@@ -7,6 +7,7 @@ import { usePublicChatStore } from "@/stores/publicChat";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import { usePrivateChatStore } from "@/stores/privateChat";
 import { useUsersStore } from "@/stores/users";
+import { useLoadingStore } from "@/stores/loading";
 
 export const useAuthenticationStore = defineStore("authentication", () => {
   const isAuthenticated = ref(false);
@@ -27,8 +28,12 @@ export const useAuthenticationStore = defineStore("authentication", () => {
   const usersStore = useUsersStore();
   const { users } = storeToRefs(usersStore);
 
+  const loadingStore = useLoadingStore();
+  const { isLoading } = storeToRefs(loadingStore);
+
   const login = async (username: string, password: string) => {
     if (loggedUser.value !== undefined) return;
+    isLoading.value = true;
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/login`,
@@ -38,13 +43,14 @@ export const useAuthenticationStore = defineStore("authentication", () => {
         },
         { withCredentials: true }
       );
-
+      isLoading.value = false;
       loggedUser.value = response.data.user;
       isAuthenticated.value = true;
       errorMessage.value = "";
 
       await router.push({ name: "home" });
     } catch (e) {
+      isLoading.value = false;
       console.log(e);
       if (isAxiosError(e))
         errorMessage.value =
@@ -54,12 +60,15 @@ export const useAuthenticationStore = defineStore("authentication", () => {
   };
 
   const logout = async () => {
+    isLoading.value = true;
     try {
       await axios.post(
         `${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/logout`,
         {},
         { withCredentials: true }
       );
+      isLoading.value = false;
+
       isAuthenticated.value = false;
       loggedUser.value = undefined;
 
@@ -69,20 +78,24 @@ export const useAuthenticationStore = defineStore("authentication", () => {
       fetchedPrivateChats.value = new Map();
       users.value = [];
     } catch (e) {
+      isLoading.value = false;
       alert("Internal error");
     }
   };
 
   const getLoggedUser = async (successCb: Function, errorCb: Function) => {
+    isLoading.value = true;
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication/me`,
         { withCredentials: true }
       );
+      isLoading.value = false;
       loggedUser.value = response.data.user;
       isAuthenticated.value = true;
       successCb();
     } catch (_e) {
+      isLoading.value = false;
       isAuthenticated.value = false;
       loggedUser.value = undefined;
       errorCb();
