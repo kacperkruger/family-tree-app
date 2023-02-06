@@ -24,6 +24,10 @@ const copyPersonToUsersTree = async (userId: string, personId: string, nGenerati
                 copiedPersons.push(addedPerson);
                 return;
             }
+            if (!person.parents.length) {
+                copiedPersons.push(addedPerson);
+                return;
+            }
             for (const parent of person.parents) {
                 await copyPersonHelper(userId, parent, nGenerations - 1, addedPerson.id);
             }

@@ -10,7 +10,7 @@ const checkIfUserHasAccessToPerson = async (userId: string, personId: string): P
     });
 
     return result.then(queryResult => {
-        if (!queryResult.records.length) throw new Error('PersonResponse not found');
+        if (!queryResult.records.length) throw new Error('Person not found');
         return queryResult.records[0].get('hasAccess');
     }).finally(() => session.close());
 };

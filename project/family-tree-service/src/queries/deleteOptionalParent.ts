@@ -1,6 +1,6 @@
 const deleteChildFromParent = 'MATCH (child: Person {id: $childId})\n' +
     'MATCH (parent: Person {id: $parentId})\n' +
-    'MATCH (child)-[r:CHILD_OF]->(parent)\n' +
+    'MATCH (child)-[r:OPTIONAL_CHILD_OF]->(parent)\n' +
     'DELETE r \n' +
     'WITH child\n' +
     'OPTIONAL MATCH (child)-[:CHILD_OF]->(parents: Person)\n' +

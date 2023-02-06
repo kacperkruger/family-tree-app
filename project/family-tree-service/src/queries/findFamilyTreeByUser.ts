@@ -6,6 +6,7 @@ const findFamilyTreeByUser =
     'OPTIONAL MATCH (persons)-[:CHILD_OF]->(parents: Person)\n' +
     'WITH parents, persons\n' +
     'OPTIONAL MATCH (partners: Person)-[:PARTNERS]-(persons)\n' +
-    'RETURN persons.id AS id, persons.name AS name, persons.surname AS surname, persons.gender as gender, date(persons.dateOfBirth) AS dateOfBirth, collect(parents.id) AS parents, collect(partners.id) AS partners';
+    'OPTIONAL MATCH (editedPerson)-[:OPTIONAL_CHILD_OF]-(optionalParents: Person)\n' +
+    'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners, collect(optionalParents.id) as optionalParents';
 
 export default findFamilyTreeByUser;

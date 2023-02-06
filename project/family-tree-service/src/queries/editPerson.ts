@@ -6,6 +6,7 @@ const editPerson = 'MATCH (person: Person {id: $personId})\n' +
     'WITH person\n' +
     'OPTIONAL MATCH (person)-[:CHILD_OF]->(parents: Person)\n' +
     'OPTIONAL MATCH (person)-[:PARTNERS]-(partners: Person)\n' +
-    'RETURN person.id as id, person.name as name, person.surname AS surname, person.gender as gender, date(person.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners';
+    'OPTIONAL MATCH (editedPerson)-[:OPTIONAL_CHILD_OF]-(optionalParents: Person)\n' +
+    'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners, collect(optionalParents.id) as optionalParents';
 
 export default editPerson;

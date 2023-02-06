@@ -10,7 +10,8 @@ const parsePerson = (record: Record): Static<typeof PersonResponse> => {
         gender: record.get('gender'),
         dateOfBirth: new Date(record.get('dateOfBirth')).toISOString().split('T')[0],
         parents: record.get('parents'),
-        partners: record.get('partners')
+        partners: record.get('partners'),
+        optionalParents: record.get('optionalParents')
     };
 };
 

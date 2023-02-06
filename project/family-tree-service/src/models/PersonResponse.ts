@@ -1,4 +1,4 @@
-import {Array, InstanceOf, Record, String} from 'runtypes';
+import {Array, Record, String} from 'runtypes';
 import {Gender} from './Gender';
 
 
@@ -11,5 +11,6 @@ export const PersonResponse = Record({
     gender: Gender,
     dateOfBirth: String,
     parents: Array(PersonId),
-    partners: Array(PersonId)
+    partners: Array(PersonId),
+    optionalParents: Array(PersonId)
 });
