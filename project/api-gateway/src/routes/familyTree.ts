@@ -15,6 +15,8 @@ import {
 import {isClientError} from '@kacperkruger/clients';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 import {getUsersDetails} from '@kacperkruger/clients/user';
+import addOptionalParentRelationship from '@kacperkruger/clients/dist/family-tree/addOptionalParentRelationship';
+import deleteOptionalParentRelationship from '@kacperkruger/clients/dist/family-tree/deleteOptionalParentRelationship';
 
 const router = express.Router();
 
@@ -110,6 +112,32 @@ router.delete('/relationships/partners/:partner1Id/partners/:partner2Id', async 
     try {
         const editedPersons = await deletePartnership(userId, partner1Id, partner2Id);
         return res.json({persons: editedPersons});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
+router.post('/relationships/optional/parents/:parentId/children/:childId/', async (req: Request, res: Response) => {
+    const userId = <string>req.user?._id;
+    const parentId = req.params.parentId;
+    const childId = req.params.childId;
+    try {
+        const editedPerson = await addOptionalParentRelationship(userId, childId, parentId);
+        return res.json({person: editedPerson});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
+router.delete('/relationships/optional/parents/:parentId/children/:childId', async (req: Request, res: Response): Promise<Response> => {
+    const userId = <string>req.user?._id;
+    const parentId = req.params.parentId;
+    const childId = req.params.childId;
+    try {
+        const editedPerson = await deleteOptionalParentRelationship(userId, childId, parentId);
+        return res.json({person: editedPerson});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
