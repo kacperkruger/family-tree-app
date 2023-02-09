@@ -1,21 +1,87 @@
 import { ref } from "vue";
-import { defineStore, storeToRefs } from "pinia";
-import axios, { isAxiosError } from "axios";
+import { defineStore } from "pinia";
+import axios from "axios";
 import { useAuthenticationStore } from "@/stores/authentication";
-import router from "@/router";
 import type { PrivateChat } from "@/data/private-chat";
 import type { Message } from "@/data/message";
 import { useSocketStore } from "@/stores/socket";
-import { useLoadingStore } from "@/stores/loading";
+import handleRequestError from "@/utils/handleRequestError";
 
 export const usePrivateChatStore = defineStore("privateChat", () => {
   const authStore = useAuthenticationStore();
-  const privateChats = ref<PrivateChat[]>([]);
   const socketStore = useSocketStore();
-  const loadingStore = useLoadingStore();
-  const { isLoading } = storeToRefs(loadingStore);
+  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private`;
 
+  const privateChats = ref<PrivateChat[]>([]);
+  const isLoadingMessages = ref(false);
+  const isLoadingRooms = ref(false);
   const fetchedPrivateChats = ref<Map<string, Message[]>>(new Map());
+
+  const getPrivateChats = async (username?: string) => {
+    isLoadingRooms.value = true;
+    try {
+      const response = await axios.get(
+        `${url}?userId=${authStore.loggedUser?._id}${
+          username ? "&username=" + username : ""
+        }`,
+        { withCredentials: true }
+      );
+      privateChats.value = response.data.privateChats;
+      isLoadingRooms.value = false;
+    } catch (e) {
+      isLoadingRooms.value = false;
+      await handleRequestError(e);
+    }
+  };
+
+  const getPrivateChatMessages = async (chatId: string) => {
+    if (fetchedPrivateChats.value.get(chatId)) return;
+    isLoadingMessages.value = true;
+    try {
+      const response = await axios.get(`${url}/${chatId}`, {
+        withCredentials: true,
+      });
+      fetchedPrivateChats.value.set(chatId, response.data.privateChat.messages);
+      isLoadingMessages.value = false;
+    } catch (e) {
+      isLoadingMessages.value = false;
+      await handleRequestError(e);
+    }
+  };
+
+  const sendMessage = async (chatId: string, message: string) => {
+    isLoadingMessages.value = false;
+    try {
+      const response = await axios.post(
+        `${url}/${chatId}/messages`,
+        { text: message, user: authStore.loggedUser?._id },
+        { withCredentials: true }
+      );
+      const messageResponse = response.data.message;
+      addMessage(chatId, messageResponse);
+      socketStore.emitMessage(chatId, messageResponse);
+      isLoadingMessages.value = false;
+    } catch (e) {
+      isLoadingMessages.value = false;
+      await handleRequestError(e);
+    }
+  };
+
+  const create = async (usersToAdd: string[]) => {
+    isLoadingRooms.value = true;
+    try {
+      const response = await axios.post(
+        url,
+        { users: usersToAdd },
+        { withCredentials: true }
+      );
+      privateChats.value.push(response.data.privateChat);
+      isLoadingRooms.value = false;
+    } catch (e) {
+      isLoadingRooms.value = false;
+      await handleRequestError(e);
+    }
+  };
 
   const addMessage = (chatId: string, message: Message) => {
     fetchedPrivateChats.value.set(chatId, [
@@ -24,102 +90,23 @@ export const usePrivateChatStore = defineStore("privateChat", () => {
     ]);
   };
 
-  const getPrivateChats = async (username?: string) => {
-    if (!authStore.isAuthenticated || !authStore.loggedUser) return;
-    isLoading.value = true;
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private?userId=${
-          authStore.loggedUser._id
-        }${username ? "&username=" + username : ""}`,
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      privateChats.value = response.data.privateChats;
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
-  };
-
-  const getPrivateChatMessages = async (chatId: string) => {
-    if (!authStore.isAuthenticated || !authStore.loggedUser) return;
-    if (fetchedPrivateChats.value.get(chatId)) return;
-    isLoading.value = true;
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private/${chatId}`,
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      fetchedPrivateChats.value.set(chatId, response.data.privateChat.messages);
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
-  };
-
-  const sendMessage = async (chatId: string, message: string) => {
-    if (!authStore.isAuthenticated || !authStore.loggedUser) return;
-    isLoading.value = false;
-    try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/chats/private/${chatId}/messages`,
-        { text: message, user: authStore.loggedUser._id },
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      const messageResponse = response.data.message;
-      addMessage(chatId, messageResponse);
-      socketStore.emitMessage(chatId, messageResponse);
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
-  };
-
-  const create = async (usersToAdd: string[]) => {
-    if (!authStore.isAuthenticated || !authStore.loggedUser) return;
-    isLoading.value = true;
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private/`,
-        { users: usersToAdd },
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      privateChats.value.push(response.data.privateChat);
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
+  const clear = () => {
+    privateChats.value = [];
+    isLoadingRooms.value = false;
+    isLoadingMessages.value = false;
+    fetchedPrivateChats.value = new Map();
   };
 
   return {
     privateChats,
     fetchedPrivateChats,
+    isLoadingRooms,
+    isLoadingMessages,
     getPrivateChats,
     getPrivateChatMessages,
     sendMessage,
     create,
     addMessage,
+    clear,
   };
 });

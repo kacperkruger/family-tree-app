@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import SideMenuComponent from "@/components/SideMenuComponent.vue";
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import { storeToRefs } from "pinia";
 
 defineProps({
   "isOpenAddPerson": { type: Boolean, required: true }
@@ -12,6 +14,9 @@ const emits = defineEmits<{
 }>();
 
 const familyTreeStore = useFamilyTreeStore();
+const { isLoading, addErrorMessage } = storeToRefs(familyTreeStore);
+const nameElement = ref<HTMLElement>();
+
 const name = ref("");
 const surname = ref("");
 const gender = ref("");
@@ -26,6 +31,8 @@ const addPerson = async () => {
   };
 
   await familyTreeStore.addPerson(personRequest);
+
+  if (addErrorMessage) return;
   emits("setIsOpenAddPerson", false);
 
   name.value = "";
@@ -33,13 +40,18 @@ const addPerson = async () => {
   gender.value = "";
   dateOfBirth.value = undefined;
 };
+
+onMounted(() => nameElement.value?.focus());
 </script>
 
 <template>
   <SideMenuComponent :menu-status="isOpenAddPerson" @closeMenu="emits('setIsOpenAddPerson', false)">
-    <div class="flex flex-col gap-2 h-full justify-center">
-      <input v-model="name" type="text" placeholder="Name*" class="border w-full rounded p-2">
-      <input v-model="surname" type="text" placeholder="Surname" class="border w-full rounded p-2">
+    <LoadingComponent v-show="isLoading" />
+    <div v-show="!isLoading" class="flex flex-col gap-2 h-full justify-center">
+      <input v-model="name" @keydown.enter="addPerson" type="text" ref="nameElement" placeholder="Name*"
+             class="border w-full rounded p-2">
+      <input v-model="surname" @keydown.enter="addPerson" type="text" placeholder="Surname"
+             class="border w-full rounded p-2">
       <input v-model="gender" type="text" placeholder="Gender" class="border w-full rounded p-2">
       <input v-model="dateOfBirth" type="date" class="border w-full rounded p-2">
       <button @click="addPerson"

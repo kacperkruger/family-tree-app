@@ -4,12 +4,14 @@ import { useFamilyTreeStore } from "@/stores/familyTree";
 import type { PropType } from "vue";
 import { ref } from "vue";
 import type { Person } from "@/data/person";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   isOpenPersonDetails: { type: Boolean, required: true },
   selectedPerson: { type: Object as PropType<Person | undefined>, required: true },
   parents: { type: Object as PropType<Set<Person | undefined>>, required: true },
   partners: { type: Object as PropType<Set<Person | undefined>>, required: true },
+  optionalParents: { type: Object as PropType<Set<Person | undefined>>, required: true },
   readOnly: { type: Boolean, required: true }
 });
 
@@ -20,17 +22,21 @@ const emits = defineEmits<{
 }>();
 
 const familyTreeStore = useFamilyTreeStore();
+const { detailsErrorMessage } = storeToRefs(familyTreeStore);
 const nGenerations = ref(0);
 
-const deletePerson = () => {
-  familyTreeStore.deletePerson(props.selectedPerson?.id);
+const deletePerson = async () => {
+  await familyTreeStore.deletePerson(props.selectedPerson?.id);
+  if (detailsErrorMessage) return;
+
   emits("setSelectedPerson", undefined);
   emits("setIsOpenPersonDetails", false);
 };
 
-const copyPerson = () => {
-  familyTreeStore.copyPerson(props.selectedPerson?.id, nGenerations.value);
+const copyPerson = async () => {
+  await familyTreeStore.copyPerson(props.selectedPerson?.id, nGenerations.value);
   nGenerations.value = 0;
+  if (detailsErrorMessage) return;
   emits("setSelectedPerson", undefined);
   emits("setIsOpenPersonDetails", false);
 };
@@ -73,6 +79,13 @@ const copyPerson = () => {
           <p v-else>{{ partner.name }},</p>
         </div>
       </div>
+      <div class="flex gap-2">
+        <p>Optional parents:</p>
+        <div v-for="(optionalParent, index) in optionalParents" :key="index">
+          <p v-if="optionalParent.surname">{{ optionalParent.name }} {{ optionalParent.surname }},</p>
+          <p v-else>{{ optionalParent.name }},</p>
+        </div>
+      </div>
       <div class="flex gap-1 w-full justify-end">
         <div class="flex gap-1 p-2 border-yellow-500 text-white rounded text-sm bg-yellow-500 hover:bg-yellow-600">
           <button @click="copyPerson"
@@ -89,7 +102,9 @@ const copyPerson = () => {
             <option value="4">4</option>
           </select>
         </div>
-
+        <p class="text-red-600">
+          {{ detailsErrorMessage }}
+        </p>
         <button v-if="!readOnly" @click="emits('openEditPersonMenu')"
                 class="p-2 border-green-500 text-white rounded text-sm bg-green-500 hover:bg-green-600">Edit
         </button>

@@ -1,153 +1,108 @@
-import { defineStore, storeToRefs } from "pinia";
-import { ref } from "vue";
-import type { Person, PersonRequest, PersonResponse } from "@/data/person";
-import axios, { isAxiosError } from "axios";
-import { useAuthenticationStore } from "@/stores/authentication";
-import { useRouter } from "vue-router";
-import { useLoadingStore } from "@/stores/loading";
+import { defineStore } from "pinia";
+import { type Ref, ref, toRaw } from "vue";
+import type {
+  Person,
+  PersonEditRequest,
+  PersonRequest,
+  PersonResponse,
+} from "@/data/person";
+import axios from "axios";
+import parsePersonResponse from "@/utils/parsePersonResponse";
+import handleRequestError from "@/utils/handleRequestError";
+import parseErrorMessage from "@/utils/parseErrorMessage";
 
 export const useFamilyTreeStore = defineStore("familyTree", () => {
-  const authStore = useAuthenticationStore();
-  const router = useRouter();
-  const familyTree = ref<Person[]>([]);
-
-  const loadingStore = useLoadingStore();
-  const { isLoading } = storeToRefs(loadingStore);
-
-  const parsePersonResponse = (personResponse: PersonResponse): Person => {
-    return {
-      id: personResponse.id,
-      name: personResponse.name,
-      surname: personResponse.surname,
-      dateOfBirth: personResponse.dateOfBirth,
-      gender: personResponse.gender.toLowerCase(),
-      pids: personResponse.partners,
-      fid: personResponse.parents[0],
-      mid: personResponse.parents[1],
-      parents: personResponse.parents,
-    };
-  };
+  const familyTree = ref([]) as Ref<Person[]>;
+  const isLoading = ref(false);
+  const addErrorMessage = ref("");
+  const editErrorMessage = ref("");
+  const detailsErrorMessage = ref("");
+  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees`;
 
   const getFamilyTree = async () => {
     if (familyTree.value.length !== 0) return;
     isLoading.value = true;
     try {
-      const response = await axios.get<{ familyTree: PersonResponse[] }>(
-        `${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(url, { withCredentials: true });
       isLoading.value = false;
-      familyTree.value = response.data.familyTree.map((personResponse) =>
-        parsePersonResponse(personResponse)
+      familyTree.value = response.data.familyTree.map(
+        (personResponse: PersonResponse) => parsePersonResponse(personResponse)
       );
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
+      await handleRequestError(e);
     }
   };
 
   const getUsersFamilyTree = async (userId: string): Promise<Person[]> => {
     isLoading.value = true;
     try {
-      const response = await axios.get<{ familyTree: PersonResponse[] }>(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/users/${userId}`,
-        { withCredentials: true }
-      );
+      const response = await axios.get(`${url}/users/${userId}`, {
+        withCredentials: true,
+      });
       isLoading.value = false;
-      return response.data.familyTree.map((personResponse) =>
+      return response.data.familyTree.map((personResponse: PersonResponse) =>
         parsePersonResponse(personResponse)
       );
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-        return [];
-      } else throw e;
+      await handleRequestError(e);
+      return [];
     }
   };
 
   const addPerson = async (person: PersonRequest) => {
     isLoading.value = true;
     try {
-      const response = await axios.post<{ person: PersonResponse }>(
-        `${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees/persons/`,
-        person,
-        { withCredentials: true }
-      );
+      const response = await axios.post(`${url}/persons`, person, {
+        withCredentials: true,
+      });
       isLoading.value = false;
-      familyTree.value = [
-        ...familyTree.value,
-        parsePersonResponse(response.data.person),
-      ];
+      pushPerson(response.data.person);
+      detailsErrorMessage.value = "";
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
+      await handleRequestError(e);
+      addErrorMessage.value = parseErrorMessage(e);
     }
   };
 
   const deletePerson = async (id: string | number | undefined) => {
     isLoading.value = true;
     try {
-      await axios.delete(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/persons/${id}`,
-        { withCredentials: true }
-      );
+      await axios.delete(`${url}/persons/${id}`, { withCredentials: true });
       isLoading.value = false;
-      familyTree.value = familyTree.value
-        .filter((person) => person.id !== id)
-        .map((person) => ({
-          ...person,
-          fid: person.fid === id ? undefined : person.fid,
-          mid: person.mid === id ? undefined : person.mid,
-          pids: person.pids.filter((pid) => pid !== id),
-        }));
+      removePerson(id);
+      detailsErrorMessage.value = "";
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
+      await handleRequestError(e);
+      detailsErrorMessage.value = parseErrorMessage(e);
     }
   };
 
   const editPerson = async (
     id: string | number | undefined,
-    personRequest: PersonRequest
+    personEditRequest: PersonEditRequest
   ) => {
     isLoading.value = true;
     try {
       const response = await axios.put(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/persons/${id}`,
-        personRequest,
-        { withCredentials: true }
+        `${url}/persons/${id}`,
+        personEditRequest,
+        {
+          withCredentials: true,
+        }
       );
+      response.data.persons.forEach((person: PersonResponse) => {
+        replacePerson(person);
+      });
       isLoading.value = false;
-      familyTree.value = familyTree.value.map((person) =>
-        person.id === id ? parsePersonResponse(response.data.person) : person
-      );
+      editErrorMessage.value = "";
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
+      await handleRequestError(e);
+      editErrorMessage.value = parseErrorMessage(e);
     }
   };
 
@@ -158,157 +113,66 @@ export const useFamilyTreeStore = defineStore("familyTree", () => {
     isLoading.value = true;
     try {
       const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/persons/${id}?n=${nGenerations}`,
+        `${url}/persons/${id}?n=${nGenerations}`,
         {},
         { withCredentials: true }
       );
+      response.data.persons.forEach((person: PersonResponse) =>
+        pushPerson(person)
+      );
       isLoading.value = false;
-      familyTree.value = [
-        ...familyTree.value,
-        ...response.data.persons.map((person: PersonResponse) =>
-          parsePersonResponse(person)
-        ),
-      ];
+      detailsErrorMessage.value = "";
     } catch (e) {
       isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
+      await handleRequestError(e);
+      detailsErrorMessage.value = parseErrorMessage(e);
     }
   };
 
-  const addParentRelationship = async (parentId: string, childId: string) => {
-    isLoading.value = true;
-    try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/relationships/parents/${parentId}/children/${childId}`,
-        {},
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      familyTree.value = familyTree.value.map((person) =>
-        person.id === childId
-          ? parsePersonResponse(response.data.person)
-          : person
-      );
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
+  const clear = () => {
+    familyTree.value = [];
+    isLoading.value = false;
   };
 
-  const deleteParentRelationship = async (
-    parentId: string,
-    childId: string
-  ) => {
-    try {
-      isLoading.value = true;
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/relationships/parents/${parentId}/children/${childId}`,
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      familyTree.value = familyTree.value.map((person) =>
-        person.id === childId
-          ? parsePersonResponse(response.data.person)
-          : person
-      );
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
+  const pushPerson = (person: PersonResponse) => {
+    familyTree.value.push(parsePersonResponse(person));
   };
 
-  const addPartnerRelationship = async (
-    partner1Id: string,
-    partner2Id: string
-  ) => {
-    isLoading.value = true;
-    try {
-      const response = await axios.post(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/relationships/partners/${partner1Id}/partners/${partner2Id}`,
-        {},
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      familyTree.value = [
-        ...familyTree.value.filter(
-          (person) => person.id !== partner1Id && person.id !== partner2Id
+  const removePerson = (personId: string | number | undefined) => {
+    familyTree.value = familyTree.value
+      .filter((person) => person.id !== personId)
+      .map((person) => ({
+        ...person,
+        fid: person.fid === personId ? undefined : person.fid,
+        mid: person.mid === personId ? undefined : person.mid,
+        pids: person.pids.filter((pid) => pid !== personId),
+        parents: person.parents.filter((pid) => pid !== personId),
+        optionalParents: person.optionalParents.filter(
+          (pid) => pid !== personId
         ),
-        ...response.data.persons.map((person: PersonResponse) =>
-          parsePersonResponse(person)
-        ),
-      ];
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
+      }));
   };
 
-  const deletePartnerRelationship = async (
-    partner1Id: string,
-    partner2Id: string
-  ) => {
-    isLoading.value = true;
-    try {
-      const response = await axios.delete(
-        `${
-          import.meta.env.VITE_API_HOST_URL
-        }/api/v1/family-trees/relationships/partners/${partner1Id}/partners/${partner2Id}`,
-        { withCredentials: true }
-      );
-      isLoading.value = false;
-      familyTree.value = [
-        ...familyTree.value.filter(
-          (person) => person.id !== partner1Id && person.id !== partner2Id
-        ),
-        ...response.data.persons.map((person: PersonResponse) =>
-          parsePersonResponse(person)
-        ),
-      ];
-    } catch (e) {
-      isLoading.value = false;
-      if (isAxiosError(e) && e.response?.status === 401) {
-        authStore.logout();
-        await router.push({ name: "login" });
-      }
-      console.log(e);
-    }
+  const replacePerson = (personResponse: PersonResponse) => {
+    familyTree.value = toRaw(familyTree.value).map((person: Person) =>
+      person.id === personResponse.id
+        ? parsePersonResponse(personResponse)
+        : person
+    );
   };
 
   return {
     familyTree,
+    isLoading,
+    addErrorMessage,
+    editErrorMessage,
+    detailsErrorMessage,
     getFamilyTree,
     addPerson,
     deletePerson,
     editPerson,
     getUsersFamilyTree,
     copyPerson,
-    addParentRelationship,
-    deleteParentRelationship,
-    addPartnerRelationship,
-    deletePartnerRelationship,
+    clear,
   };
 });

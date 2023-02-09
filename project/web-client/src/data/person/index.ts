@@ -6,6 +6,7 @@ export interface PersonResponse {
   dateOfBirth: string;
   parents: string[];
   partners: string[];
+  optionalParents: string[];
 }
 
 export interface Person {
@@ -18,6 +19,7 @@ export interface Person {
   fid?: string;
   pids: string[];
   parents: string[];
+  optionalParents: string[];
 }
 
 export interface PersonRequest {
@@ -25,4 +27,14 @@ export interface PersonRequest {
   surname: string | null;
   gender: string | null;
   dateOfBirth: string | null;
+}
+
+export interface PersonEditRequest {
+  name: string;
+  surname: string;
+  gender: string;
+  dateOfBirth: string;
+  parents: string[];
+  partners: string[];
+  optionalParents: string[];
 }

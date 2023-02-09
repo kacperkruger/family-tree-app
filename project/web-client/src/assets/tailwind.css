@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .view {
-    @apply container mx-auto flex flex-grow justify-center;
+    @apply container mx-auto h-full w-full flex flex-grow justify-center;
 }

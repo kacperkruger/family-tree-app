@@ -1,31 +1,32 @@
 <script setup lang="ts">
-import MessageFormComponent from "@/components/MessageFormComponent.vue";
-import MessageComponent from "@/components/MessageComponent.vue";
 import { onMounted } from "vue";
 import { usePublicChatStore } from "@/stores/publicChat";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useSocketStore } from "@/stores/socket";
+import { storeToRefs } from "pinia";
+import ChatComponent from "@/components/ChatComponent.vue";
 
 const publicChatStore = usePublicChatStore();
+const { messages, isLoading } = storeToRefs(publicChatStore);
 const authStore = useAuthenticationStore();
 const socketStore = useSocketStore();
+
 
 onMounted(async () => {
   await publicChatStore.getMessages();
   socketStore.connect("public", publicChatStore.addMessage);
 });
 
-const onSendMessage = (message: string) => {
+const sendMessage = async (message: string) => {
   if (!authStore.loggedUser) return;
-  publicChatStore.sendMessage(message);
+  if (!message) return;
+
+  await publicChatStore.sendMessage(message);
 };
 </script>
 
 <template>
-  <div class="view flex-col p-6 gap-4 overflow-auto">
-    <div class="flex flex-col justify-end flex-grow w-full gap-2">
-      <MessageComponent v-for="message in publicChatStore.messages" :key="message._id" :message="message" />
-    </div>
-    <MessageFormComponent @sendMessage="onSendMessage" />
+  <div class="view overflow-auto py-2">
+    <ChatComponent :isLoading="isLoading" :messages="messages" @sendMessage="sendMessage" />
   </div>
 </template>

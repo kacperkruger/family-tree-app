@@ -16,8 +16,9 @@ const isOpenEditPerson = ref(false);
 const isOpenAddPerson = ref(false);
 const isOpenAddRelationship = ref(false);
 
-const parents = ref<Set<Person | undefined>>(new Set());
-const partners = ref<Set<Person | undefined>>(new Set());
+const parents = ref<Set<Person>>(new Set());
+const partners = ref<Set<Person>>(new Set());
+const optionalParents = ref<Set<Person>>(new Set());
 
 
 defineProps({
@@ -39,6 +40,14 @@ const openEditPersonMenu = () => {
   isOpenEditPerson.value = true;
 };
 
+const closeEditPersonMenu = () => {
+  parents.value = new Set();
+  partners.value = new Set();
+  optionalParents.value = new Set();
+  selectedPerson.value = undefined;
+  isOpenEditPerson.value = false;
+};
+
 const openPersonDetailsMenu = () => {
   isOpenAddPerson.value = false;
   isOpenEditPerson.value = false;
@@ -49,29 +58,30 @@ const openPersonDetailsMenu = () => {
 const selectPerson = (person: Person | undefined): void => {
   selectedPerson.value = person;
   if (selectedPerson.value && selectedPerson.value.parents)
-    parents.value = new Set(selectedPerson.value.parents.map(parentId => familyTreeStore.familyTree.find(personFromTree => personFromTree.id === parentId)));
+    parents.value = new Set(familyTreeStore.familyTree.filter(person => selectedPerson.value?.parents.some(parentId => person.id === parentId)));
   if (selectedPerson.value && selectedPerson.value.pids)
-    partners.value = new Set(selectedPerson.value.pids.map(partnerId => familyTreeStore.familyTree.find(personFromTree => personFromTree.id === partnerId)));
-
+    partners.value = new Set(familyTreeStore.familyTree.filter(person => selectedPerson.value?.pids.some(partnerId => person.id === partnerId)));
+  if (selectedPerson.value && selectedPerson.value.optionalParents)
+    optionalParents.value = new Set(familyTreeStore.familyTree.filter(person => selectedPerson.value?.optionalParents.some(optionalParentId => person.id === optionalParentId)));
 };
 </script>
 
 <template>
   <div class="view flex-col">
-    <AddPersonMenu :isOpenAddPerson="isOpenAddPerson"
+    <AddPersonMenu v-if="isOpenAddPerson" :isOpenAddPerson="isOpenAddPerson"
                    @setIsOpenAddPerson="(value: Boolean) => isOpenAddPerson = value" />
     <EditPersonMenu v-if="selectedPerson && !readOnly" :parents="parents" :partners="partners"
                     :selectedPerson="selectedPerson" :isOpenEditPerson="isOpenEditPerson"
-                    @setIsOpenEditPerson="(value: Boolean) => isOpenEditPerson = value"
-                    @setSelectedPerson="selectPerson"
-                    @setParents="(value: Set<Person | undefined>) => parents = value"
-                    @setPartners="(value: Set<Person | undefined>) => partners = value" />
+                    :optionalParents="optionalParents"
+                    @closeEditPersonMenu="closeEditPersonMenu" />
     <DetailsPersonMenu v-if="selectedPerson" :selectedPerson="selectedPerson" :read-only="readOnly"
                        :isOpenPersonDetails="isOpenPersonDetails" :parents="parents" :partners="partners"
+                       :optionalParents="optionalParents"
                        @setIsOpenPersonDetails="value => isOpenPersonDetails = value"
                        @setSelectedPerson="selectPerson"
                        @openEditPersonMenu="openEditPersonMenu" />
     <FamilyTreeButtons v-if="!readOnly" @openAddPersonMenu="openAddPersonMenu" />
-    <FamilyTreeComponent :userId="userId" @openPersonDetailsMenu="openPersonDetailsMenu" @selectPerson="selectPerson" />
+    <FamilyTreeComponent class="h-full" :userId="userId" @openPersonDetailsMenu="openPersonDetailsMenu"
+                         @selectPerson="selectPerson" />
   </div>
 </template>

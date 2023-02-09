@@ -2,14 +2,18 @@
 import { useUsersStore } from "@/stores/users";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 const usersStore = useUsersStore();
+const { isLoading, users } = storeToRefs(usersStore);
 const router = useRouter();
 
 const searchSurnames = ref("");
 const searchDateOfBirth = ref<string | undefined>(undefined);
 
 const searchUsersByPersonSurname = async () => {
+  if (!searchSurnames.value && !searchDateOfBirth.value) await usersStore.getAllUsers();
   await usersStore.getUsersByPersonsSurnames(searchSurnames.value.split(" "), searchDateOfBirth.value);
 };
 
@@ -37,9 +41,10 @@ onMounted(async () => {
       </div>
     </div>
     <div class="text-lg flex flex-grow justify-center overflow-auto w-full">
-      <div class="flex flex-col w-max gap-1">
+      <LoadingComponent v-show="isLoading" />
+      <div v-show="!isLoading" class="flex flex-col w-max gap-1">
         <button @click="router.push(`/users/${user?.username}`)"
-                class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in usersStore.users"
+                class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in users"
                 :key="index">{{ user?.username }}
         </button>
       </div>

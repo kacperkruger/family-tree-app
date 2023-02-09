@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const emit = defineEmits<{ (e: "sendMessage", message: string): Promise<void> }>();
 const message = ref("");
+const messageInput = ref<HTMLElement>();
 const emitSendMessage = () => {
   emit("sendMessage", message.value);
   message.value = "";
 };
+
+onMounted(() => messageInput.value?.focus());
 </script>
 
 <template>
   <div class="flex w-full gap-2 items-center">
-    <input v-model.trim="message" placeholder="Type message..." class="flex-grow p-2 border rounded-xl" type="text" />
+    <input v-model.trim="message" @keydown.enter="emitSendMessage" ref="messageInput" placeholder="Type message..."
+           class="flex-grow p-2 border rounded-xl" type="text" />
     <button @click="emitSendMessage">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
            class="w-6 h-6">

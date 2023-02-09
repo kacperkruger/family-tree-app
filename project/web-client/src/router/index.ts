@@ -49,10 +49,8 @@ router.beforeEach(async (to, from, next) => {
   const treeStore = useFamilyTreeStore();
 
   if (to.name === "home") {
-    await authStore.getLoggedUser(
-      () => next(),
-      () => next()
-    );
+    await authStore.getLoggedUser();
+    next();
   } else if (
     to.name !== "login" &&
     to.name !== "register" &&

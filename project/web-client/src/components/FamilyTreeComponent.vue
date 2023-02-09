@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, toRaw, watch } from "vue";
 import FamilyTree from "@balkangraph/familytree.js";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import { storeToRefs } from "pinia";
 import type { Person } from "@/data/person";
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import buildFamilyTree from "@/utils/buildFamilyTree";
 
 const props = defineProps({
   userId: { type: String, required: true }
@@ -13,81 +15,48 @@ const props = defineProps({
 const authStore = useAuthenticationStore();
 const { loggedUser } = storeToRefs(authStore);
 const treeStore = useFamilyTreeStore();
-const { familyTree } = storeToRefs(treeStore);
+const { familyTree, isLoading } = storeToRefs(treeStore);
 
 const tree = ref("");
-const nodes = ref<Person[]>([]);
+const family = ref<FamilyTree>();
 
 const emit = defineEmits<{
   (e: "openPersonDetailsMenu"): void
   (e: "selectPerson", person: Person | undefined): void
 }>();
 
-const displayFamilyTree = async () => {
-  FamilyTree.templates.myTemplate = Object.assign({}, FamilyTree.templates.base);
-  FamilyTree.templates.myTemplate.size = [150, 150];
-  FamilyTree.templates.myTemplate.node =
-    "<circle cx=\"75\" cy=\"75\" r=\"75\" fill=\"#4D4D4D\" stroke-width=\"1\" stroke=\"#aeaeae\"></circle>";
-  FamilyTree.templates.myTemplate.defs = "";
+const onNodeClick = (node: FamilyTree.node) => {
+  emit("selectPerson", familyTree.value.find(person => person.id === node.id));
+  emit("openPersonDetailsMenu");
+};
 
-  FamilyTree.templates.myTemplate.field_0 = "<text data-width=\"150\" data-text-overflow=\"ellipsis\" style=\"font-size: 24px;\" fill=\"#ffffff\" x=\"75\" y=\"75\" text-anchor=\"middle\">{val}</text>";
-  FamilyTree.templates.myTemplate.field_1 = "<text data-width=\"150\" data-text-overflow=\"ellipsis\" style=\"font-size: 16px;\" fill=\"#ffffff\" x=\"75\" y=\"95\" text-anchor=\"middle\">{val}</text>";
-  FamilyTree.templates.myTemplate.link =
-    "<path stroke=\"#686868\" stroke-width=\"1px\" fill=\"none\" data-l-id=\"[{id}][{child-id}]\" d=\"M{xa},{ya} C{xb},{yb} {xc},{yc} {xd},{yd}\" />";
-
-  FamilyTree.templates.myTemplate_male = Object.assign({}, FamilyTree.templates.myTemplate);
-  FamilyTree.templates.myTemplate_male.node = "<circle cx=\"75\" cy=\"75\" r=\"75\" fill=\"#039be5\" stroke-width=\"1\" stroke=\"#aeaeae\"\"></circle>";
-  FamilyTree.templates.myTemplate_female = Object.assign({}, FamilyTree.templates.myTemplate);
-  FamilyTree.templates.myTemplate_female.node = "<circle cx=\"75\" cy=\"75\" r=\"75\" fill=\"#FF46A3\" stroke-width=\"1\" stroke=\"#aeaeae\"\"></circle>";
-
-  const family = new FamilyTree(tree.value, {
-    template: "myTemplate",
-    scaleInitial: FamilyTree.match.boundary,
-    enableSearch: false,
-    mouseScrool: FamilyTree.action.none,
-    nodeBinding: {
-      field_0: "name",
-      field_1: "surname"
-    },
-    nodeMouseClick: undefined
-  });
-
+onMounted(async () => {
   if (props.userId === loggedUser.value?._id) {
     await treeStore.getFamilyTree();
-    nodes.value = familyTree.value;
-    family.load(familyTree.value);
-  } else if (props.userId) {
-    const userNodes = await treeStore.getUsersFamilyTree(props.userId);
-    nodes.value = userNodes;
-    family.load(userNodes);
+    family.value = buildFamilyTree(tree.value, familyTree.value, onNodeClick);
   } else {
-    family.load([]);
+    const nodes = await treeStore.getUsersFamilyTree(props.userId);
+    family.value = buildFamilyTree(tree.value, nodes, onNodeClick);
   }
-  family.onNodeClick(({ node }) => {
-    emit("openPersonDetailsMenu");
-    emitSelectPerson(node.id);
-  });
-};
-
-const emitSelectPerson = (id: string | number | undefined) => {
-  emit("selectPerson", nodes.value.find(person => person.id === id));
-};
-
-onMounted(() => {
-  displayFamilyTree();
 });
 
 if (props.userId === loggedUser.value?._id) {
-  watch(familyTree, () => {
-    displayFamilyTree();
-  });
+  watch(familyTree, async () => {
+    if (!family.value) return;
+    if (toRaw(family.value).nodes.length !== toRaw(familyTree.value).length) {
+      family.value = buildFamilyTree(tree.value, familyTree.value, onNodeClick);
+      return;
+    }
+    family.value = family.value?.load(familyTree.value);
+  }, { deep: true });
 }
 
 </script>
 
 <template>
   <div>
-    <div id="tree" ref="tree"></div>
+    <LoadingComponent v-show="isLoading" />
+    <div v-show="!isLoading" id="tree" ref="tree"></div>
   </div>
 </template>
 

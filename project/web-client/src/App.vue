@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { RouterView } from "vue-router";
 import NavBar from "@/components/NavbarComponent.vue";
-import { useLoadingStore } from "@/stores/loading";
 import LoadingView from "@/views/LoadingView.vue";
 import { storeToRefs } from "pinia";
+import { useAuthenticationStore } from "@/stores/authentication";
 
-const loadingStore = useLoadingStore();
-const { isLoading } = storeToRefs(loadingStore);
+const authStore = useAuthenticationStore();
+const { isLoading } = storeToRefs(authStore);
 </script>
 
 <template>
