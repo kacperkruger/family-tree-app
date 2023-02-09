@@ -1,13 +1,16 @@
 import express, {Request, Response} from 'express';
 import {
+    addOptionalParentRelationship,
     addParentRelationship,
     addPartnership,
     addPerson,
     copyPerson,
+    deleteOptionalParentRelationship,
     deleteParentRelationship,
     deletePartnership,
     deletePerson,
     editPerson,
+    editPersonDetails,
     getFamilyTree,
     getUsersBySurnames,
     getUsersBySurnamesWithDateOfBirth
@@ -15,13 +18,22 @@ import {
 import {isClientError} from '@kacperkruger/clients';
 import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 import {getUsersDetails} from '@kacperkruger/clients/user';
-import addOptionalParentRelationship from '@kacperkruger/clients/dist/family-tree/addOptionalParentRelationship';
-import deleteOptionalParentRelationship from '@kacperkruger/clients/dist/family-tree/deleteOptionalParentRelationship';
 
 const router = express.Router();
 
 router.get('/', async (req: Request, res: Response): Promise<Response> => {
     const userId = <string>req.user?._id;
+    try {
+        const familyTree = await getFamilyTree(userId);
+        return res.json({familyTree});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
+router.get('/users/:userId', async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.params.userId;
     try {
         const familyTree = await getFamilyTree(userId);
         return res.json({familyTree});
@@ -46,7 +58,19 @@ router.put('/persons/:personId', async (req: Request, res: Response): Promise<Re
     const userId = <string>req.user?._id;
     const personId = req.params.personId;
     try {
-        const editedPerson = await editPerson(userId, personId, req.body);
+        const editedPersons = await editPerson(userId, personId, req.body);
+        return res.json({persons: editedPersons});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
+router.patch('/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
+    const userId = <string>req.user?._id;
+    const personId = req.params.personId;
+    try {
+        const editedPerson = await editPersonDetails(userId, personId, req.body);
         return res.json({person: editedPerson});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
@@ -160,30 +184,19 @@ router.post('/persons/:personId', async (req: Request, res: Response): Promise<R
 router.get('/users', async (req: Request<{}, {}, {}, { surname: string | string[], dateOfBirth: string | undefined }>, res: Response): Promise<Response> => {
     let surnames = req.query.surname;
     const dateOfBirth = req.query.dateOfBirth;
-
+    if (!surnames.length) return res.json({users: []});
     if (typeof surnames === 'string') surnames = [surnames];
     try {
         if (dateOfBirth) {
             const usersToFetch = await getUsersBySurnamesWithDateOfBirth(surnames, dateOfBirth);
-            if (usersToFetch.length === 0) return res.status(404).json({error: 'Persons not found'});
+            if (usersToFetch.length === 0) return res.json({users: []});
             const users = await getUsersDetails(usersToFetch);
             return res.json({users});
         }
         const usersToFetch = await getUsersBySurnames(surnames);
-        if (usersToFetch.length === 0) return res.status(404).json({error: 'Persons not found'});
+        if (usersToFetch.length === 0) return res.json({users: []});
         const users = await getUsersDetails(usersToFetch);
         return res.json({users});
-    } catch (e) {
-        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
-        return res.status(500).json({error: parseErrorMessage(e)});
-    }
-});
-
-router.get('/users/:userId', async (req: Request, res: Response): Promise<Response> => {
-    const userId = req.params.userId;
-    try {
-        const familyTree = await getFamilyTree(userId);
-        return res.json({familyTree});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
