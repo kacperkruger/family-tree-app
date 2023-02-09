@@ -3,7 +3,7 @@ import {parseErrorMessage} from '@kacperkruger/common-server-utils';
 import copyPersonToUsersTree from '../operations/copyPersonToUsersTree';
 import getFamilyTree from '../operations/getFamilyTree';
 import addPerson from '../operations/addPerson';
-import updatePerson from '../operations/updatePerson';
+import patchPerson from '../operations/patchPerson';
 import deletePerson from '../operations/deletePerson';
 import checkIfUserHasAccessToPerson from '../operations/checkIfUserHasAccessToPerson';
 import deleteChildRelationship from '../operations/deleteChildRelationship';
@@ -17,6 +17,10 @@ import checkIfHaveKids from '../operations/checkIfHaveKids';
 import deleteOptionalChildRelationship from '../operations/deleteOptionalChildRelationship';
 import addOptionalChildRelationship from '../operations/addOptionalChildRelationship';
 import addChildRelationship from '../operations/addChildRelationship';
+import {PersonEditRequest} from '../models/PersonEditRequest';
+import updatePerson from '../operations/updatePerson';
+import checkIfArePartners from '../operations/checkIfArePartners';
+
 
 const router: Router = express.Router();
 
@@ -61,7 +65,6 @@ router.post('/users/:userId/persons', async (req: Request, res: Response): Promi
         const addedPerson = await addPerson(userId, personRequest);
         return res.status(201).json({person: addedPerson});
     } catch (e) {
-        console.log(e);
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
@@ -70,18 +73,37 @@ router.post('/users/:userId/persons', async (req: Request, res: Response): Promi
 router.put('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
     const userId = req.params.userId;
     const personId = req.params.personId;
-    console.log(req.body);
+    try {
+        const personEditRequest = PersonEditRequest.check(req.body);
+
+        const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
+        if (!hasAccess) return res.sendStatus(405);
+
+        const parents = personEditRequest.parents;
+        if (parents.length > 2) return res.status(400).json({error: 'Max number of parents is 2'});
+        if (parents.length == 2 && !(await checkIfArePartners(parents[0], parents[1])))
+            return res.status(400).json({error: 'Parents must be partners'});
+
+        const updatedPersons = await updatePerson(personId, personEditRequest);
+        return res.json({persons: updatedPersons});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        return res.status(400).json({error: errorMessage});
+    }
+});
+
+router.patch('/users/:userId/persons/:personId', async (req: Request, res: Response): Promise<Response> => {
+    const userId = req.params.userId;
+    const personId = req.params.personId;
     try {
         const personRequest = PersonRequest.check(req.body);
 
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
         if (!hasAccess) return res.sendStatus(405);
 
-        const updatedPerson = await updatePerson(personId, personRequest);
-        console.log(updatedPerson);
+        const updatedPerson = await patchPerson(personId, personRequest);
         return res.json({person: updatedPerson});
     } catch (e) {
-        console.log(e);
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
     }
