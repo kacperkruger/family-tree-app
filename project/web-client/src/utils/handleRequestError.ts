@@ -9,6 +9,10 @@ const handleRequestError = async (e: unknown) => {
     authStore.logout();
     await router.push({ name: "login" });
   }
+
+  if (isAxiosError(e) && e.response?.status === 500) {
+    await router.push({ name: "login" });
+  }
 };
 
 export default handleRequestError;

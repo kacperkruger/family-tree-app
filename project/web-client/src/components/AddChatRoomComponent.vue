@@ -27,6 +27,7 @@ const emits = defineEmits<{
 
 const emitCreateChat = () => {
   emits("createChat", usersToAdd.value);
+  usersToAdd.value = new Set();
 };
 </script>
 

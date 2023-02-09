@@ -59,7 +59,7 @@ export const usePrivateChatStore = defineStore("privateChat", () => {
       );
       const messageResponse = response.data.message;
       addMessage(chatId, messageResponse);
-      socketStore.emitMessage(chatId, messageResponse);
+      socketStore.emit(`chat/private/${chatId}/messages`, messageResponse);
       isLoadingMessages.value = false;
     } catch (e) {
       isLoadingMessages.value = false;
@@ -75,7 +75,9 @@ export const usePrivateChatStore = defineStore("privateChat", () => {
         { users: usersToAdd },
         { withCredentials: true }
       );
-      privateChats.value.push(response.data.privateChat);
+      const createdChat = response.data.privateChat;
+      privateChats.value.push(createdChat);
+      socketStore.emit("chat/private", createdChat);
       isLoadingRooms.value = false;
     } catch (e) {
       isLoadingRooms.value = false;

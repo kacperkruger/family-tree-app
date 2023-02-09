@@ -25,7 +25,7 @@ export const usePublicChatStore = defineStore("publicChat", () => {
       );
       const messageResponse = response.data.message;
       addMessage(messageResponse);
-      socketServer.emitMessage("public", messageResponse);
+      socketServer.emit("chat/public", messageResponse);
       isLoading.value = false;
     } catch (e) {
       isLoading.value = false;

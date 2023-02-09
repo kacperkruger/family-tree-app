@@ -8,10 +8,8 @@ defineEmits<{
   (e: "closeMenu"): void
 }>();
 
-const menuStatus = computed(() => props.menuStatus);
-
 const sideMenuProperties = computed(() => {
-  return menuStatus.value ? "" : "hidden";
+  return props.menuStatus ? "translate-x-0" : "translate-x-full";
 });
 
 </script>

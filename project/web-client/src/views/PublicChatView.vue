@@ -14,7 +14,7 @@ const socketStore = useSocketStore();
 
 onMounted(async () => {
   await publicChatStore.getMessages();
-  socketStore.connect("public", publicChatStore.addMessage);
+  socketStore.connect("chat/public", publicChatStore.addMessage);
 });
 
 const sendMessage = async (message: string) => {

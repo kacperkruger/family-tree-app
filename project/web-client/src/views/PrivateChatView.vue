@@ -10,7 +10,11 @@ import ChatComponent from "@/components/ChatComponent.vue";
 
 import PrivateChatButtonsComponent from "@/components/PrivateChatButtonsComponent.vue";
 import ListChatRoomComponent from "@/components/ListChatRoomComponent.vue";
+import type { PrivateChat } from "@/data/private-chat";
+import { useAuthenticationStore } from "@/stores/authentication";
 
+const authStore = useAuthenticationStore();
+const { loggedUser } = storeToRefs(authStore);
 const privateChatStore = usePrivateChatStore();
 const socketStore = useSocketStore();
 const { privateChats, fetchedPrivateChats, isLoadingMessages, isLoadingRooms } = storeToRefs(privateChatStore);
@@ -34,6 +38,9 @@ const createChat = async (usersToAdd: Set<User>) => {
 onMounted(async () => {
   await privateChatStore.getPrivateChats();
   selectedChatId.value = privateChats.value[0]?._id;
+  socketStore.connect("chat/private", (newRoom: PrivateChat) => {
+    privateChats.value.push(newRoom);
+  }, { userId: loggedUser.value?._id });
 });
 
 watch(selectedChatId, async () => {
@@ -41,7 +48,7 @@ watch(selectedChatId, async () => {
   if (chatId) {
     await privateChatStore.getPrivateChatMessages(chatId);
     messages.value = fetchedPrivateChats.value.get(chatId) || [];
-    await socketStore.connect(chatId, (message: Message) => privateChatStore.addMessage(chatId, message));
+    await socketStore.connect(`chat/private/${chatId}/messages`, (message: Message) => privateChatStore.addMessage(chatId, message));
   }
 });
 

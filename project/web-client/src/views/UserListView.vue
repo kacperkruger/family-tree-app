@@ -43,7 +43,7 @@ onMounted(async () => {
     <div class="text-lg flex flex-grow justify-center overflow-auto w-full">
       <LoadingComponent v-show="isLoading" />
       <div v-show="!isLoading" class="flex flex-col w-max gap-1">
-        <button @click="router.push(`/users/${user?.username}`)"
+        <button @click="router.push({name: 'user', params: {username: user?.username}})"
                 class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in users"
                 :key="index">{{ user?.username }}
         </button>

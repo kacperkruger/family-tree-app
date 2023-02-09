@@ -1,22 +1,22 @@
 import { defineStore } from "pinia";
 import { io, Socket } from "socket.io-client";
-import type { Message } from "@/data/message";
 import { ref } from "vue";
 
 export const useSocketStore = defineStore("socket", () => {
   const sockets = ref(new Map<string, Socket>());
 
-  const connect = (roomId: string, cb: Function) => {
-    if (sockets.value.has(roomId)) return;
-    const socket = io(`http://localhost:9000/${roomId}`);
+  const connect = (urlPath: string, cb: Function, authParam?: Object) => {
+    if (sockets.value.has(urlPath)) return;
+    const socket = io(`http://localhost:9000/${urlPath}`, { auth: authParam });
     socket.on("message", (data) => {
       cb(data);
     });
-    sockets.value.set(roomId, socket);
+    sockets.value.set(urlPath, socket);
+    console.log([...sockets.value.keys()]);
   };
 
-  const emitMessage = (roomId: string, data: Message) => {
-    const socket = sockets.value.get(roomId);
+  const emit = (urlPath: string, data: any) => {
+    const socket = sockets.value.get(urlPath);
     if (!socket) return;
     socket.emit("message", data);
   };
@@ -25,5 +25,5 @@ export const useSocketStore = defineStore("socket", () => {
     sockets.value = new Map();
   };
 
-  return { connect, emitMessage, clear };
+  return { connect, emit, clear };
 });

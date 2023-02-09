@@ -14,32 +14,37 @@ const router = createRouter({
     {
       path: "/login",
       name: "login",
-      component: () => import("../views/LoginView.vue"),
+      component: () => import("@/views/LoginView.vue"),
     },
     {
       path: "/register",
       name: "register",
-      component: () => import("../views/RegisterView.vue"),
+      component: () => import("@/views/RegisterView.vue"),
     },
     {
       path: "/chat/public",
       name: "public-chat",
-      component: () => import("../views/PublicChatView.vue"),
+      component: () => import("@/views/PublicChatView.vue"),
     },
     {
       path: "/chat/private",
       name: "private-chat",
-      component: () => import("../views/PrivateChatView.vue"),
+      component: () => import("@/views/PrivateChatView.vue"),
     },
     {
       path: "/users",
       name: "users",
-      component: () => import("../views/UserListView.vue"),
+      component: () => import("@/views/UserListView.vue"),
     },
     {
       path: "/users/:username",
       name: "user",
-      component: () => import("../views/UserView.vue"),
+      component: () => import("@/views/UserView.vue"),
+    },
+    {
+      path: "/:catchall(.*)*",
+      name: "Not Found",
+      component: () => import("@/views/404View.vue"),
     },
   ],
 });
