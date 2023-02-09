@@ -3,11 +3,14 @@ const removePartnerRelationship = 'MATCH (partner1: Person {id: $partner1Id})\n'
     'MATCH (partner1)-[r:PARTNERS]-(partner2)\n' +
     'DELETE r\n' +
     'WITH partner1, partner2\n' +
-    'UNWIND [partner1, partner2] AS editedPerson\n' +
-    'OPTIONAL MATCH (editedPerson)-[:CHILD_OF]->(parents: Person)\n' +
-    'OPTIONAL MATCH (editedPerson)-[:PARTNERS]-(partners: Person)\n' +
-    'OPTIONAL MATCH (editedPerson)-[:OPTIONAL_CHILD_OF]-(optionalParents: Person)\n' +
-    'RETURN editedPerson.id as id, editedPerson.name as name, editedPerson.surname AS surname, editedPerson.gender as gender, date(editedPerson.dateOfBirth) AS dateOfBirth, collect(parents.id) as parents, collect(partners.id) as partners, collect(optionalParents.id) as optionalParents';
+    'UNWIND [partner1, partner2] AS editedPersons\n' +
+    'OPTIONAL MATCH (editedPersons)-[:CHILD_OF]->(parents: Person)\n' +
+    'WITH editedPersons, collect(parents.id) as parents\n' +
+    'OPTIONAL MATCH (editedPersons)-[:PARTNERS]-(partners: Person)\n' +
+    'WITH editedPersons, parents, collect(partners.id) as partners\n' +
+    'OPTIONAL MATCH (editedPersons)-[:OPTIONAL_CHILD_OF]->(optionalParents: Person)\n' +
+    'WITH editedPersons, parents, partners, collect(optionalParents.id) as optionalParents\n' +
+    'RETURN editedPersons.id as id, editedPersons.name as name, editedPersons.surname AS surname, editedPersons.gender as gender, date(editedPersons.dateOfBirth) AS dateOfBirth, parents, partners, optionalParents';
 
 
 export default removePartnerRelationship;

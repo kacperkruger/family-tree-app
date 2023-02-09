@@ -2,13 +2,13 @@ import connectToNeo4jOrGetDriver from '../utils/connectToNeo4jOrGetDriver';
 import {PersonResponse} from '../models/PersonResponse';
 import parsePerson from '../utils/parsePerson';
 import {PersonRequest} from '../models/PersonRequest';
-import editPerson from '../queries/editPerson';
+import updatePersonPersonalInfo from '../queries/updatePersonPersonalInfo';
 import {Static} from 'runtypes';
 
-const updatePerson = async (personId: string, personRequest: Static<typeof PersonRequest>): Promise<Static<typeof PersonResponse>> => {
+const patchPerson = async (personId: string, personRequest: Static<typeof PersonRequest>): Promise<Static<typeof PersonResponse>> => {
     const session = await connectToNeo4jOrGetDriver();
 
-    const result = session.run(editPerson, {
+    const result = session.run(updatePersonPersonalInfo, {
         personId,
         name: personRequest.name,
         surname: personRequest.surname,
@@ -18,9 +18,9 @@ const updatePerson = async (personId: string, personRequest: Static<typeof Perso
 
     return result.then(queryResult => {
         const records = queryResult.records;
-        if (!records.length) throw new Error('PersonResponse not found');
+        if (!records.length) throw new Error('Person not found');
         return records.map(record => parsePerson(record))[0];
     }).finally(() => session.close());
 };
 
-export default updatePerson;
+export default patchPerson;
