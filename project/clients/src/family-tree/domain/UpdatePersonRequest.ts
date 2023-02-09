@@ -1,5 +1,4 @@
-export interface PersonResponse {
-    id: string,
+export interface UpdatePersonRequest {
     name: string,
     surname: string,
     gender: string,
