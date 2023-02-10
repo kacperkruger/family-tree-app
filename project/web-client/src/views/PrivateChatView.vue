@@ -62,11 +62,11 @@ watch(fetchedPrivateChats, () => {
   <div class="view py-2 overflow-auto gap-2">
     <section class="flex w-2/5 flex-col gap-2">
       <PrivateChatButtonsComponent :isOpenAddChat="isOpenAddChat"
-                                   @setIsOpenAddChat="(value: Boolean) => isOpenAddChat = value" />
+                                   @setIsOpenAddChat="value => isOpenAddChat = value" />
       <LoadingComponent v-show="isLoadingRooms" />
       <ListChatRoomComponent :is-open-add-chat="isOpenAddChat" :selected-chat-id="selectedChatId"
                              @createChat="createChat"
-                             @setSelectedChatId="(value: String | undefined) => selectedChatId = value" />
+                             @setSelectedChatId="value => selectedChatId = value" />
     </section>
     <ChatComponent :isLoading="isLoadingMessages" :messages="messages" @sendMessage="sendMessage" />
   </div>

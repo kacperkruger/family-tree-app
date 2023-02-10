@@ -10,7 +10,7 @@ import handleRequestError from "@/utils/handleRequestError";
 export const usePrivateChatStore = defineStore("privateChat", () => {
   const authStore = useAuthenticationStore();
   const socketStore = useSocketStore();
-  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/private`;
+  const url = `${import.meta.env.API_HOST_URL}/api/v1/chats/private`;
 
   const privateChats = ref<PrivateChat[]>([]);
   const isLoadingMessages = ref(false);

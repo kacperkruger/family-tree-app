@@ -7,7 +7,7 @@ defineProps({
 });
 
 defineEmits<{
-  (e: "setIsOpenAddChat", value: Boolean): void
+  (e: "setIsOpenAddChat", value: boolean): void
 }>();
 
 const privateChatStore = usePrivateChatStore();

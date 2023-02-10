@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, type Ref, ref, toRaw, watch } from "vue";
-import FamilyTree from "@balkangraph/familytree.js";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import { storeToRefs } from "pinia";
 import type { Person } from "@/data/person";
 import LoadingComponent from "@/components/LoadingComponent.vue";
 import buildFamilyTree from "@/utils/buildFamilyTree";
+import type FamilyTree from "@balkangraph/familytree.js";
 
 const props = defineProps({
   userId: { type: String, required: true }

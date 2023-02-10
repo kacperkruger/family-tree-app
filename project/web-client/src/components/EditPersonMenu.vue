@@ -98,7 +98,7 @@ const addOptionalParent = () => {
           <p>Parents:</p>
           <select id="parent" v-model="parentToAdd" class="w-full p-2 border rounded" name="parent"
                   @change="addParent">
-            <option :value="undefined" disabled selected="selected">Add Parent</option>
+            <option :value="undefined" disabled selected>Add Parent</option>
             <option
               v-for="(person, index) in [...copyOptionalParents].filter(person =>![...copyParents, selectedPerson].some(parent => parent?.id === person.id))"
               :key="index" :value="JSON.stringify(person)">
@@ -124,7 +124,7 @@ const addOptionalParent = () => {
           <p>Partners:</p>
           <select id="partner" v-model="partnerToAdd" class="w-full p-2 border rounded" name="partner"
                   @change="addPartner">
-            <option :value="undefined" disabled selected="selected">Add Partner</option>
+            <option :value="undefined" disabled selected>Add Partner</option>
             <option
               v-for="(person, index) in familyTree.filter(person =>![...copyPartners, selectedPerson].some(partner => partner?.id === person.id))"
               :key="index" :value="JSON.stringify(person)">
@@ -150,7 +150,7 @@ const addOptionalParent = () => {
           <select id="optionalPartners" v-model="optionalParentToAdd" class="w-full p-2 border rounded"
                   name="optionalPartners"
                   @change="addOptionalParent">
-            <option :value="undefined" disabled selected="selected">Add Optional Parent</option>
+            <option :value="undefined" disabled selected>Add Optional Parent</option>
             <option
               v-for="(person, index) in familyTree.filter(person =>![...copyOptionalParents, selectedPerson].some(optionalParent => optionalParent?.id === person.id))"
               :key="index" :value="JSON.stringify(person)">

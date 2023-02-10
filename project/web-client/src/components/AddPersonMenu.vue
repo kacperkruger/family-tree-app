@@ -10,7 +10,7 @@ defineProps({
 });
 
 const emits = defineEmits<{
-  (e: "setIsOpenAddPerson", value: Boolean): void
+  (e: "setIsOpenAddPerson", value: boolean): void
 }>();
 
 const familyTreeStore = useFamilyTreeStore();

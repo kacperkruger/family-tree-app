@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const emits = defineEmits<{
-  (e: "setIsOpenPersonDetails", value: Boolean): void,
+  (e: "setIsOpenPersonDetails", value: boolean): void,
   (e: "setSelectedPerson", value: Person | undefined): void,
   (e: "openEditPersonMenu"): void,
 }>();
@@ -49,41 +49,41 @@ const copyPerson = async () => {
     <div class="flex flex-col gap-2 h-full justify-center text-lg">
       <div class="flex gap-2">
         <p>Name:</p>
-        <p>{{ selectedPerson.name }}</p>
+        <p>{{ selectedPerson?.name }}</p>
       </div>
       <div class="flex gap-2">
         <p>Surname:</p>
-        <p>{{ selectedPerson.surname }}</p>
+        <p>{{ selectedPerson?.surname }}</p>
       </div>
       <div class="flex gap-2">
         <p>Gender:</p>
-        <p>{{ selectedPerson.gender }}</p>
+        <p>{{ selectedPerson?.gender }}</p>
       </div>
       <div class="flex gap-2">
         <p>Date of birth:</p>
-        <p>{{ selectedPerson.dateOfBirth }}</p>
+        <p>{{ selectedPerson?.dateOfBirth }}</p>
       </div>
       <div class="flex gap-2">
         <p>Parents:</p>
         <div class="flex gap-1">
           <div v-for="(parent, index) in parents" :key="index">
-            <p v-if="parent.surname">{{ parent.name }} {{ parent.surname }},</p>
-            <p v-else>{{ parent.name }},</p>
+            <p v-if="parent?.surname">{{ parent?.name }} {{ parent?.surname }},</p>
+            <p v-else>{{ parent?.name }},</p>
           </div>
         </div>
       </div>
       <div class="flex gap-2">
         <p>Partners:</p>
         <div v-for="(partner, index) in partners" :key="index">
-          <p v-if="partner.surname">{{ partner.name }} {{ partner.surname }},</p>
-          <p v-else>{{ partner.name }},</p>
+          <p v-if="partner?.surname">{{ partner?.name }} {{ partner?.surname }},</p>
+          <p v-else>{{ partner?.name }},</p>
         </div>
       </div>
       <div class="flex gap-2">
         <p>Optional parents:</p>
         <div v-for="(optionalParent, index) in optionalParents" :key="index">
-          <p v-if="optionalParent.surname">{{ optionalParent.name }} {{ optionalParent.surname }},</p>
-          <p v-else>{{ optionalParent.name }},</p>
+          <p v-if="optionalParent?.surname">{{ optionalParent?.name }} {{ optionalParent?.surname }},</p>
+          <p v-else>{{ optionalParent?.name }},</p>
         </div>
       </div>
       <div class="flex gap-1 w-full justify-end">

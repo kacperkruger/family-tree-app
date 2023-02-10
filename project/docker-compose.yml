@@ -117,12 +117,31 @@ services:
       - PUBLIC_CHAT_SERVICE_HOST_URL=http://public-chat-service:6000
       - FAMILY_TREE_SERVICE_HOST_URL=http://family-tree-service:7000
       - WEB_CLIENT_HOST_URL=http://localhost:5173
+    depends_on:
+      - family-tree-service
+      - public-chat-service
+      - private-chat-service
+      - user-service
     networks:
       - api-gateway
       - public-chat
       - private-chat
       - user
       - family-tree
+  webclient-service:
+    image: kacperkruger/tsw-webclient-service:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      - API_HOST_URL=http://localhost:8000
+      - WEBSOCKET_HOST_URL=http://localhost:9000
+    depends_on:
+      - api-gateway-service
+      - websocket-service
+    networks:
+      - api-gateway
+      - websocket
 
 networks:
   public-chat:

@@ -9,7 +9,7 @@ export const usePublicChatStore = defineStore("publicChat", () => {
   const messages = ref<Message[]>([]);
   const socketServer = useSocketStore();
   const isLoading = ref(false);
-  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/chats/public`;
+  const url = `${import.meta.env.API_HOST_URL}/api/v1/chats/public`;
 
   const addMessage = (message: Message) => {
     messages.value.push(message);

@@ -7,7 +7,7 @@ import handleRequestError from "@/utils/handleRequestError";
 export const useUsersStore = defineStore("users", () => {
   const users = ref<User[]>([]);
   const isLoading = ref(false);
-  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/users`;
+  const url = `${import.meta.env.API_HOST_URL}/api/v1/users`;
 
   const getAllUsers = async () => {
     if (users.value.length !== 0) return;

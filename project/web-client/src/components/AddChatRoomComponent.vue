@@ -33,7 +33,7 @@ const emitCreateChat = () => {
   <section class="flex flex-col gap-4 border p-4 rounded">
     <select id="test" v-model="userToAdd"
             class="border rounded px-4 py-2" name="test" @change="addUser">
-      <option :value="undefined" disabled selected="selected">Select user to add</option>
+      <option :value="undefined" disabled selected>Select user to add</option>
       <option v-for="(user, index) in users.filter(u => ![...usersToAdd].some(uu => uu?._id === u._id))"
               :key="index" :value="JSON.stringify(user)">{{ user.username }}
       </option>

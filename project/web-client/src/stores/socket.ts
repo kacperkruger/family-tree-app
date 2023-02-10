@@ -7,7 +7,9 @@ export const useSocketStore = defineStore("socket", () => {
 
   const connect = (urlPath: string, cb: Function, authParam?: Object) => {
     if (sockets.value.has(urlPath)) return;
-    const socket = io(`http://localhost:9000/${urlPath}`, { auth: authParam });
+    const socket = io(`${import.meta.env.WEBSOCKET_HOST_URL}/${urlPath}`, {
+      auth: authParam,
+    });
     socket.on("message", (data) => {
       cb(data);
     });
