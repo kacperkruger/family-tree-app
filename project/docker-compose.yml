@@ -2,10 +2,7 @@ version: "3.7"
 services:
   neo4j-family-tree:
     image: neo4j:5-enterprise
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-      - "7473:7473"
+    restart: unless-stopped
     environment:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
       - NEO4j_AUTH=${FAMILY_TREE_DB_USERNAME}/${FAMILY_TREE_DB_PASSWORD}
@@ -15,6 +12,7 @@ services:
       - family-tree
   mongodb-user:
     image: mongo
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${USER_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${USER_DB_PASSWORD}
@@ -24,6 +22,7 @@ services:
       - user
   mongodb-private-chat:
     image: mongo
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PRIVATE_CHAT_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${PRIVATE_CHAT_DB_PASSWORD}
@@ -33,6 +32,7 @@ services:
       - private-chat
   mongodb-public-chat:
     image: mongo
+    restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PUBLIC_CHAT_DB_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${PUBLIC_CHAT_DB_PASSWORD}
@@ -43,6 +43,7 @@ services:
   user-service:
     image:
       kacperkruger/tsw-user-service:latest
+    restart: unless-stopped
     ports:
       - "4000:4000"
     environment:
@@ -58,8 +59,7 @@ services:
   private-chat-service:
     image:
       kacperkruger/tsw-private-chat-service:latest
-    ports:
-      - "5000:5000"
+    restart: unless-stopped
     environment:
       - PORT=5000
       - MONGO_HOST=mongodb-private-chat
@@ -73,8 +73,7 @@ services:
   public-chat-service:
     image:
       kacperkruger/tsw-public-chat-service:latest
-    ports:
-      - "6000:6000"
+    restart: unless-stopped
     environment:
       - PORT=6000
       - MONGO_PORT=27017
@@ -87,6 +86,7 @@ services:
       - public-chat
   family-tree-service:
     image: kacperkruger/tsw-family-tree-service:latest
+    restart: unless-stopped
     ports:
       - "7000:7000"
     environment:
@@ -98,6 +98,32 @@ services:
       - neo4j-family-tree
     networks:
       - family-tree
+  websocket-service:
+    image: kacperkruger/tsw-websocket-service:latest
+    restart: unless-stopped
+    environment:
+      - PORT=9000
+    networks:
+      - websocket
+  api-gateway-service:
+    image: kacperkruger/tsw-api-gateway:latest
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - JWT_SECRET=${JWT_SECRET}
+      - USER_SERVICE_HOST_URL=http://user-service:4000
+      - PRIVATE_CHAT_SERVICE_HOST_URL=http://private-chat-service:5000
+      - PUBLIC_CHAT_SERVICE_HOST_URL=http://public-chat-service:6000
+      - FAMILY_TREE_SERVICE_HOST_URL=http://family-tree-service:7000
+      - WEB_CLIENT_HOST_URL=http://localhost:5173
+    networks:
+      - api-gateway
+      - public-chat
+      - private-chat
+      - user
+      - family-tree
 
 networks:
   public-chat:
@@ -107,6 +133,10 @@ networks:
   user:
     driver: bridge
   family-tree:
+    driver: bridge
+  websocket:
+    driver: bridge
+  api-gateway:
     driver: bridge
 
 volumes:
