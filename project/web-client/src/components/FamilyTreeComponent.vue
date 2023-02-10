@@ -45,6 +45,7 @@ onMounted(async () => {
 
 if (props.userId === loggedUser.value?._id) {
   watch(familyTree, async () => {
+    fetchedNodes.value = familyTree.value;
     if (!family.value) return;
     if (toRaw(family.value).nodes.length !== toRaw(familyTree.value).length) {
       family.value = buildFamilyTree(tree.value, familyTree.value, onNodeClick);
