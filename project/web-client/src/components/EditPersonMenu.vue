@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import SideMenuComponent from "@/components/SideMenuComponent.vue";
 import type { Person } from "@/data/person";
 import type { PropType } from "vue";
@@ -83,21 +83,21 @@ const addOptionalParent = () => {
   <SideMenuComponent v-if="copySelectedPerson" :menu-status="isOpenEditPerson"
                      @closeMenu="emits('closeEditPersonMenu')">
     <div class="flex flex-col gap-2 h-full justify-center">
-      <input v-model.trim="copySelectedPerson.name" type="text" placeholder="Name*" class="border w-full rounded p-2">
-      <input v-model.trim="copySelectedPerson.surname" type="text" placeholder="Surname"
-             class="border w-full rounded p-2">
-      <select v-model="copySelectedPerson.gender" name="gender" id="gender"
-              class="border p-2 rounded">
-        <option value="" selected>Select Gender</option>
+      <input v-model.trim="copySelectedPerson.name" class="border w-full rounded p-2" placeholder="Name*" type="text">
+      <input v-model.trim="copySelectedPerson.surname" class="border w-full rounded p-2" placeholder="Surname"
+             type="text">
+      <select id="gender" v-model="copySelectedPerson.gender" class="border p-2 rounded"
+              name="gender">
+        <option selected value="">Select Gender</option>
         <option value="male">male</option>
         <option value="female">female</option>
       </select>
-      <input v-model.trim="copySelectedPerson.dateOfBirth" type="date" class="border w-full rounded p-2">
+      <input v-model.trim="copySelectedPerson.dateOfBirth" class="border w-full rounded p-2" type="date">
       <div class="flex flex-col gap-2 p-2">
         <div class="flex items-center gap-1">
           <p>Parents:</p>
-          <select v-model="parentToAdd" @change="addParent" name="parent" id="parent"
-                  class="w-full p-2 border rounded">
+          <select id="parent" v-model="parentToAdd" class="w-full p-2 border rounded" name="parent"
+                  @change="addParent">
             <option :value="undefined" disabled selected="selected">Add Parent</option>
             <option
               v-for="(person, index) in [...copyOptionalParents].filter(person =>![...copyParents, selectedPerson].some(parent => parent?.id === person.id))"
@@ -108,13 +108,13 @@ const addOptionalParent = () => {
           </select>
         </div>
         <div class="flex gap-1 flex-wrap">
-          <button @click="copyParents.delete(parent)"
-                  class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center"
-                  v-for="(parent, index) in copyParents" :key="index">
+          <button v-for="(parent, index) in copyParents"
+                  :key="index"
+                  class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center" @click="copyParents.delete(parent)">
             {{ parent?.name }} {{ parent?.surname }}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -122,8 +122,8 @@ const addOptionalParent = () => {
       <div class="flex flex-col gap-2 p-2">
         <div class="flex items-center gap-1">
           <p>Partners:</p>
-          <select v-model="partnerToAdd" @change="addPartner" name="partner" id="partner"
-                  class="w-full p-2 border rounded">
+          <select id="partner" v-model="partnerToAdd" class="w-full p-2 border rounded" name="partner"
+                  @change="addPartner">
             <option :value="undefined" disabled selected="selected">Add Partner</option>
             <option
               v-for="(person, index) in familyTree.filter(person =>![...copyPartners, selectedPerson].some(partner => partner?.id === person.id))"
@@ -134,12 +134,12 @@ const addOptionalParent = () => {
           </select>
         </div>
         <div class="flex gap-1 flex-wrap">
-          <button @click="copyPartners.delete(partner)" class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center"
-                  v-for="(partner, index) in copyPartners" :key="index">
+          <button v-for="(partner, index) in copyPartners" :key="index"
+                  class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center" @click="copyPartners.delete(partner)">
             {{ partner?.name }} {{ partner?.surname }}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -147,9 +147,9 @@ const addOptionalParent = () => {
       <div class="flex flex-col gap-2 p-2">
         <div class="flex items-center gap-1">
           <p>Optional partners:</p>
-          <select v-model="optionalParentToAdd" @change="addOptionalParent" name="optionalPartners"
-                  id="optionalPartners"
-                  class="w-full p-2 border rounded">
+          <select id="optionalPartners" v-model="optionalParentToAdd" class="w-full p-2 border rounded"
+                  name="optionalPartners"
+                  @change="addOptionalParent">
             <option :value="undefined" disabled selected="selected">Add Optional Parent</option>
             <option
               v-for="(person, index) in familyTree.filter(person =>![...copyOptionalParents, selectedPerson].some(optionalParent => optionalParent?.id === person.id))"
@@ -160,13 +160,14 @@ const addOptionalParent = () => {
           </select>
         </div>
         <div class="flex gap-1 flex-wrap">
-          <button @click="copyOptionalParents.delete(partner)"
+          <button v-for="(partner, index) in copyOptionalParents"
+                  :key="index"
                   class="rounded px-2 py-1 bg-gray-100 flex gap-1 items-center"
-                  v-for="(partner, index) in copyOptionalParents" :key="index">
+                  @click="copyOptionalParents.delete(partner)">
             {{ partner?.name }} {{ partner?.surname }}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-4 h-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -174,8 +175,8 @@ const addOptionalParent = () => {
       <p class="text-red-600">
         {{ editErrorMessage }}
       </p>
-      <button @click="updatePersonPersonalInfo"
-              class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end">Edit
+      <button class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end"
+              @click="updatePersonPersonalInfo">Edit
         Person
       </button>
     </div>

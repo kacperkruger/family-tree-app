@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useUsersStore } from "@/stores/users";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -28,12 +28,13 @@ onMounted(async () => {
       <h1 class="text-4xl">User List</h1>
       <div class="flex flex-col border rounded">
         <div class="flex items-center border-b-2">
-          <input v-model.trim="searchSurnames" type="text" class="p-2" placeholder="Search in users...">
+          <input v-model.trim="searchSurnames" class="p-2" placeholder="Search in users..." type="text">
           <button class="p-2" @click="searchUsersByPersonSurname">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                 stroke="currentColor" class="w-6 h-6 hover:stroke-2">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+            <svg class="w-6 h-6 hover:stroke-2" fill="none" stroke="currentColor" stroke-width="1.5"
+                 viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                    stroke-linecap="round"
+                    stroke-linejoin="round" />
             </svg>
           </button>
         </div>
@@ -43,9 +44,9 @@ onMounted(async () => {
     <div class="text-lg flex flex-grow justify-center overflow-auto w-full">
       <LoadingComponent v-show="isLoading" />
       <div v-show="!isLoading" class="flex flex-col w-max gap-1">
-        <button @click="router.push({name: 'user', params: {username: user?.username}})"
-                class="border p-8 rounded text-center hover:bg-gray-100" v-for="(user, index) in users"
-                :key="index">{{ user?.username }}
+        <button v-for="(user, index) in users"
+                :key="index" class="border p-8 rounded text-center hover:bg-gray-100"
+                @click="router.push({name: 'user', params: {username: user?.username}})">{{ user?.username }}
         </button>
       </div>
     </div>

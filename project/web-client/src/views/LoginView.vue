@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useRouter } from "vue-router";
@@ -29,11 +29,11 @@ onMounted(() => {
   <div class="view flex-col items-center">
     <LoadingComponent v-show="isLoading" />
     <section v-show="!isLoading" class="flex flex-col gap-3">
-      <input v-model.trim="username" @keydown.enter="login" ref="loginElement" placeholder="Login"
-             class="border rounded p-1" type="text"
-             id="username" />
-      <input v-model.trim="password" @keydown.enter="login" placeholder="Password" class="border rounded p-1"
-             type="password" id="password" />
+      <input id="username" ref="loginElement" v-model.trim="username" class="border rounded p-1"
+             placeholder="Login" type="text"
+             @keydown.enter="login" />
+      <input id="password" v-model.trim="password" class="border rounded p-1" placeholder="Password"
+             type="password" @keydown.enter="login" />
       <p class="text-red-600">
         {{ loginErrorMessage }}
       </p>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import AddChatRoomComponent from "@/components/AddChatRoomComponent.vue";
 import ChatRoomComponent from "@/components/ChatRoomComponent.vue";
 import type { User } from "@/data/user";
@@ -28,7 +28,7 @@ const emitCreateChat = (usersToAdd: Set<User>) => {
     <li v-show="isOpenAddChat">
       <AddChatRoomComponent @createChat="emitCreateChat" />
     </li>
-    <li @click="$emit('setSelectedChatId', privateChat._id)" v-for="(privateChat, index) in privateChats" :key="index">
+    <li v-for="(privateChat, index) in privateChats" :key="index" @click="$emit('setSelectedChatId', privateChat._id)">
       <ChatRoomComponent :private-chat="privateChat" :selectedChatId="selectedChatId" />
     </li>
   </ul>

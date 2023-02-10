@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import SideMenuComponent from "@/components/SideMenuComponent.vue";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import type { PropType } from "vue";
@@ -91,10 +91,10 @@ const copyPerson = async () => {
           <button @click="copyPerson"
           >Copy
           </button>
-          <select name="nGenerations"
+          <select id="nGenerations"
+                  v-model="nGenerations"
                   class="text-black cursor-pointer"
-                  id="nGenerations"
-                  v-model="nGenerations">
+                  name="nGenerations">
             <option value="0">0</option>
             <option value="1">1</option>
             <option value="2">2</option>
@@ -105,11 +105,11 @@ const copyPerson = async () => {
         <p class="text-red-600">
           {{ detailsErrorMessage }}
         </p>
-        <button v-if="!readOnly" @click="emits('openEditPersonMenu')"
-                class="p-2 border-green-500 text-white rounded text-sm bg-green-500 hover:bg-green-600">Edit
+        <button v-if="!readOnly" class="p-2 border-green-500 text-white rounded text-sm bg-green-500 hover:bg-green-600"
+                @click="emits('openEditPersonMenu')">Edit
         </button>
-        <button v-if="!readOnly" @click="deletePerson"
-                class="p-2 border-red-500 text-white rounded text-sm bg-red-500 hover:bg-red-600">Delete
+        <button v-if="!readOnly" class="p-2 border-red-500 text-white rounded text-sm bg-red-500 hover:bg-red-600"
+                @click="deletePerson">Delete
         </button>
       </div>
     </div>

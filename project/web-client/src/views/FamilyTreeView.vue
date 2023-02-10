@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { ref } from "vue";
 import type { Person } from "@/data/person";
 import { useFamilyTreeStore } from "@/stores/familyTree";
@@ -70,19 +70,20 @@ const selectPerson = (person: Person | undefined): void => {
   <div class="view flex-col">
     <AddPersonMenu v-show="isOpenAddPerson" :isOpenAddPerson="isOpenAddPerson"
                    @setIsOpenAddPerson="(value: Boolean) => isOpenAddPerson = value" />
-    <EditPersonMenu v-show="isOpenEditPerson" v-if="selectedPerson && !readOnly" :parents="parents" :partners="partners"
-                    :selectedPerson="selectedPerson" :isOpenEditPerson="isOpenEditPerson"
+    <EditPersonMenu v-if="selectedPerson && !readOnly" v-show="isOpenEditPerson" :isOpenEditPerson="isOpenEditPerson"
                     :optionalParents="optionalParents"
+                    :parents="parents" :partners="partners"
+                    :selectedPerson="selectedPerson"
                     @closeEditPersonMenu="closeEditPersonMenu" />
-    <DetailsPersonMenu v-show="isOpenPersonDetails" v-if="selectedPerson" :selectedPerson="selectedPerson"
-                       :read-only="readOnly"
-                       :isOpenPersonDetails="isOpenPersonDetails" :parents="parents" :partners="partners"
+    <DetailsPersonMenu v-if="selectedPerson" v-show="isOpenPersonDetails" :isOpenPersonDetails="isOpenPersonDetails"
                        :optionalParents="optionalParents"
+                       :parents="parents" :partners="partners" :read-only="readOnly"
+                       :selectedPerson="selectedPerson"
+                       @openEditPersonMenu="openEditPersonMenu"
                        @setIsOpenPersonDetails="value => isOpenPersonDetails = value"
-                       @setSelectedPerson="selectPerson"
-                       @openEditPersonMenu="openEditPersonMenu" />
+                       @setSelectedPerson="selectPerson" />
     <FamilyTreeButtons v-if="!readOnly" @openAddPersonMenu="openAddPersonMenu" />
-    <FamilyTreeComponent class="h-full" :userId="userId" @openPersonDetailsMenu="openPersonDetailsMenu"
+    <FamilyTreeComponent :userId="userId" class="h-full" @openPersonDetailsMenu="openPersonDetailsMenu"
                          @selectPerson="selectPerson" />
   </div>
 </template>

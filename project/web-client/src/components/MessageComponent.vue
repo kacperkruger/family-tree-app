@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { PropType } from "vue";
 import { computed } from "vue";
 import type { Message } from "@/data/message";
@@ -20,7 +20,7 @@ const messagePosition = computed(() => {
 
 <template>
   <div :class="`${messagePosition} flex flex-col justify-center `">
-    <p class="p-2" v-if="authStore.loggedUser?._id !== props.message.user._id">{{ message.user.username }}: </p>
+    <p v-if="authStore.loggedUser?._id !== props.message.user._id" class="p-2">{{ message.user.username }}: </p>
     <p :class="`${messageProperties} flex gap-2 py-2 px-4 border rounded-full w-fit`">{{ message.text }}</p>
   </div>
 </template>

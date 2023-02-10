@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { useAuthenticationStore } from "@/stores/authentication";
 import FamilyTreeView from "@/views/FamilyTreeView.vue";
 import { storeToRefs } from "pinia";

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import LoadingComponent from "@/components/LoadingComponent.vue";
 import MessageComponent from "@/components/MessageComponent.vue";
 import MessageFormComponent from "@/components/MessageFormComponent.vue";
@@ -31,7 +31,7 @@ watch(props, () => {
 <template>
   <section class="flex flex-col w-full h-full gap-4">
     <LoadingComponent v-show="isLoading" />
-    <div v-show="!isLoading" class="overflow-auto flex-grow" ref="container">
+    <div v-show="!isLoading" ref="container" class="overflow-auto flex-grow">
       <div class="flex flex-col justify-end gap-2">
         <MessageComponent v-for="message in messages" :key="message._id" :message="message" />
       </div>

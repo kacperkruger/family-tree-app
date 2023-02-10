@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted, ref } from "vue";
 import { useFamilyTreeStore } from "@/stores/familyTree";
 import SideMenuComponent from "@/components/SideMenuComponent.vue";
@@ -48,14 +48,14 @@ onMounted(() => nameElement.value?.focus());
   <SideMenuComponent :menu-status="isOpenAddPerson" @closeMenu="emits('setIsOpenAddPerson', false)">
     <LoadingComponent v-show="isLoading" />
     <div v-show="!isLoading" class="flex flex-col gap-2 h-full justify-center">
-      <input v-model="name" @keydown.enter="addPerson" type="text" ref="nameElement" placeholder="Name*"
-             class="border w-full rounded p-2">
-      <input v-model="surname" @keydown.enter="addPerson" type="text" placeholder="Surname"
-             class="border w-full rounded p-2">
-      <input v-model="gender" type="text" placeholder="Gender" class="border w-full rounded p-2">
-      <input v-model="dateOfBirth" type="date" class="border w-full rounded p-2">
-      <button @click="addPerson"
-              class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end">Add
+      <input ref="nameElement" v-model="name" class="border w-full rounded p-2" placeholder="Name*" type="text"
+             @keydown.enter="addPerson">
+      <input v-model="surname" class="border w-full rounded p-2" placeholder="Surname" type="text"
+             @keydown.enter="addPerson">
+      <input v-model="gender" class="border w-full rounded p-2" placeholder="Gender" type="text">
+      <input v-model="dateOfBirth" class="border w-full rounded p-2" type="date">
+      <button class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end"
+              @click="addPerson">Add
         Person
       </button>
     </div>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import LoadingComponent from "@/components/LoadingComponent.vue";</script>
 
 <template>

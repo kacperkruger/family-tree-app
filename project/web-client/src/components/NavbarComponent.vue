@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthenticationStore } from "@/stores/authentication";
@@ -44,40 +44,42 @@ const logout = () => {
 <template>
   <nav :class="`flex lg:items-center justify-between p-4 flex-col lg:flex-row ${menuProperties} bg-white`">
     <section class="flex justify-between items-center">
-      <div @click="navigate('home', false)" class="flex items-center gap-4 cursor-pointer">
-        <img src="@/assets/logo.svg" alt="logo" width="75" height="75">
+      <div class="flex items-center gap-4 cursor-pointer" @click="navigate('home', false)">
+        <img alt="logo" height="75" src="@/assets/logo.svg" width="75">
         <span class="font-semibold text-xl tracking-tight">Family Tree App</span>
       </div>
       <div class="lg:hidden">
         <button
-          @click="handleMenuClick" class="flex items-center px-3 py-2">
-          <svg v-if="!isMenuOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-               stroke="currentColor" class="w-10 h-10 hover:stroke-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          class="flex items-center px-3 py-2" @click="handleMenuClick">
+          <svg v-if="!isMenuOpen" class="w-10 h-10 hover:stroke-2" fill="none" stroke="currentColor" stroke-width="1.5"
+               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-               stroke="currentColor" class="w-10 h-10 hover:stroke-2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg v-else class="w-10 h-10 hover:stroke-2" fill="none" stroke="currentColor" stroke-width="1.5"
+               viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
         </button>
       </div>
     </section>
     <section
       :class="`${menuStatus} lg:flex text-lg flex flex-col lg:flex-row lg:justify-end items-center flex-grow lg:flex-grow-0 gap-6 justify-center`">
-      <p @click="navigate('private-chat', true)" :class="`${loginProperties} cursor-pointer`">Private Chat</p>
-      <p @click="navigate('public-chat', true)" :class="`${loginProperties} cursor-pointer`">Public Chat</p>
-      <p @click="navigate('users', true)" :class="`${loginProperties} cursor-pointer`">Users</p>
-      <p v-if="authStore.isAuthenticated" @click="logout"
-         class="px-4 py-2 leading-none border bg-red-500 hover:bg-red-600 text-white rounded mt-2 lg:mt-0 cursor-pointer">
+      <p :class="`${loginProperties} cursor-pointer`" @click="navigate('private-chat', true)">Private Chat</p>
+      <p :class="`${loginProperties} cursor-pointer`" @click="navigate('public-chat', true)">Public Chat</p>
+      <p :class="`${loginProperties} cursor-pointer`" @click="navigate('users', true)">Users</p>
+      <p v-if="authStore.isAuthenticated"
+         class="px-4 py-2 leading-none border bg-red-500 hover:bg-red-600 text-white rounded mt-2 lg:mt-0 cursor-pointer"
+         @click="logout">
         Logout</p>
-      <p v-else @click="login"
-         class="px-4 py-2 leading-none border rounded mt-2 bg-blue-500 text-white hover:bg-blue-600 lg:mt-0 cursor-pointer">
+      <p v-else
+         class="px-4 py-2 leading-none border rounded mt-2 bg-blue-500 text-white hover:bg-blue-600 lg:mt-0 cursor-pointer"
+         @click="login">
         Login</p>
     </section>
   </nav>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 body {
   overflow: hidden;
 }

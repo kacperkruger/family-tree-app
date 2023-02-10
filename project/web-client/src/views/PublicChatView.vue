@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { onMounted } from "vue";
 import { usePublicChatStore } from "@/stores/publicChat";
 import { useAuthenticationStore } from "@/stores/authentication";

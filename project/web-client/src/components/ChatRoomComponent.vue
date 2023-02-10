@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { computed, type PropType } from "vue";
 import type { PrivateChat } from "@/data/private-chat";
 import { useAuthenticationStore } from "@/stores/authentication";
