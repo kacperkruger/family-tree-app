@@ -68,7 +68,7 @@ const selectPerson = (person: Person | undefined): void => {
 
 <template>
   <div class="view flex-col">
-    <AddPersonMenu v-show="isOpenAddPerson" :isOpenAddPerson="isOpenAddPerson"
+    <AddPersonMenu v-if="isOpenAddPerson" :isOpenAddPerson="isOpenAddPerson"
                    @setIsOpenAddPerson="(value: Boolean) => isOpenAddPerson = value" />
     <EditPersonMenu v-if="selectedPerson && !readOnly" v-show="isOpenEditPerson" :isOpenEditPerson="isOpenEditPerson"
                     :optionalParents="optionalParents"

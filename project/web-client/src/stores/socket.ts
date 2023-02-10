@@ -12,7 +12,6 @@ export const useSocketStore = defineStore("socket", () => {
       cb(data);
     });
     sockets.value.set(urlPath, socket);
-    console.log([...sockets.value.keys()]);
   };
 
   const emit = (urlPath: string, data: any) => {

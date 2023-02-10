@@ -44,8 +44,6 @@ services:
     image:
       kacperkruger/tsw-user-service:latest
     restart: unless-stopped
-    ports:
-      - "4000:4000"
     environment:
       - PORT=4000
       - MONGO_HOST=mongodb-user
@@ -87,8 +85,6 @@ services:
   family-tree-service:
     image: kacperkruger/tsw-family-tree-service:latest
     restart: unless-stopped
-    ports:
-      - "7000:7000"
     environment:
       - PORT=7000
       - NEO4J_URI=bolt://neo4j-family-tree/7687
@@ -100,9 +96,12 @@ services:
       - family-tree
   websocket-service:
     image: kacperkruger/tsw-websocket-service:latest
+    ports:
+      - "9000:9000"
     restart: unless-stopped
     environment:
       - PORT=9000
+      - WEB_CLIENT_HOST_URL=http://localhost:5173
     networks:
       - websocket
   api-gateway-service:
