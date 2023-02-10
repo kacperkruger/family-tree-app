@@ -13,8 +13,8 @@ const searchSurnames = ref("");
 const searchDateOfBirth = ref<string | undefined>(undefined);
 
 const searchUsersByPersonSurname = async () => {
-  if (!searchSurnames.value && !searchDateOfBirth.value) await usersStore.getAllUsers();
-  await usersStore.getUsersByPersonsSurnames(searchSurnames.value.split(" "), searchDateOfBirth.value);
+  if (!searchSurnames.value) await usersStore.getAllUsers();
+  else await usersStore.getUsersByPersonsSurnames(searchSurnames.value.split(" "), searchDateOfBirth.value);
 };
 
 onMounted(async () => {

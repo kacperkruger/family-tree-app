@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref, toRaw, watch } from "vue";
+import { onMounted, type Ref, ref, toRaw, watch } from "vue";
 import FamilyTree from "@balkangraph/familytree.js";
 import { useAuthenticationStore } from "@/stores/authentication";
 import { useFamilyTreeStore } from "@/stores/familyTree";
@@ -19,6 +19,7 @@ const { familyTree, isLoading } = storeToRefs(treeStore);
 
 const tree = ref("");
 const family = ref<FamilyTree>();
+const fetchedNodes = ref() as Ref<Person[]>;
 
 const emit = defineEmits<{
   (e: "openPersonDetailsMenu"): void
@@ -26,16 +27,18 @@ const emit = defineEmits<{
 }>();
 
 const onNodeClick = (node: FamilyTree.node) => {
-  emit("selectPerson", familyTree.value.find(person => person.id === node.id));
+  emit("selectPerson", fetchedNodes.value.find(person => person.id === node.id));
   emit("openPersonDetailsMenu");
 };
 
 onMounted(async () => {
   if (props.userId === loggedUser.value?._id) {
     await treeStore.getFamilyTree();
+    fetchedNodes.value = familyTree.value;
     family.value = buildFamilyTree(tree.value, familyTree.value, onNodeClick);
   } else {
     const nodes = await treeStore.getUsersFamilyTree(props.userId);
+    fetchedNodes.value = nodes;
     family.value = buildFamilyTree(tree.value, nodes, onNodeClick);
   }
 });

@@ -32,7 +32,7 @@ const addPerson = async () => {
 
   await familyTreeStore.addPerson(personRequest);
 
-  if (addErrorMessage) return;
+  if (addErrorMessage.value) return;
   emits("setIsOpenAddPerson", false);
 
   name.value = "";
@@ -52,7 +52,11 @@ onMounted(() => nameElement.value?.focus());
              @keydown.enter="addPerson">
       <input v-model="surname" class="border w-full rounded p-2" placeholder="Surname" type="text"
              @keydown.enter="addPerson">
-      <input v-model="gender" class="border w-full rounded p-2" placeholder="Gender" type="text">
+      <select v-model="gender" class="border w-full rounded p-2" name="gender" id="gender">
+        <option value="">Select Gender</option>
+        <option value="MALE">male</option>
+        <option value="FEMALE">female</option>
+      </select>
       <input v-model="dateOfBirth" class="border w-full rounded p-2" type="date">
       <button class="border-blue-500 hover:bg-blue-600 p-2 rounded bg-blue-500 text-white w-full self-end"
               @click="addPerson">Add
