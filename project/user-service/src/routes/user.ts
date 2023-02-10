@@ -9,9 +9,15 @@ const router = express.Router();
 router.post('/', async (req: Request, res: Response): Promise<Response> => {
     const userRequest = UserRequest.check(req.body);
     userRequest.password = await hashPassword(userRequest.password);
+
+    let user1 = await User.findOne({username: userRequest.username})
+    if (user1) return res.status(400).json({error: "users exists with given username"})
+
+    let user2 = await User.findOne({email: userRequest.email})
+    if (user2) return res.status(400).json({error: "users exists with given email"})
     try {
         await User.create(userRequest);
-        return res.status(204);
+        return res.sendStatus(204);
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(400).json({error: errorMessage});
