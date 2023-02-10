@@ -4,13 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kacperkruger/clients": "^1.1.32",
+    "@kacperkruger/clients": "^1.1.35",
     "@kacperkruger/common-server-utils": "^1.0.7",
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
@@ -22,6 +23,7 @@
     "cors": "^2.8.5"
   },
   "devDependencies": {
+    "typescript": "^4.9.5",
     "@types/bcrypt": "^5.0.0",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
