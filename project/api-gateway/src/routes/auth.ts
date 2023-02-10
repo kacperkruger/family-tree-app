@@ -37,7 +37,6 @@ router.post('/register', async (req: Request, res: Response): Promise<Response> 
         const addedUser = await addUser(req.body);
         return res.json({user: addedUser});
     } catch (e) {
-        console.log(e);
         if (isClientError(e) && e.response && e.response.data.error) return res.status(e.response.status || 500).json({error: e.response.data.error});
         return res.status(500).json({error: parseErrorMessage(e)});
     }

@@ -17,7 +17,6 @@ router.get('/:id/users/:userId', async (req: Request, res: Response) => {
     if (!privateChat.users.includes(userId)) return res.sendStatus(405);
 
     const populatedChat = await privateChat.populate('messages');
-    console.log(privateChat);
     return res.status(200).json({privateChat: populatedChat});
 });
 
