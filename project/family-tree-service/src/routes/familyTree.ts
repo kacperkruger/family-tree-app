@@ -20,6 +20,7 @@ import addChildRelationship from '../operations/addChildRelationship';
 import {PersonEditRequest} from '../models/PersonEditRequest';
 import updatePerson from '../operations/updatePerson';
 import checkIfArePartners from '../operations/checkIfArePartners';
+import getPersonAncestors from '../operations/getPersonAncestors';
 
 
 const router: Router = express.Router();
@@ -50,6 +51,17 @@ router.get('/users/:userId', async (req: Request, res: Response): Promise<Respon
     try {
         const familyTree = await getFamilyTree(userId);
         return res.json({familyTree});
+    } catch (e) {
+        const errorMessage = parseErrorMessage(e);
+        return res.status(500).json({error: errorMessage});
+    }
+});
+
+router.get('/persons/:personId/ancestors', async (req: Request, res: Response): Promise<Response> => {
+    const personId = req.params.personId;
+    try {
+        const personAncestors = await getPersonAncestors(personId);
+        return res.json({familyTree: personAncestors});
     } catch (e) {
         const errorMessage = parseErrorMessage(e);
         return res.status(500).json({error: errorMessage});
