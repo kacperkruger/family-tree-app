@@ -89,7 +89,7 @@ router.put('/users/:userId/persons/:personId', async (req: Request, res: Respons
         const personEditRequest = PersonEditRequest.check(req.body);
 
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
-        if (!hasAccess) return res.sendStatus(405);
+        if (!hasAccess) return res.sendStatus(403);
 
         const parents = personEditRequest.parents;
         if (parents.length > 2) return res.status(400).json({error: 'Max number of parents is 2'});
@@ -111,7 +111,7 @@ router.patch('/users/:userId/persons/:personId', async (req: Request, res: Respo
         const personRequest = PersonRequest.check(req.body);
 
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
-        if (!hasAccess) return res.sendStatus(405);
+        if (!hasAccess) return res.sendStatus(403);
 
         const updatedPerson = await patchPerson(personId, personRequest);
         return res.json({person: updatedPerson});
@@ -126,7 +126,7 @@ router.delete('/users/:userId/persons/:personId', async (req: Request, res: Resp
     const personId = req.params.personId;
     try {
         const hasAccess = await checkIfUserHasAccessToPerson(userId, personId);
-        if (!hasAccess) return res.sendStatus(405);
+        if (!hasAccess) return res.sendStatus(403);
         await deletePerson(personId);
         return res.sendStatus(204);
     } catch (e) {
@@ -142,10 +142,10 @@ router.post('/users/:userId/relationships/parents/:parentId/children/:childId', 
 
     try {
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(405);
+        if (!hasAccessToChild) return res.sendStatus(403);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(405);
+        if (!hasAccessToParent) return res.sendStatus(403);
 
         const ifParentsArePartners = await checkIfPersonAndChildParentArePartners(childId, parentId);
         if (!ifParentsArePartners) return res.status(400).json({error: 'Parents are not partners'});
@@ -165,10 +165,10 @@ router.delete('/users/:userId/relationships/parents/:parentId/children/:childId'
 
     try {
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(405);
+        if (!hasAccessToChild) return res.sendStatus(403);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(405);
+        if (!hasAccessToParent) return res.sendStatus(403);
 
         const editedPerson = await deleteChildRelationship(parentId, childId);
         return res.json({person: editedPerson});
@@ -185,10 +185,10 @@ router.post('/users/:userId/relationships/partners/:partner1Id/partners/:partner
 
     try {
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
-        if (!hasAccessToPartner1) return res.sendStatus(405);
+        if (!hasAccessToPartner1) return res.sendStatus(403);
 
         const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
-        if (!hasAccessToPartner2) return res.sendStatus(405);
+        if (!hasAccessToPartner2) return res.sendStatus(403);
 
         const editedPersons = await addPartnerRelationship(partner1Id, partner2Id);
         return res.json({persons: editedPersons});
@@ -205,10 +205,10 @@ router.delete('/users/:userId/relationships/partners/:partner1Id/partners/:partn
 
     try {
         const hasAccessToPartner1 = await checkIfUserHasAccessToPerson(userId, partner1Id);
-        if (!hasAccessToPartner1) return res.sendStatus(405);
+        if (!hasAccessToPartner1) return res.sendStatus(403);
 
         const hasAccessToPartner2 = await checkIfUserHasAccessToPerson(userId, partner2Id);
-        if (!hasAccessToPartner2) return res.sendStatus(405);
+        if (!hasAccessToPartner2) return res.sendStatus(403);
 
         const ifHaveKids = await checkIfHaveKids(partner1Id, partner2Id);
         if (ifHaveKids) return res.status(400).json({error: 'Partners have kid/s'});
@@ -228,10 +228,10 @@ router.post('/users/:userId/relationships/optional/parents/:parentId/children/:c
 
     try {
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(405);
+        if (!hasAccessToChild) return res.sendStatus(403);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(405);
+        if (!hasAccessToParent) return res.sendStatus(403);
 
         const editedPerson = await addOptionalChildRelationship(childId, parentId);
         return res.json({person: editedPerson});
@@ -248,10 +248,10 @@ router.delete('/users/:userId/relationships/optional/parents/:parentId/children/
 
     try {
         const hasAccessToChild = await checkIfUserHasAccessToPerson(userId, childId);
-        if (!hasAccessToChild) return res.sendStatus(405);
+        if (!hasAccessToChild) return res.sendStatus(403);
 
         const hasAccessToParent = await checkIfUserHasAccessToPerson(userId, parentId);
-        if (!hasAccessToParent) return res.sendStatus(405);
+        if (!hasAccessToParent) return res.sendStatus(403);
 
         const editedPerson = await deleteOptionalChildRelationship(parentId, childId);
         return res.json({person: editedPerson});
