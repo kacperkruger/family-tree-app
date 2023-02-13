@@ -1,0 +1,1 @@
+{"version":3,"file":"expressConfig.d.ts","sourceRoot":"","sources":["../../src/configs/expressConfig.ts"],"names":[],"mappings":"AAAA,OAAgB,EAAC,OAAO,EAAC,MAAM,SAAS,CAAC;AAEzC,OAAO,CAAC,MAAM,CAAC;IACX,UAAU,OAAO,CAAC;QACd,UAAU,OAAO;YACb,IAAI,CAAC,EAAE,MAAM,CAAC;SACjB;KACJ;CACJ;AAED,QAAA,MAAM,aAAa,QAAS,OAAO,SAElC,CAAC;AAEF,eAAe,aAAa,CAAC"}
