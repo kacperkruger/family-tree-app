@@ -17,7 +17,7 @@ export const useFamilyTreeStore = defineStore("familyTree", () => {
   const addErrorMessage = ref("");
   const editErrorMessage = ref("");
   const detailsErrorMessage = ref("");
-  const url = `${import.meta.env.API_HOST_URL}/api/v1/family-trees`;
+  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/family-trees`;
 
   const getFamilyTree = async () => {
     if (familyTree.value.length !== 0) return;

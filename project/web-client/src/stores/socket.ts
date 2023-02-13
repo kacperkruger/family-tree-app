@@ -7,7 +7,7 @@ export const useSocketStore = defineStore("socket", () => {
 
   const connect = (urlPath: string, cb: Function, authParam?: Object) => {
     if (sockets.value.has(urlPath)) return;
-    const socket = io(`${import.meta.env.WEBSOCKET_HOST_URL}/${urlPath}`, {
+    const socket = io(`${import.meta.env.VITE_WEBSOCKET_HOST_URL}/${urlPath}`, {
       auth: authParam,
     });
     socket.on("message", (data) => {

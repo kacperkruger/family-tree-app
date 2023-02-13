@@ -16,7 +16,7 @@ export const useAuthenticationStore = defineStore("authentication", () => {
   const loginErrorMessage = ref("");
   const registerErrorMessage = ref("");
   const isLoading = ref(false);
-  const url = `${import.meta.env.API_HOST_URL}/api/v1/authentication`;
+  const url = `${import.meta.env.VITE_API_HOST_URL}/api/v1/authentication`;
 
   const router = useRouter();
   const publicChatStore = usePublicChatStore();

@@ -89,8 +89,8 @@ const addOptionalParent = () => {
       <select id="gender" v-model="copySelectedPerson.gender" class="border p-2 rounded"
               name="gender">
         <option selected value="">Select Gender</option>
-        <option value="MALE">male</option>
-        <option value="FEMALE">female</option>
+        <option value="male">male</option>
+        <option value="female">female</option>
       </select>
       <input v-model.trim="copySelectedPerson.dateOfBirth" class="border w-full rounded p-2" type="date">
       <div class="flex flex-col gap-2 p-2">

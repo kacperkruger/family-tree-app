@@ -2,13 +2,10 @@ version: "3.7"
 services:
   neo4j-family-tree:
     image: neo4j:5-enterprise
-    ports:
-      - "7474:7474"
-      - "7687:7687"
     restart: unless-stopped
     environment:
       - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
-    #      - NEO4j_AUTH=${FAMILY_TREE_DB_USERNAME}/${FAMILY_TREE_DB_PASSWORD}
+      - NEO4j_AUTH=${FAMILY_TREE_DB_USERNAME}/${FAMILY_TREE_DB_PASSWORD}
     volumes:
       - db-family-tree:/data
     networks:
@@ -104,7 +101,7 @@ services:
     restart: unless-stopped
     environment:
       - PORT=9000
-      - WEB_CLIENT_HOST_URL=http://localhost:4173
+      - WEB_CLIENT_HOST_URL=http://localhost
     networks:
       - websocket
   api-gateway-service:
@@ -119,7 +116,7 @@ services:
       - PRIVATE_CHAT_SERVICE_HOST_URL=http://private-chat-service:5000
       - PUBLIC_CHAT_SERVICE_HOST_URL=http://public-chat-service:6000
       - FAMILY_TREE_SERVICE_HOST_URL=http://family-tree-service:7000
-      - WEB_CLIENT_HOST_URL=http://localhost:4173
+      - WEB_CLIENT_HOST_URL=http://localhost
     depends_on:
       - family-tree-service
       - public-chat-service
@@ -136,9 +133,6 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
-    environment:
-      - API_HOST_URL=http://localhost:8000
-      - WEBSOCKET_HOST_URL=http://localhost:9000
     depends_on:
       - api-gateway-service
       - websocket-service
