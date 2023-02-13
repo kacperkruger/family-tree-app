@@ -11,7 +11,7 @@ services:
     networks:
       - family-tree
   mongodb-user:
-    image: mongo
+    image: mongo:6.0.4
     restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${USER_DB_USERNAME}
@@ -21,7 +21,7 @@ services:
     networks:
       - user
   mongodb-private-chat:
-    image: mongo
+    image: mongo:6.0.4
     restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PRIVATE_CHAT_DB_USERNAME}
@@ -31,7 +31,7 @@ services:
     networks:
       - private-chat
   mongodb-public-chat:
-    image: mongo
+    image: mongo:6.0.4
     restart: unless-stopped
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${PUBLIC_CHAT_DB_USERNAME}
