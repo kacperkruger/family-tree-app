@@ -4,6 +4,7 @@ import addOptionalParentRelationship from './addOptionalParentRelationship';
 import editPersonDetails from './editPersonDetails';
 import editPerson from './editPerson';
 import getFamilyTree from './getFamilyTree';
+import getPersonAncestors from './getPersonAncestors';
 import getUsersBySurnames from './getUsersBySurnames';
 import getUsersBySurnamesWithDateOfBirth from './getUsersBySurnamesWithDateOfBirth';
 import copyPerson from './copyPerson';
@@ -20,6 +21,7 @@ export {
     editPersonDetails,
     editPerson,
     getFamilyTree,
+    getPersonAncestors,
     getUsersBySurnames,
     getUsersBySurnamesWithDateOfBirth,
     copyPerson,

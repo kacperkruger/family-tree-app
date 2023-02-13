@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kacperkruger/clients": "^1.1.35",
+    "@kacperkruger/clients": "^1.1.37",
     "@kacperkruger/common-server-utils": "^1.0.7",
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",

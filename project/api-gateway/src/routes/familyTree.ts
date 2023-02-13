@@ -12,6 +12,7 @@ import {
     editPerson,
     editPersonDetails,
     getFamilyTree,
+    getPersonAncestors,
     getUsersBySurnames,
     getUsersBySurnamesWithDateOfBirth
 } from '@kacperkruger/clients/family-tree';
@@ -36,6 +37,17 @@ router.get('/users/:userId', async (req: Request, res: Response): Promise<Respon
     const userId = req.params.userId;
     try {
         const familyTree = await getFamilyTree(userId);
+        return res.json({familyTree});
+    } catch (e) {
+        if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
+        return res.status(500).json({error: parseErrorMessage(e)});
+    }
+});
+
+router.get('/persons/:personId/ancestors', async (req: Request, res: Response): Promise<Response> => {
+    const personId = req.params.personId;
+    try {
+        const familyTree = await getPersonAncestors(personId);
         return res.json({familyTree});
     } catch (e) {
         if (isClientError(e)) return res.status(e.response?.status || 500).json({error: e.response?.data.error});
